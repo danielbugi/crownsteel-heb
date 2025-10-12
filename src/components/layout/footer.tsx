@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 import {
   Gem,
   Facebook,
@@ -9,11 +9,11 @@ import {
   Mail,
   Phone,
   MapPin,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useSettings } from "@/contexts/settings-context";
-import { useLanguage } from "@/contexts/language-context";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useSettings } from '@/contexts/settings-context';
+import { useLanguage } from '@/contexts/language-context';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -27,13 +27,12 @@ export function Footer() {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <Gem className="h-6 w-6 text-gold-500" />
               <span className="font-bold text-xl">
-                {settings?.siteName || "FORGE & STEEL"}
+                {settings?.siteName || 'FORGE & STEEL'}
               </span>
             </div>
             <p className="text-gray-400">
-              {settings?.siteDescription || t("footer.description")}
+              {settings?.siteDescription || t('footer.description')}
             </p>
 
             {/* Contact Info */}
@@ -95,14 +94,14 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-semibold">{t("footer.quickLinks")}</h3>
+            <h3 className="font-semibold">{t('footer.quickLinks')}</h3>
             <ul className="space-y-2 text-gray-400">
               <li>
                 <Link
                   href="/shop"
                   className="hover:text-white transition-colors"
                 >
-                  {t("footer.shopAll")}
+                  {t('footer.shopAll')}
                 </Link>
               </li>
               <li>
@@ -110,7 +109,7 @@ export function Footer() {
                   href="/categories"
                   className="hover:text-white transition-colors"
                 >
-                  {t("footer.categories")}
+                  {t('footer.categories')}
                 </Link>
               </li>
               <li>
@@ -118,7 +117,7 @@ export function Footer() {
                   href="/about"
                   className="hover:text-white transition-colors"
                 >
-                  {t("footer.aboutUs")}
+                  {t('footer.aboutUs')}
                 </Link>
               </li>
               <li>
@@ -126,7 +125,7 @@ export function Footer() {
                   href="/contact"
                   className="hover:text-white transition-colors"
                 >
-                  {t("footer.contact")}
+                  {t('footer.contact')}
                 </Link>
               </li>
             </ul>
@@ -134,14 +133,14 @@ export function Footer() {
 
           {/* Customer Service */}
           <div className="space-y-4">
-            <h3 className="font-semibold">{t("footer.customerService")}</h3>
+            <h3 className="font-semibold">{t('footer.customerService')}</h3>
             <ul className="space-y-2 text-gray-400">
               <li>
                 <Link
                   href="/faq"
                   className="hover:text-white transition-colors"
                 >
-                  {t("footer.faq")}
+                  {t('footer.faq')}
                 </Link>
               </li>
               <li>
@@ -149,7 +148,7 @@ export function Footer() {
                   href="/shipping"
                   className="hover:text-white transition-colors"
                 >
-                  {language === "he" ? "משלוחים והחזרות" : "Shipping & Returns"}
+                  {language === 'he' ? 'משלוחים והחזרות' : 'Shipping & Returns'}
                 </Link>
               </li>
               <li>
@@ -157,7 +156,7 @@ export function Footer() {
                   href="/privacy"
                   className="hover:text-white transition-colors"
                 >
-                  {language === "he" ? "מדיניות פרטיות" : "Privacy Policy"}
+                  {language === 'he' ? 'מדיניות פרטיות' : 'Privacy Policy'}
                 </Link>
               </li>
               <li>
@@ -165,7 +164,7 @@ export function Footer() {
                   href="/terms"
                   className="hover:text-white transition-colors"
                 >
-                  {language === "he" ? "תנאי שימוש" : "Terms of Service"}
+                  {language === 'he' ? 'תנאי שימוש' : 'Terms of Service'}
                 </Link>
               </li>
             </ul>
@@ -173,12 +172,12 @@ export function Footer() {
 
           {/* Newsletter */}
           <div className="space-y-4">
-            <h3 className="font-semibold">{t("footer.newsletter")}</h3>
-            <p className="text-gray-400">{t("footer.newsletterDesc")}</p>
+            <h3 className="font-semibold">{t('footer.newsletter')}</h3>
+            <p className="text-gray-400">{t('footer.newsletterDesc')}</p>
             <div className="flex space-x-2">
               <Input
                 type="email"
-                placeholder={t("footer.emailPlaceholder")}
+                placeholder={t('footer.emailPlaceholder')}
                 className="bg-gray-800 border-gray-700 text-white"
               />
               <Button className="bg-accent hover:bg-accent/90">
@@ -190,8 +189,8 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>
-            &copy; {currentYear} {settings?.siteName || "Forge & Steel"}.{" "}
-            {t("footer.allRightsReserved")}.
+            &copy; {currentYear} {settings?.siteName || 'Forge & Steel'}.{' '}
+            {t('footer.allRightsReserved')}.
           </p>
         </div>
       </div>

@@ -7,12 +7,11 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useCartStore } from '@/store/cart-store';
 import { CartItem } from '@/components/cart/cart-item';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, X } from 'lucide-react';
 
 export function CartSheet() {
   const { items, isOpen, toggleCart, getTotalPrice, getTotalItems } =
@@ -22,55 +21,104 @@ export function CartSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
-      <SheetContent className="flex w-full flex-col pr-0 sm:max-w-lg">
-        <SheetHeader className="space-y-2.5 pr-6">
-          <SheetTitle>Cart ({totalItems})</SheetTitle>
-        </SheetHeader>
+      <SheetContent className="flex w-full flex-col p-0 sm:max-w-lg bg-white border-l border-gray-200">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <SheetTitle className="text-xl font-bold text-black">
+            CART ({totalItems})
+          </SheetTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleCart}
+            className="text-black hover:bg-gray-100"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+
         {items.length > 0 ? (
           <>
-            <div className="flex flex-1 flex-col gap-5 overflow-hidden pr-6">
-              <div className="flex-1 overflow-auto">
-                <div className="space-y-4">
-                  {items.map((item) => (
-                    <CartItem key={item.id} item={item} />
-                  ))}
+            {/* Cart Items */}
+            <div className="flex-1 overflow-auto">
+              {items.map((item, index) => (
+                <div key={item.id}>
+                  <CartItem item={item} />
+                  {index !== items.length - 1 && (
+                    <div className="border-b border-gray-200" />
+                  )}
                 </div>
-              </div>
+              ))}
             </div>
-            <div className="space-y-4 pr-6">
-              <Separator />
-              <div className="space-y-1.5 text-sm">
-                <div className="flex">
-                  <span className="flex-1">Subtotal</span>
-                  <span>{formatPrice(totalPrice)}</span>
-                </div>
-                <div className="flex">
-                  <span className="flex-1">Shipping</span>
-                  <span>Free</span>
-                </div>
-                <Separator />
-                <div className="flex">
-                  <span className="flex-1">Total</span>
-                  <span className="font-medium">{formatPrice(totalPrice)}</span>
-                </div>
+
+            {/* Summary Section */}
+            <div className="border-t border-gray-200 p-6 space-y-4 bg-white">
+              {/* Subtotal */}
+              <div className="flex justify-between text-sm">
+                <span className="font-light uppercase tracking-wide text-gray-600">
+                  Subtotal
+                </span>
+                <span className="font-medium text-black">
+                  {formatPrice(totalPrice)}
+                </span>
               </div>
-              <div className="space-y-2">
-                <Button className="w-full" size="sm" asChild>
+
+              {/* Shipping */}
+              <div className="flex justify-between text-sm">
+                <span className="font-light uppercase tracking-wide text-gray-600">
+                  Shipping
+                </span>
+                <span className="font-medium text-green-600">Free</span>
+              </div>
+
+              {/* Separator */}
+              <div className="border-t border-gray-200" />
+
+              {/* Total */}
+              <div className="flex justify-between">
+                <span className="font-light uppercase tracking-wide text-black text-base">
+                  Total
+                </span>
+                <span className="font-bold text-black text-lg">
+                  {formatPrice(totalPrice)}
+                </span>
+              </div>
+
+              {/* Checkout Buttons */}
+              <div className="space-y-2 pt-2">
+                <Button
+                  className="w-full bg-black hover:bg-gray-800 text-white font-light uppercase tracking-wide"
+                  size="lg"
+                  asChild
+                  onClick={toggleCart}
+                >
                   <Link href="/checkout">Proceed to Checkout</Link>
                 </Button>
-                <Button variant="outline" className="w-full" size="sm" asChild>
+                <Button
+                  variant="outline"
+                  className="w-full border-gray-300 text-black hover:bg-gray-50 font-light uppercase tracking-wide"
+                  size="lg"
+                  asChild
+                  onClick={toggleCart}
+                >
                   <Link href="/cart">View Cart</Link>
                 </Button>
               </div>
             </div>
           </>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center space-y-2">
-            <ShoppingBag className="h-12 w-12 text-muted-foreground" />
-            <span className="text-lg font-medium text-muted-foreground">
+          <div className="flex h-full flex-col items-center justify-center space-y-4 p-6">
+            <ShoppingBag className="h-16 w-16 text-gray-300" />
+            <span className="text-lg font-light uppercase tracking-wide text-gray-600">
               Your cart is empty
             </span>
-            <Button variant="outline" size="sm" asChild>
+            <Button
+              variant="outline"
+              className="border-gray-300 text-black hover:bg-gray-50 font-light uppercase tracking-wide"
+              size="lg"
+              asChild
+              onClick={toggleCart}
+            >
               <Link href="/shop">Continue Shopping</Link>
             </Button>
           </div>

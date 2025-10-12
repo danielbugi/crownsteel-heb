@@ -43,7 +43,7 @@ export function AnnouncementBar() {
   const Icon = currentAnnouncement.icon;
 
   return (
-    <div className="bg-steel-500 text-white py-2 overflow-hidden">
+    <div className="bg-white text-black py-2 overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-center gap-2 text-sm font-medium">
           <Icon className="h-4 w-4 flex-shrink-0" />
