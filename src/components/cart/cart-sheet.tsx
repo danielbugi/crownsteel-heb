@@ -31,7 +31,7 @@ export function CartSheet() {
             variant="ghost"
             size="icon"
             onClick={toggleCart}
-            className="text-black hover:bg-gray-100"
+            className="h-8 w-8 text-gray-500 hover:text-black"
           >
             <X className="h-5 w-5" />
           </Button>
@@ -87,17 +87,16 @@ export function CartSheet() {
               {/* Checkout Buttons */}
               <div className="space-y-2 pt-2">
                 <Button
-                  className="w-full bg-black hover:bg-gray-800 text-white font-light uppercase tracking-wide"
                   size="lg"
+                  className="w-full"
                   asChild
                   onClick={toggleCart}
                 >
                   <Link href="/checkout">Proceed to Checkout</Link>
                 </Button>
                 <Button
-                  variant="outline"
-                  className="w-full border-gray-300 text-black hover:bg-gray-50 font-light uppercase tracking-wide"
                   size="lg"
+                  className="w-full"
                   asChild
                   onClick={toggleCart}
                 >
@@ -112,13 +111,7 @@ export function CartSheet() {
             <span className="text-lg font-light uppercase tracking-wide text-gray-600">
               Your cart is empty
             </span>
-            <Button
-              variant="outline"
-              className="border-gray-300 text-black hover:bg-gray-50 font-light uppercase tracking-wide"
-              size="lg"
-              asChild
-              onClick={toggleCart}
-            >
+            <Button size="lg" className="w-full" asChild onClick={toggleCart}>
               <Link href="/shop">Continue Shopping</Link>
             </Button>
           </div>

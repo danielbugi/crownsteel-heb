@@ -136,79 +136,131 @@
   }
 }
 
+/* ===================================
+   BUTTON ANIMATION FIXES
+   Add this at the END of globals.css
+   (before the closing brace)
+   =================================== */
+
 @layer components {
-  /* Button on dark background variant */
-  .btn-on-dark {
-    border: 1px solid hsl(var(--accent));
-    color: white;
-    background: transparent;
-  }
-
-  .btn-on-dark:hover {
-    background: hsl(var(--accent) / 0.1);
-    border-color: hsl(var(--accent));
-  }
-
-  /* Luxury gradient backgrounds */
-  .bg-gradient-steel {
-    background: linear-gradient(135deg, #1a1d23 0%, #2d3748 100%);
-  }
-
-  .bg-gradient-gold {
-    background: linear-gradient(135deg, #d4a574 0%, #b8860b 100%);
-  }
-
-  .bg-gradient-luxury {
-    background: linear-gradient(135deg, #0d1117 0%, #2d3748 50%, #1a1d23 100%);
-  }
-
-  /* Shimmer effect for loading states */
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite;
-  }
-
-  /* Elegant hover effects */
-  .hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Image overlay effects */
-  .image-overlay {
+  /* Fix button base styles - override global span styles */
+  button[data-slot='button'] {
     position: relative;
+    isolation: isolate; /* Creates new stacking context */
+    font-family: 'Rubik', system-ui, sans-serif !important;
     overflow: hidden;
   }
 
-  .image-overlay::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0.7) 100%
-    );
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
+  /* Fix span inside buttons - override global span font-family */
+  button[data-slot='button'] > span,
+  button[data-slot='button'] span {
+    font-family: inherit !important; /* Override global span font */
+    position: relative;
+    z-index: 10; /* Ensure text is above pseudo-element */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease-in-out;
   }
 
-  .image-overlay:hover::after {
-    opacity: 0.8;
+  /* Ensure pseudo-element stays behind */
+  button[data-slot='button']::before {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none; /* Don't interfere with clicks */
   }
+
+  /* Remove conflicting .btn-on-dark class */
+  button[data-slot='button'].btn-on-dark {
+    border: inherit;
+    background: inherit;
+    color: inherit;
+  }
+
+  /* Fix for icons inside buttons */
+  button[data-slot='button'] svg {
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
+    transition: color 0.3s ease-in-out;
+  }
+
+  /* Ensure letter-spacing animation works */
+  button[data-slot='button']:hover > span,
+  button[data-slot='button']:hover span {
+    letter-spacing: 1.5px;
+  }
+
+  /* Fix text color transitions */
+  button[data-slot='button'] > span *,
+  button[data-slot='button'] span * {
+    transition: color 0.3s ease-in-out;
+  }
+}
+
+/* ===================================
+   END BUTTON FIXES
+   =================================== */
+
+/* Luxury gradient backgrounds */
+.bg-gradient-steel {
+  background: linear-gradient(135deg, #1a1d23 0%, #2d3748 100%);
+}
+
+.bg-gradient-gold {
+  background: linear-gradient(135deg, #d4a574 0%, #b8860b 100%);
+}
+
+.bg-gradient-luxury {
+  background: linear-gradient(135deg, #0d1117 0%, #2d3748 50%, #1a1d23 100%);
+}
+
+/* Shimmer effect for loading states */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Elegant hover effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Image overlay effects */
+.image-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.image-overlay:hover::after {
+  opacity: 0.8;
 }
 
 /* RTL Support */

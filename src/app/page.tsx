@@ -336,12 +336,12 @@ export default async function HomePage() {
             <ScrollReveal direction="up" delay={100}>
               <div className="max-w-3xl">
                 <div className="space-y-4 md:space-y-6 text-white animate-fade-in">
-                  <h3 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+                  <h3 className="text-2xl md:text-4xl lg:text-5xl  text-white leading-tight">
                     {/* <span className="drop-shadow-2xl">Forge Your Legacy</span> */}
                     Explore Our Exquisite Collections
                   </h3>
 
-                  <p className="text-lg md:text-xl lg:text-2xl text-gray-200 font-thin leading-relaxed drop-shadow-lg max-w-2xl">
+                  <p className="text-lg md:text-xl lg:text-xl text-gray-200 font-thin leading-relaxed drop-shadow-lg max-w-2xl">
                     Discover exceptional pieces crafted for the modern
                     gentleman. Where tradition meets contemporary design.
                   </p>
@@ -386,7 +386,7 @@ export default async function HomePage() {
                 </Button>
               </div>
             )}
-            <div className="mt-8 md:mt-12 text-center">
+            <div className="mt-8 md:mt-12 text-center ">
               <Button
                 variant="outline"
                 size="lg"
@@ -397,7 +397,7 @@ export default async function HomePage() {
               >
                 <Link href="/shop">
                   View All Products
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight />
                 </Link>
               </Button>
             </div>
@@ -417,19 +417,10 @@ export default async function HomePage() {
               the perfect piece that tells your story.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-gold-500 hover:bg-gold-600 text-white font-semibold text-base md:text-lg px-6 md:px-8 py-5 md:py-6 h-auto shadow-2xl"
-                asChild
-              >
+              <Button variant="gold">
                 <Link href="/contact">Book Consultation</Link>
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-2 border-white text-black hover:bg-white/20 text-base md:text-lg px-6 md:px-8 py-5 md:py-6 h-auto backdrop-blur-sm"
-                asChild
-              >
+              <Button>
                 <Link href="/shop">Browse Collection</Link>
               </Button>
             </div>

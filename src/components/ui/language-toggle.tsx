@@ -16,9 +16,9 @@ export function LanguageToggle() {
       aria-label={`Switch to ${language === 'en' ? 'Hebrew' : 'English'}`}
     >
       <Globe className="h-5 w-5" aria-hidden="true" />
-      <span className="absolute -bottom-1 right-1 text-[10px] font-bold uppercase text-gold-400">
+      {/* <span className="absolute -bottom-1 right-1 text-[10px] font-bold uppercase text-gold-400">
         {language}
-      </span>
+      </span> */}
     </Button>
   );
 }
