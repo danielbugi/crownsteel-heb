@@ -46,7 +46,7 @@ export function Navbar() {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <header className="sticky top-0 z-40 w-full bg-black shadow-lg">
+      <header className="sticky top-0 z-40 w-full bg-black text-white shadow-lg">
         <nav
           className="container flex h-20 items-center justify-between px-4 md:px-6"
           aria-label="Main navigation"
@@ -159,7 +159,7 @@ export function Navbar() {
                   placeholder={t('nav.search')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/10 border-white/20 text-white placeholder:text-white/50 pr-10"
+                  className="w-full  bg-white/10 border-white/20 text-white placeholder:text-white/50 pr-10"
                   autoFocus
                 />
                 <Button

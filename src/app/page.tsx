@@ -72,7 +72,7 @@ export default async function HomePage() {
                   </h6>
                 </div>
 
-                <h1 className="text-4xl md:text-6xl text-white lg:text-7xl font-bold leading-tight">
+                <h1 className="text-4xl md:text-5xl text-white lg:text-6xl leading-tight">
                   {/* <span className="drop-shadow-2xl">Forge Your Legacy</span> */}
                   {/* <span className="block text-white mt-2 drop-shadow-2xl"> */}
                   25% Off All Collections
@@ -148,10 +148,10 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="flex flex-col items-center text-center pt-6 md:pt-8 pb-6 md:pb-8">
-                  <div className="flex items-center justify-center mb-4 md:mb-6">
+                  <div className="flex items-center justify-center mb-2 md:mb-2">
                     <Truck className="h-8 md:h-10 w-8 md:w-10 text-gold-600" />
                   </div>
-                  <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-3">
+                  <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-2">
                     Free Shipping
                   </h3>
                   <p className="text-sm md:text-base text-muted-foreground">
@@ -162,10 +162,10 @@ export default async function HomePage() {
 
               <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="flex flex-col items-center text-center pt-6 md:pt-8 pb-6 md:pb-8">
-                  <div className="flex items-center justify-center mb-4 md:mb-6">
+                  <div className="flex items-center justify-center mb-2 md:mb-2">
                     <Shield className="h-8 md:h-10 w-8 md:w-10 text-gold-600" />
                   </div>
-                  <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-3">
+                  <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-2">
                     Lifetime Warranty
                   </h3>
                   <p className="text-sm md:text-base text-muted-foreground">
@@ -176,10 +176,10 @@ export default async function HomePage() {
 
               <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="flex flex-col items-center text-center pt-6 md:pt-8 pb-6 md:pb-8">
-                  <div className="flex items-center justify-center mb-4 md:mb-6">
+                  <div className="flex items-center justify-center mb-2 md:mb-2">
                     <Award className="h-8 md:h-10 w-8 md:w-10 text-gold-600" />
                   </div>
-                  <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-3">
+                  <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-2">
                     Premium Quality
                   </h3>
                   <p className="text-sm md:text-base text-muted-foreground">
@@ -190,10 +190,10 @@ export default async function HomePage() {
 
               <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="flex flex-col items-center text-center pt-6 md:pt-8 pb-6 md:pb-8">
-                  <div className="flex items-center justify-center mb-4 md:mb-6">
+                  <div className="flex items-center justify-center mb-2 md:mb-2">
                     <HeadphonesIcon className="h-8 md:h-10 w-8 md:w-10 text-gold-600" />
                   </div>
-                  <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-3">
+                  <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-2">
                     Expert Support
                   </h3>
                   <p className="text-sm md:text-base text-muted-foreground">
@@ -388,12 +388,9 @@ export default async function HomePage() {
             )}
             <div className="mt-8 md:mt-12 text-center ">
               <Button
-                variant="outline"
-                size="lg"
+                size={'lg'}
+                className="bg-gold-600 hover:bg-gold-700 text-white font-semibold"
                 asChild
-                // write a class that the width fitting the content
-                className="hidden md:flex  justify-center mx-auto
-                "
               >
                 <Link href="/shop">
                   View All Products
@@ -417,10 +414,19 @@ export default async function HomePage() {
               the perfect piece that tells your story.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
-              <Button variant="gold">
+              <Button
+                size={'lg'}
+                className="bg-gold-600 hover:bg-gold-700 text-white font-semibold"
+                asChild
+              >
                 <Link href="/contact">Book Consultation</Link>
               </Button>
-              <Button>
+              <Button
+                size={'lg'}
+                variant="outline"
+                className="border-white text-black  hover:bg-white/10"
+                asChild
+              >
                 <Link href="/shop">Browse Collection</Link>
               </Button>
             </div>
