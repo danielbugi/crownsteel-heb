@@ -15,9 +15,9 @@ function Logo() {
                 {settings?.siteName || 'FORGE & STEEL'}
               </h1> */}
       <Image
-        src={'/images/logo/logo-white.png'}
+        src={'/images/logo/logo-2-white.png'}
         alt={'BogaRoyal Jewels'}
-        width={100}
+        width={70}
         height={40}
         className="object-contain"
       />
