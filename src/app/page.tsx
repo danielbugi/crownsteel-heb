@@ -83,43 +83,6 @@ export default async function HomePage() {
                   Discover exceptional pieces crafted for the modern gentleman.
                   Where tradition meets contemporary design.
                 </p>
-                {/* 
-                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-2 md:pt-4">
-                  <Button
-                    size="lg"
-                    className="bg-gold-500 hover:bg-gold-600 text-white font-semibold text-base md:text-lg px-6 md:px-8 py-5 md:py-6 h-auto shadow-2xl"
-                    asChild
-                  >
-                    <Link href="/shop">
-                      Explore Collection{' '}
-                      <ArrowRight className="ml-2 h-4 md:h-5 w-4 md:w-5" />
-                    </Link>
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-2 border-white/70 text-white hover:bg-white/20 hover:border-white backdrop-blur-sm text-base md:text-lg px-6 md:px-8 py-5 md:py-6 h-auto shadow-xl"
-                    asChild
-                  >
-                    <Link href="/about">Our Story</Link>
-                  </Button>
-                </div> */}
-
-                {/* Trust Badges */}
-                {/* <div className="flex flex-wrap gap-4 md:gap-6 pt-6 md:pt-8 text-xs md:text-sm text-gray-200">
-                  <div className="flex items-center gap-2 drop-shadow-lg">
-                    <Shield className="h-4 w-4 text-gold-400" />
-                    <span>Lifetime Warranty</span>
-                  </div>
-                  <div className="flex items-center gap-2 drop-shadow-lg">
-                    <Truck className="h-4 w-4 text-gold-400" />
-                    <span>Free Shipping</span>
-                  </div>
-                  <div className="flex items-center gap-2 drop-shadow-lg">
-                    <Award className="h-4 w-4 text-gold-400" />
-                    <span>Handcrafted Excellence</span>
-                  </div>
-                </div> */}
               </div>
             </div>
           </ScrollReveal>
@@ -136,20 +99,11 @@ export default async function HomePage() {
       <ScrollReveal direction="up" delay={200}>
         <section className="py-4 md:py-4 bg-gradient-to-b from-secondary/20 to-background">
           <div className="container px-4 mx-auto">
-            {/* <div className="text-center mb-12 md:mb-16">
-              <h6 className="text-gold-600 uppercase tracking-widest text-xs md:text-sm font-semibold mb-3 md:mb-4 font-sans">
-                The Forge & Steel Difference
-              </h6>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
-                Why Choose Us
-              </h2>
-            </div> */}
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="flex flex-col items-center text-center pt-6 md:pt-8 pb-6 md:pb-8">
                   <div className="flex items-center justify-center mb-2 md:mb-2">
-                    <Truck className="h-8 md:h-10 w-8 md:w-10 text-gold-600" />
+                    <Truck className="h-8 md:h-10 w-8 md:w-10 text-gray-400" />
                   </div>
                   <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-2">
                     Free Shipping
@@ -163,7 +117,7 @@ export default async function HomePage() {
               <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="flex flex-col items-center text-center pt-6 md:pt-8 pb-6 md:pb-8">
                   <div className="flex items-center justify-center mb-2 md:mb-2">
-                    <Shield className="h-8 md:h-10 w-8 md:w-10 text-gold-600" />
+                    <Shield className="h-8 md:h-10 w-8 md:w-10 text-gray-400" />
                   </div>
                   <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-2">
                     Lifetime Warranty
@@ -177,7 +131,7 @@ export default async function HomePage() {
               <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="flex flex-col items-center text-center pt-6 md:pt-8 pb-6 md:pb-8">
                   <div className="flex items-center justify-center mb-2 md:mb-2">
-                    <Award className="h-8 md:h-10 w-8 md:w-10 text-gold-600" />
+                    <Award className="h-8 md:h-10 w-8 md:w-10 text-gray-400" />
                   </div>
                   <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-2">
                     Premium Quality
@@ -188,10 +142,10 @@ export default async function HomePage() {
                 </CardContent>
               </Card>
 
-              <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <Card className="backdrop-blur-sm hover:shadow-xl transition-all duration-300 ">
                 <CardContent className="flex flex-col items-center text-center pt-6 md:pt-8 pb-6 md:pb-8">
                   <div className="flex items-center justify-center mb-2 md:mb-2">
-                    <HeadphonesIcon className="h-8 md:h-10 w-8 md:w-10 text-gold-600" />
+                    <HeadphonesIcon className="h-8 md:h-10 w-8 md:w-10 text-gray-400" />
                   </div>
                   <h3 className="font-bold text-lg md:text-xl mb-2 md:mb-2">
                     Expert Support
@@ -214,13 +168,9 @@ export default async function HomePage() {
               {/* <h6 className="text-gold-600 uppercase tracking-widest text-xs md:text-sm font-semibold mb-3 md:mb-4 font-sans">
                 Signature Collections
               </h6> */}
-              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl mb-4 md:mb-6">
                 Discover Your Style
               </h3>
-              {/* <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Each collection tells a unique story of craftsmanship, designed
-                to complement your individual character.
-              </p> */}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
@@ -336,7 +286,7 @@ export default async function HomePage() {
             <ScrollReveal direction="up" delay={100}>
               <div className="max-w-3xl">
                 <div className="space-y-4 md:space-y-6 text-white animate-fade-in">
-                  <h3 className="text-2xl md:text-4xl lg:text-5xl  text-white leading-tight">
+                  <h3 className="text-2xl md:text-4xl lg:text-5xl  text-white font-light leading-tight">
                     {/* <span className="drop-shadow-2xl">Forge Your Legacy</span> */}
                     Explore Our Exquisite Collections
                   </h3>
@@ -361,7 +311,7 @@ export default async function HomePage() {
                 {/* <h6 className="text-gold-600 uppercase tracking-widest text-xs md:text-sm font-semibold mb-2 md:mb-3 font-sans">
                   Curated Selection
                 </h6> */}
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl mb-2 md:mb-3">
                   Featured Collection
                 </h2>
                 {/* <p className="text-base md:text-lg text-muted-foreground">
@@ -406,7 +356,7 @@ export default async function HomePage() {
       <section className="py-16 md:py-20 bg-gradient-luxury text-white">
         <div className="container px-4 mx-auto text-center">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 drop-shadow-lg text-white">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl  mb-4 md:mb-6 drop-shadow-lg text-white">
               Begin Your Journey
             </h2>
             <p className="text-lg md:text-xl text-gray-200 mb-6 md:mb-8 leading-relaxed drop-shadow-md">

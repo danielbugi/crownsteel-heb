@@ -59,6 +59,7 @@ const translations = {
     'auth.dontHaveAccount': "Don't have an account?",
 
     // Footer (update existing)
+    'footer.findUs': 'Find Us',
     'footer.quickLinks': 'Quick Links',
     'footer.shopAll': 'Shop All',
     'footer.categories': 'Categories',
@@ -240,6 +241,7 @@ const translations = {
     'auth.dontHaveAccount': 'אין לך חשבון?',
 
     // Footer (update existing)
+    'footer.findUs': 'תמצאו אותנו',
     'footer.quickLinks': 'קישורים מהירים',
     'footer.shopAll': 'כל המוצרים',
     'footer.categories': 'קטגוריות',

@@ -15,11 +15,13 @@ import { UserMenuSidebar } from './user-menu-sidebar';
 import { AuthSidebar } from '@/components/auth/auth-sidebar';
 import { useSettings } from '@/contexts/settings-context';
 import { useLanguage } from '@/contexts/language-context';
+import Image from 'next/image';
+import Logo from '../ui/logo';
 
 export function Navbar() {
   const { data: session } = useSession();
   const { getTotalItems, toggleCart } = useCartStore();
-  const { settings } = useSettings();
+  // const { settings } = useSettings();
   const { t, direction } = useLanguage();
   const router = useRouter();
   const totalItems = getTotalItems();
@@ -46,7 +48,7 @@ export function Navbar() {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <header className="sticky top-0 z-40 w-full bg-black text-white shadow-lg">
+      <header className="sticky top-0 py-2 z-40 w-full bg-black text-white shadow-lg">
         <nav
           className="container flex h-20 items-center justify-between px-4 md:px-6"
           aria-label="Main navigation"
@@ -66,17 +68,7 @@ export function Navbar() {
           </div>
 
           {/* Center - Logo */}
-          <Link
-            href="/"
-            className="absolute left-1/2 transform -translate-x-1/2 flex items-center"
-            aria-label={`${settings?.siteName || 'FORGE & STEEL'} home`}
-          >
-            <div className="flex flex-col justify-center items-center">
-              <h1 className="font-sans text-xl md:text-2xl text-white tracking-wide">
-                {settings?.siteName || 'FORGE & STEEL'}
-              </h1>
-            </div>
-          </Link>
+          <Logo />
 
           {/* Right Side - Icons Only */}
           <div className="flex items-center gap-1 md:gap-2">
@@ -183,18 +175,20 @@ export function Navbar() {
       />
 
       {/* User Menu Sidebar */}
-      {session && (
-        <UserMenuSidebar
-          isOpen={isUserMenuOpen}
-          onClose={() => setIsUserMenuOpen(false)}
-          user={{
-            name: session.user?.name,
-            email: session.user?.email,
-            image: session.user?.image,
-            role: (session.user as any)?.role,
-          }}
-        />
-      )}
+      <UserMenuSidebar
+        isOpen={session ? isUserMenuOpen : false}
+        onClose={() => setIsUserMenuOpen(false)}
+        user={
+          session
+            ? {
+                name: session.user?.name,
+                email: session.user?.email,
+                image: session.user?.image,
+                role: (session.user as { role?: string })?.role,
+              }
+            : null
+        }
+      />
     </>
   );
 }

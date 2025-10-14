@@ -136,8 +136,10 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
       {/* Overlay */}
       <div
         className={cn(
-          'fixed inset-0 bg-black/40 z-50 transition-opacity duration-300',
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          'fixed inset-0 bg-black/40 transition-all duration-300',
+          isOpen
+            ? 'opacity-100 z-50'
+            : 'opacity-0 pointer-events-none invisible -z-10'
         )}
         onClick={onClose}
       />
@@ -145,13 +147,13 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed top-0 z-50 h-full w-full sm:w-[400px] bg-white shadow-2xl transition-transform duration-300 ease-in-out',
+          'fixed top-0 h-full w-full sm:w-[400px] bg-white shadow-2xl transition-all duration-300 ease-in-out',
           direction === 'rtl' ? 'left-0' : 'right-0',
           isOpen
-            ? 'translate-x-0'
+            ? 'translate-x-0 z-50 visible'
             : direction === 'rtl'
-            ? '-translate-x-full'
-            : 'translate-x-full'
+              ? '-translate-x-full invisible z-50'
+              : 'translate-x-full invisible z-50'
         )}
         dir={direction}
       >

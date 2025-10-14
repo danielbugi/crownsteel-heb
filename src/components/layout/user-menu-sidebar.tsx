@@ -23,7 +23,7 @@ interface UserMenuSidebarProps {
     email?: string | null;
     image?: string | null;
     role?: string;
-  };
+  } | null;
 }
 
 export function UserMenuSidebar({
@@ -32,6 +32,9 @@ export function UserMenuSidebar({
   user,
 }: UserMenuSidebarProps) {
   const { t, direction } = useLanguage();
+
+  // Debug logging
+  console.log('UserMenuSidebar render:', { isOpen, direction, user: !!user });
 
   const handleSignOut = () => {
     signOut();
@@ -57,7 +60,7 @@ export function UserMenuSidebar({
   ];
 
   // Add admin link if user is admin
-  if (user.email === 'admin@example.com' || user.role === 'ADMIN') {
+  if (user && (user.email === 'admin@example.com' || user.role === 'ADMIN')) {
     menuItems.push({
       icon: Shield,
       label: t('nav.admin'),
@@ -70,22 +73,26 @@ export function UserMenuSidebar({
       {/* Overlay */}
       <div
         className={cn(
-          'fixed inset-0 bg-black/40 z-50 transition-opacity duration-300',
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          'fixed inset-0 bg-black/40 transition-opacity duration-300',
+          isOpen
+            ? 'opacity-100 z-50'
+            : 'opacity-0 pointer-events-none invisible -z-10'
         )}
         onClick={onClose}
       />
 
       {/* Sidebar */}
       <div
+        key={direction} // Force re-mount on direction change to prevent transition
         className={cn(
-          'fixed top-0 z-50 h-full w-full sm:w-80 bg-white shadow-2xl transition-transform duration-300 ease-in-out',
+          'fixed top-0 h-full w-full sm:w-80 bg-white shadow-2xl transition-transform duration-300 ease-in-out',
+          // User menu slides from right in LTR, left in RTL
           direction === 'rtl' ? 'left-0' : 'right-0',
-          isOpen
-            ? 'translate-x-0'
+          isOpen && user
+            ? 'translate-x-0 z-50 visible'
             : direction === 'rtl'
-            ? '-translate-x-full'
-            : 'translate-x-full'
+              ? '-translate-x-full  z-50'
+              : 'translate-x-full  z-50'
         )}
         dir={direction}
       >
@@ -109,18 +116,18 @@ export function UserMenuSidebar({
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
             <Avatar className="h-16 w-16 border-2 border-gray-200">
               <AvatarImage
-                src={user.image || undefined}
-                alt={user.name || 'User'}
+                src={user?.image || undefined}
+                alt={user?.name || 'User'}
               />
               <AvatarFallback className="bg-black text-white text-lg">
-                {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="font-medium text-black truncate">
-                {user.name || 'User'}
+                {user?.name || 'User'}
               </p>
-              <p className="text-sm text-gray-600 truncate">{user.email}</p>
+              <p className="text-sm text-gray-600 truncate">{user?.email}</p>
             </div>
           </div>
         </div>

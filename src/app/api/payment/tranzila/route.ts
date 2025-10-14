@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,16 +13,16 @@ export async function POST(request: NextRequest) {
 
     // For now, we'll create a mock payment URL
     // Replace this with actual Tranzila integration
-    const tranzilaTerminalId = process.env.TRANZILA_TERMINAL_ID || "demo";
+    const tranzilaTerminalId = process.env.TRANZILA_TERMINAL_ID || 'demo';
 
     // Tranzila payment URL structure (example)
-    const paymentUrl = `https://direct.tranzila.com/${tranzilaTerminalId}/iframenew.php?sum=${amount}&currency=1&cred_type=1&orderId=${orderId}&contact=${customerName}&email=${customerEmail}&phone=${customerPhone}&successUrl=${process.env.NEXT_PUBLIC_URL}/order-confirmation?orderId=${orderId}&failureUrl=${process.env.NEXT_PUBLIC_URL}/checkout?error=payment_failed`;
+    const paymentUrl = `${process.env.NEXT_PUBLIC_URL}/payment-success?orderId=${orderId}`;
 
     return NextResponse.json({ paymentUrl });
   } catch (error) {
-    console.error("Error creating payment:", error);
+    console.error('Error creating payment:', error);
     return NextResponse.json(
-      { error: "Failed to create payment" },
+      { error: 'Failed to create payment' },
       { status: 500 }
     );
   }
