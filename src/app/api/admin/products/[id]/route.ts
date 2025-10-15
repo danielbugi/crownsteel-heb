@@ -1,23 +1,29 @@
+// src/app/api/admin/products/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/api-auth';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Check admin authorization
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     const product = await prisma.product.findUnique({
       where: { id: params.id },
-      include: {
-        category: true,
-      },
+      include: { category: true },
     });
 
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    // Convert Decimal to number for JSON serialization
+    // Convert Decimal to number
     const productData = {
       ...product,
       price: product.price.toNumber(),
@@ -38,6 +44,12 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Check admin authorization
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     const body = await request.json();
     const {
@@ -55,6 +67,8 @@ export async function PUT(
       categoryId,
       inStock,
       featured,
+      freeShipping,
+      inventory,
     } = body;
 
     // Check if product exists
@@ -83,7 +97,7 @@ export async function PUT(
     const product = await prisma.product.update({
       where: { id: params.id },
       data: {
-        name: name || nameEn, // Fallback for compatibility
+        name: name || nameEn,
         nameEn,
         nameHe,
         slug,
@@ -93,10 +107,12 @@ export async function PUT(
         price,
         comparePrice: comparePrice || null,
         image,
-        images,
+        images: images || [],
         categoryId,
-        inStock,
-        featured,
+        inStock: inStock ?? true,
+        featured: featured ?? false,
+        freeShipping: freeShipping ?? false,
+        inventory: inventory ?? 0,
       },
     });
 
@@ -121,6 +137,12 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Check admin authorization
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     // Check if product exists
     const product = await prisma.product.findUnique({

@@ -1,8 +1,16 @@
 // src/app/api/upload/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadImage, deleteImage } from '@/lib/cloudinary';
+import { requireAdmin } from '@/lib/api-auth';
 
 export async function POST(request: NextRequest) {
+  // Check admin authorization
+  // IMPORTANT: Only admins can upload images to prevent abuse and cost overruns
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -47,6 +55,12 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  // Check admin authorization
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     const { publicId } = await request.json();
 

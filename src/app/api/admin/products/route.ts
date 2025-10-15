@@ -1,7 +1,15 @@
+// src/app/api/admin/products/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/api-auth';
 
 export async function GET() {
+  // Check admin authorization
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     const products = await prisma.product.findMany({
       include: {
@@ -30,6 +38,12 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  // Check admin authorization
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     const body = await request.json();
     const {
@@ -49,17 +63,6 @@ export async function POST(request: NextRequest) {
       featured,
     } = body;
 
-    console.log('Received product data:', {
-      nameEn,
-      nameHe,
-      slug,
-      price,
-      comparePrice,
-      categoryId,
-      image,
-      hasImages: !!images,
-    });
-
     // Validate required fields
     const missingFields = [];
     if (!nameEn) missingFields.push('nameEn');
@@ -70,7 +73,6 @@ export async function POST(request: NextRequest) {
     if (!image) missingFields.push('image');
 
     if (missingFields.length > 0) {
-      console.error('Missing required fields:', missingFields);
       return NextResponse.json(
         { error: `Missing required fields: ${missingFields.join(', ')}` },
         { status: 400 }
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest) {
 
     const product = await prisma.product.create({
       data: {
-        name: name || nameEn, // Fallback for compatibility
+        name: name || nameEn,
         nameEn,
         nameHe,
         slug,

@@ -1,10 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+// src/app/api/admin/categories/[id]/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/api-auth';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Check admin authorization
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     const category = await prisma.category.findUnique({
       where: { id: params.id },
@@ -17,16 +25,16 @@ export async function GET(
 
     if (!category) {
       return NextResponse.json(
-        { error: "Category not found" },
+        { error: 'Category not found' },
         { status: 404 }
       );
     }
 
     return NextResponse.json(category);
   } catch (error) {
-    console.error("Error fetching category:", error);
+    console.error('Error fetching category:', error);
     return NextResponse.json(
-      { error: "Failed to fetch category" },
+      { error: 'Failed to fetch category' },
       { status: 500 }
     );
   }
@@ -36,6 +44,12 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Check admin authorization
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     const body = await request.json();
     const { name, nameEn, nameHe, slug, description, image } = body;
@@ -47,7 +61,7 @@ export async function PUT(
 
     if (!existingCategory) {
       return NextResponse.json(
-        { error: "Category not found" },
+        { error: 'Category not found' },
         { status: 404 }
       );
     }
@@ -60,7 +74,7 @@ export async function PUT(
 
       if (slugExists) {
         return NextResponse.json(
-          { error: "Slug already exists" },
+          { error: 'Slug already exists' },
           { status: 400 }
         );
       }
@@ -69,7 +83,7 @@ export async function PUT(
     const category = await prisma.category.update({
       where: { id: params.id },
       data: {
-        name: name || nameEn, // Fallback for compatibility
+        name: name || nameEn,
         nameEn,
         nameHe,
         slug,
@@ -80,9 +94,9 @@ export async function PUT(
 
     return NextResponse.json(category);
   } catch (error) {
-    console.error("Error updating category:", error);
+    console.error('Error updating category:', error);
     return NextResponse.json(
-      { error: "Failed to update category" },
+      { error: 'Failed to update category' },
       { status: 500 }
     );
   }
@@ -92,6 +106,12 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Check admin authorization
+  const authCheck = await requireAdmin();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
   try {
     // Check if category exists
     const category = await prisma.category.findUnique({
@@ -105,7 +125,7 @@ export async function DELETE(
 
     if (!category) {
       return NextResponse.json(
-        { error: "Category not found" },
+        { error: 'Category not found' },
         { status: 404 }
       );
     }
@@ -124,11 +144,11 @@ export async function DELETE(
       where: { id: params.id },
     });
 
-    return NextResponse.json({ message: "Category deleted successfully" });
+    return NextResponse.json({ message: 'Category deleted successfully' });
   } catch (error) {
-    console.error("Error deleting category:", error);
+    console.error('Error deleting category:', error);
     return NextResponse.json(
-      { error: "Failed to delete category" },
+      { error: 'Failed to delete category' },
       { status: 500 }
     );
   }
