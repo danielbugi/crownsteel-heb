@@ -1,4 +1,6 @@
+// src/lib/email.ts
 import { Resend } from 'resend';
+import { emailMonitor } from './email-monitor';
 
 if (!process.env.RESEND_API_KEY) {
   throw new Error('RESEND_API_KEY is not defined in environment variables');
@@ -6,9 +8,6 @@ if (!process.env.RESEND_API_KEY) {
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Email sender configuration
-// For local development without domain: use 'onboarding@resend.dev'
-// For production with verified domain: use 'orders@yourdomain.com'
 const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
 
@@ -17,6 +16,7 @@ export interface EmailOptions {
   subject: string;
   react: React.ReactElement;
   from?: string;
+  replyTo?: string;
 }
 
 export interface OrderEmailData {
@@ -49,29 +49,159 @@ export interface ShippingEmailData extends OrderEmailData {
   estimatedDelivery?: Date;
 }
 
+export interface EmailResult {
+  success: boolean;
+  data?: any;
+  error?: any;
+}
+
+// Rate limiting
+const emailRateLimits = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const MAX_EMAILS_PER_WINDOW = 5;
+
+function checkRateLimit(email: string): boolean {
+  const now = Date.now();
+  const timestamps = emailRateLimits.get(email) || [];
+
+  const recentTimestamps = timestamps.filter(
+    (ts) => now - ts < RATE_LIMIT_WINDOW
+  );
+
+  if (recentTimestamps.length >= MAX_EMAILS_PER_WINDOW) {
+    return false;
+  }
+
+  recentTimestamps.push(now);
+  emailRateLimits.set(email, recentTimestamps);
+  return true;
+}
+
 /**
- * Send an email using Resend
+ * Send an email using Resend with monitoring
  */
 export async function sendEmail({
   to,
   subject,
   react,
   from = FROM_EMAIL,
-}: EmailOptions) {
+  replyTo,
+}: EmailOptions): Promise<EmailResult> {
+  const recipient = Array.isArray(to) ? to[0] : to;
+
   try {
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const recipients = Array.isArray(to) ? to : [to];
+
+    for (const email of recipients) {
+      if (!emailRegex.test(email)) {
+        const error = `Invalid email address: ${email}`;
+
+        // Log validation failure
+        emailMonitor.log({
+          to: email,
+          subject,
+          status: 'failed',
+          error,
+        });
+
+        throw new Error(error);
+      }
+
+      // Rate limiting check
+      if (!checkRateLimit(email)) {
+        console.warn(`Rate limit exceeded for ${email}`);
+
+        // Log rate limit
+        emailMonitor.log({
+          to: email,
+          subject,
+          status: 'rate_limited',
+        });
+
+        return { success: false, error: 'Rate limit exceeded' };
+      }
+    }
+
+    // Send email
     const data = await resend.emails.send({
       from,
       to,
       subject,
       react,
+      ...(replyTo && { replyTo }),
     });
 
-    console.log('Email sent successfully:', { to, subject, id: data.id });
+    console.log('Email sent successfully:', {
+      to,
+      subject,
+      id: data.data?.id,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Log success
+    emailMonitor.log({
+      to: recipient,
+      subject,
+      status: 'sent',
+      emailId: data.data?.id,
+    });
+
     return { success: true, data };
   } catch (error) {
-    console.error('Failed to send email:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    console.error('Failed to send email:', {
+      error,
+      to,
+      subject,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Log failure
+    emailMonitor.log({
+      to: recipient,
+      subject,
+      status: 'failed',
+      error: errorMessage,
+    });
+
     return { success: false, error };
   }
+}
+
+/**
+ * Send batch emails with retry logic
+ */
+export async function sendBatchEmails(
+  emails: EmailOptions[],
+  retries = 3
+): Promise<EmailResult[]> {
+  const results: EmailResult[] = [];
+
+  for (const emailOptions of emails) {
+    let attempt = 0;
+    let result: EmailResult | null = null;
+
+    while (attempt < retries) {
+      result = await sendEmail(emailOptions);
+
+      if (result.success) {
+        break;
+      }
+
+      attempt++;
+      if (attempt < retries) {
+        // Exponential backoff
+        await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+      }
+    }
+
+    results.push(result!);
+  }
+
+  return results;
 }
 
 /**
@@ -168,4 +298,6 @@ export async function sendContactFormNotification(data: {
   });
 }
 
+// Export monitor for stats endpoint
+export { emailMonitor };
 export { resend };
