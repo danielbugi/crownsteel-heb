@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ShoppingCart, Search, Menu, User, Globe } from 'lucide-react';
+import { ShoppingCart, Search, Menu, User, Globe, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,9 +13,9 @@ import { LanguageToggle } from '@/components/ui/language-toggle';
 import { NavigationSidebar } from './navigation-sidebar';
 import { UserMenuSidebar } from './user-menu-sidebar';
 import { AuthSidebar } from '@/components/auth/auth-sidebar';
-import { useSettings } from '@/contexts/settings-context';
+// import { useSettings } from '@/contexts/settings-context';
 import { useLanguage } from '@/contexts/language-context';
-import Image from 'next/image';
+import { useWishlistStore } from '@/store/wishlist-store';
 import Logo from '../ui/logo';
 
 export function Navbar() {
@@ -24,12 +24,48 @@ export function Navbar() {
   // const { settings } = useSettings();
   const { t, direction } = useLanguage();
   const router = useRouter();
-  const totalItems = getTotalItems();
+  const [totalItems, setTotalItems] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  // const totalItems = getTotalItems();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  // Wishlist
+  const { getItemCount: getWishlistCount, toggleWishlist } = useWishlistStore();
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [wishlistMounted, setWishlistMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setTotalItems(getTotalItems());
+  }, [getTotalItems]);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const unsubscribe = useCartStore.subscribe((state) => {
+      setTotalItems(state.getTotalItems());
+    });
+
+    return unsubscribe;
+  }, [mounted]);
+
+  useEffect(() => {
+    setWishlistMounted(true);
+    setWishlistCount(getWishlistCount());
+  }, [getWishlistCount]);
+
+  useEffect(() => {
+    if (!wishlistMounted) return;
+
+    const unsubscribe = useWishlistStore.subscribe((state) => {
+      setWishlistCount(state.getItemCount());
+    });
+
+    return unsubscribe;
+  }, [wishlistMounted]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +108,58 @@ export function Navbar() {
 
           {/* Right Side - Icons Only */}
           <div className="flex items-center gap-1 md:gap-2">
+            {/* Search Icon */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/10"
+              onClick={() => setShowSearch(!showSearch)}
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </Button>
+
+            {/* ✅ WISHLIST ICON - ADD THIS */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative text-white hover:bg-white/10"
+              onClick={toggleWishlist}
+              aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
+            >
+              <Heart className="h-5 w-5" />
+              {wishlistMounted && wishlistCount > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold shadow-lg"
+                  aria-label={`${wishlistCount} items in wishlist`}
+                >
+                  {wishlistCount}
+                </span>
+              )}
+            </Button>
+
+            {/* Globe Icon - Language Toggle */}
+            <LanguageToggle />
+
+            {/* Cart Icon */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative text-white hover:bg-white/10"
+              onClick={toggleCart}
+              aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {mounted && totalItems > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-gold-500 text-white text-xs flex items-center justify-center font-bold shadow-lg"
+                  aria-label={`${totalItems} items in cart`}
+                >
+                  {totalItems}
+                </span>
+              )}
+            </Button>
+
             {/* User Icon */}
             {session ? (
               <Button
@@ -102,39 +190,6 @@ export function Navbar() {
                 <User className="h-5 w-5" />
               </Button>
             )}
-
-            {/* Search Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/10"
-              onClick={() => setShowSearch(!showSearch)}
-              aria-label="Search"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
-
-            {/* Globe Icon - Language Toggle */}
-            <LanguageToggle />
-
-            {/* Cart Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative text-white hover:bg-white/10"
-              onClick={toggleCart}
-              aria-label={`${t('nav.cart')} (${totalItems} items)`}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {totalItems > 0 && (
-                <span
-                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-gold-500 text-white text-xs flex items-center justify-center font-bold shadow-lg"
-                  aria-label={`${totalItems} items in cart`}
-                >
-                  {totalItems}
-                </span>
-              )}
-            </Button>
           </div>
         </nav>
 

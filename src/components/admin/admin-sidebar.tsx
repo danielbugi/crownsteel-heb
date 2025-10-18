@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
   Package,
@@ -11,16 +11,18 @@ import {
   Users,
   Settings,
   Gem,
-} from "lucide-react";
-import { useSettings } from "@/contexts/settings-context";
+  Star,
+} from 'lucide-react';
+import { useSettings } from '@/contexts/settings-context';
 
 const navigation = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Products", href: "/admin/products", icon: Package },
-  { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
-  { name: "Categories", href: "/admin/categories", icon: FolderTree },
-  { name: "Customers", href: "/admin/customers", icon: Users },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
+  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Products', href: '/admin/products', icon: Package },
+  { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
+  { name: 'Categories', href: '/admin/categories', icon: FolderTree },
+  { name: 'Customers', href: '/admin/customers', icon: Users },
+  { name: 'Settings', href: '/admin/settings', icon: Settings },
+  { name: 'Reviews', href: '/admin/reviews', icon: Star },
 ];
 
 export function AdminSidebar() {
@@ -35,7 +37,7 @@ export function AdminSidebar() {
           <Gem className="h-8 w-8 text-accent" />
           <div>
             <h1 className="font-bold text-lg">
-              {settings?.siteName || "Forge & Steel"}
+              {settings?.siteName || 'Forge & Steel'}
             </h1>
             <p className="text-xs text-muted-foreground">Admin Panel</p>
           </div>
@@ -52,10 +54,10 @@ export function AdminSidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
                 isActive
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  ? 'bg-accent text-accent-foreground'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
               )}
             >
               <item.icon className="h-5 w-5" />

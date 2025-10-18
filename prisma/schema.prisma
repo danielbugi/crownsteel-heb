@@ -22,7 +22,8 @@ model User {
   sessions Session[]
   orders   Order[]
   cartItems CartItem[]
-
+  reviews   Review[]
+  wishlist  Wishlist[]
   @@map("users")
 }
 
@@ -101,10 +102,14 @@ model Product {
   categoryId    String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  averageRating Decimal?  @db.Decimal(3, 2)
+  reviewCount   Int       @default(0)
 
   category   Category     @relation(fields: [categoryId], references: [id])
   cartItems  CartItem[]
   orderItems OrderItem[]
+  reviews    Review[]
+  wishlists  Wishlist[]
 
   @@map("products")
 }
@@ -168,6 +173,49 @@ model Settings {
   updatedAt       DateTime @updatedAt
 
   @@map("settings")
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, productId])  // Prevent duplicates
+  @@index([userId])               // Fast user queries
+  @@index([productId])            // Fast product queries
+  @@map("wishlists")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  userId    String
+  rating    Int      // 1-5 stars
+  title     String?
+  comment   String?  @db.Text
+  verified  Boolean  @default(false) // Verified purchase
+  helpful   Int      @default(0)     // Helpful count
+  status    ReviewStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId]) // One review per user per product
+  @@index([productId])
+  @@index([userId])
+  @@map("reviews")
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum Role {

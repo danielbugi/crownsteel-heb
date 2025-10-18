@@ -9,6 +9,8 @@ import { AuthProvider } from '@/components/providers/auth-provider';
 import { SettingsProvider } from '@/contexts/settings-context';
 import { LanguageProvider } from '@/contexts/language-context';
 import { Toaster } from 'react-hot-toast';
+import { WishlistSyncProvider } from '@/components/providers/wishlist-sync-provider'; // ✅ ADD THIS
+import { WishlistSheet } from '@/components/wishlist/wishlist-sheet';
 
 // Playfair Display - Heading Font
 const playfair = Playfair_Display({
@@ -50,14 +52,17 @@ export default function RootLayout({
         <AuthProvider>
           <LanguageProvider>
             <SettingsProvider>
-              <div className="flex min-h-screen flex-col">
-                <AnnouncementBar />
-                <Navbar />
-                <main className="flex-1">{children}</main>
-                <Footer />
-              </div>
-              <CartSheet />
-              <Toaster position="bottom-right" />
+              <WishlistSyncProvider>
+                <div className="flex min-h-screen flex-col">
+                  <AnnouncementBar />
+                  <Navbar />
+                  <main className="flex-1">{children}</main>
+                  <Footer />
+                </div>
+                <CartSheet />
+                <WishlistSheet />
+                <Toaster position="bottom-right" />
+              </WishlistSyncProvider>
             </SettingsProvider>
           </LanguageProvider>
         </AuthProvider>

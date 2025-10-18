@@ -239,7 +239,7 @@ export function QuickViewModal({
 
               <div className="grid grid-cols-2 gap-3">
                 <Button variant="outline" size="lg" className="w-full" asChild>
-                  <Link href={`/product/${product.slug}`}>
+                  <Link href={`/shop/${product.slug}`}>
                     <ExternalLink className="mr-2 h-4 w-4" />
                     View Details
                   </Link>

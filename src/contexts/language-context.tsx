@@ -30,10 +30,25 @@ const translations = {
     'nav.signin': 'Sign in',
     'nav.profile': 'Profile',
     'nav.orders': 'Orders',
-    'nav.wishlist': 'Wishlist',
     'nav.admin': 'Admin Dashboard',
     'nav.signout': 'Sign out',
     'nav.menu': 'Menu',
+    'nav.wishlist': 'Favorites',
+
+    // Wishlist
+    'wishlist.title': 'My Favorites',
+    'wishlist.subtitle': 'Items you love',
+    'wishlist.empty': 'Your wishlist is empty',
+    'wishlist.emptyDesc': 'Start adding items you love to see them here',
+    'wishlist.browsProducts': 'Browse Products',
+    'wishlist.addToCart': 'Add to Cart',
+    'wishlist.removeFromWishlist': 'Remove',
+    'wishlist.moveToCart': 'Move to Cart',
+    'wishlist.itemsCount': 'items',
+    'wishlist.signInPrompt': 'Sign in to save your favorites forever',
+    'wishlist.signInButton': 'Sign In',
+    'wishlist.limitReached': 'Guest limit reached',
+    'wishlist.limitDesc': 'Sign in to save unlimited favorites',
 
     // Shop Dropdown (add these)
     'shop.dropdown.title': 'Shop by Category',
@@ -217,10 +232,25 @@ const translations = {
     'nav.signin': 'התחבר',
     'nav.profile': 'פרופיל',
     'nav.orders': 'הזמנות',
-    'nav.wishlist': 'מועדפים',
     'nav.admin': 'ניהול',
     'nav.signout': 'התנתק',
     'nav.menu': 'תפריט',
+    'nav.wishlist': 'מועדפים',
+
+    // Wishlist
+    'wishlist.title': 'המועדפים שלי',
+    'wishlist.subtitle': 'פריטים שאהבת',
+    'wishlist.empty': 'רשימת המועדפים ריקה',
+    'wishlist.emptyDesc': 'התחל להוסיף פריטים שאתה אוהב כדי לראות אותם כאן',
+    'wishlist.browsProducts': 'עיין במוצרים',
+    'wishlist.addToCart': 'הוסף לעגלה',
+    'wishlist.removeFromWishlist': 'הסר',
+    'wishlist.moveToCart': 'העבר לעגלה',
+    'wishlist.itemsCount': 'פריטים',
+    'wishlist.signInPrompt': 'היכנס כדי לשמור את המועדפים שלך לנצח',
+    'wishlist.signInButton': 'התחבר',
+    'wishlist.limitReached': 'הגעת למגבלת אורחים',
+    'wishlist.limitDesc': 'היכנס כדי לשמור מועדפים ללא הגבלה',
 
     // Auth Modal
     'auth.welcome': "ברוכים הבאים לפורג' אנד סטיל",
