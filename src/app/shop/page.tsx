@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { ProductGrid } from '@/components/shop/product-grid';
 import { CategoryFilter } from '@/components/shop/category-filter';
+import { serializeProducts } from '@/lib/serialize';
 
 export const metadata = {
   title: "Shop - Premium Men's Rings",
@@ -18,11 +19,7 @@ async function getProducts() {
   });
 
   // Serialize Decimal to number
-  return products.map((product) => ({
-    ...product,
-    price: product.price.toNumber(),
-    comparePrice: product.comparePrice?.toNumber() ?? null,
-  }));
+  return serializeProducts(products);
 }
 
 async function getCategories() {

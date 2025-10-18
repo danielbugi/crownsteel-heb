@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
+import { serializeProduct } from '@/lib/serialize';
 
 // GET - Get user's wishlist with product details
 export async function GET() {
@@ -28,12 +29,7 @@ export async function GET() {
     // Serialize Decimal to number for prices
     const serializedWishlist = wishlist.map((item) => ({
       ...item,
-      product: {
-        ...item.product,
-        price: item.product.price.toNumber(),
-        comparePrice: item.product.comparePrice?.toNumber() ?? null,
-        averageRating: item.product.averageRating?.toNumber() ?? 0,
-      },
+      product: serializeProduct(item.product),
     }));
 
     return NextResponse.json({ items: serializedWishlist });

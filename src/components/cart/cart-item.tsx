@@ -20,6 +20,8 @@ interface CartItemProps {
 export function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeItem } = useCartStore();
 
+  console.log('Rendering CartItem for:', item);
+
   return (
     <div className="p-6 hover:bg-gray-50 transition-colors">
       <div className="flex gap-4">

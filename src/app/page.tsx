@@ -13,6 +13,7 @@ import {
 import { prisma } from '@/lib/prisma';
 import { ProductCard } from '@/components/shop/product-card';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
+import { serializeProducts } from '@/lib/serialize';
 
 async function getFeaturedProducts() {
   const products = await prisma.product.findMany({
@@ -28,11 +29,37 @@ async function getFeaturedProducts() {
     },
   });
 
-  return products.map((product) => ({
-    ...product,
-    price: product.price.toNumber(),
-    comparePrice: product.comparePrice?.toNumber() ?? null,
-  }));
+  return serializeProducts(products);
+}
+
+async function getNewArrivals() {
+  const products = await prisma.product.findMany({
+    include: {
+      category: true,
+    },
+    take: 8,
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  // ✅ SERIALIZE
+  return serializeProducts(products);
+}
+
+async function getBestSellers() {
+  const products = await prisma.product.findMany({
+    where: {
+      inventory: { lt: 10 }, // Low stock = best sellers
+    },
+    include: {
+      category: true,
+    },
+    take: 6,
+  });
+
+  // ✅ SERIALIZE
+  return serializeProducts(products);
 }
 
 export default async function HomePage() {

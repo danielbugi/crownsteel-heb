@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { serializeProduct } from '@/lib/serialize';
 
 export async function GET(
   request: NextRequest,
@@ -17,7 +18,9 @@ export async function GET(
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ product });
+    const serializedProduct = serializeProduct(product);
+
+    return NextResponse.json({ product: serializedProduct });
   } catch (error) {
     console.error('Error fetching product:', error);
     return NextResponse.json(

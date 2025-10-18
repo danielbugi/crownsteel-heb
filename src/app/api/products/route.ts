@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { serializeProducts } from '@/lib/serialize';
 
 // POST - Get multiple products by IDs (for guest wishlist)
 export async function POST(request: NextRequest) {
@@ -20,11 +21,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Serialize prices
-    const serializedProducts = products.map((product) => ({
-      ...product,
-      price: product.price.toNumber(),
-      comparePrice: product.comparePrice?.toNumber() ?? null,
-    }));
+    const serializedProducts = serializeProducts(products);
 
     return NextResponse.json({ products: serializedProducts });
   } catch (error) {
@@ -63,26 +60,28 @@ export async function GET(request: NextRequest) {
     });
 
     // Localize product and category names
-    const localizedProducts = products.map((product) => ({
-      ...product,
-      name:
-        lang === 'he' && product.nameHe
-          ? product.nameHe
-          : product.nameEn || product.name,
-      description:
-        lang === 'he' && product.descriptionHe
-          ? product.descriptionHe
-          : product.descriptionEn || product.description,
-      category: {
-        ...product.category,
-        name:
-          lang === 'he' && product.category.nameHe
-            ? product.category.nameHe
-            : product.category.nameEn || product.category.name,
-      },
-    }));
+    // const localizedProducts = products.map((product) => ({
+    //   ...product,
+    //   name:
+    //     lang === 'he' && product.nameHe
+    //       ? product.nameHe
+    //       : product.nameEn || product.name,
+    //   description:
+    //     lang === 'he' && product.descriptionHe
+    //       ? product.descriptionHe
+    //       : product.descriptionEn || product.description,
+    //   category: {
+    //     ...product.category,
+    //     name:
+    //       lang === 'he' && product.category.nameHe
+    //         ? product.category.nameHe
+    //         : product.category.nameEn || product.category.name,
+    //   },
+    // }));
 
-    return NextResponse.json(localizedProducts);
+    const serializedProducts = serializeProducts(products);
+
+    return NextResponse.json(serializedProducts);
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(
