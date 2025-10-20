@@ -72,6 +72,7 @@ const translations = {
     'auth.passwordMinLength': 'At least 6 characters',
     'auth.alreadyHaveAccount': 'Already have an account?',
     'auth.dontHaveAccount': "Don't have an account?",
+    'auth.forgotPassword': 'Forgot password?',
 
     // Footer (update existing)
     'footer.findUs': 'Find Us',
@@ -269,6 +270,7 @@ const translations = {
     'auth.passwordMinLength': 'לפחות 6 תווים',
     'auth.alreadyHaveAccount': 'כבר יש לך חשבון?',
     'auth.dontHaveAccount': 'אין לך חשבון?',
+    'auth.forgotPassword': 'שכחת סיסמה?',
 
     // Footer (update existing)
     'footer.findUs': 'תמצאו אותנו',

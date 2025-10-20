@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/contexts/language-context';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 interface AuthSidebarProps {
   isOpen: boolean;
@@ -185,6 +186,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
           >
             {t('auth.signin')}
           </button>
+
           <button
             onClick={() => setActiveTab('signup')}
             className={cn(
@@ -289,6 +291,15 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                 >
                   {isLoading ? t('auth.signingIn') : t('auth.signinButton')}
                 </Button>
+                <div className="text-center text-sm">
+                  <Link
+                    href="/forgot-password"
+                    onClick={onClose}
+                    className="text-gray-600 hover:underline"
+                  >
+                    {t('auth.forgotPassword')}
+                  </Link>
+                </div>
               </form>
 
               {/* Switch to Sign Up */}

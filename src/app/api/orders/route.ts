@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { auth } from '@/lib/auth';
 import {
   sendOrderConfirmationEmail,
   sendOrderNotificationToAdmin,
@@ -8,6 +9,7 @@ import {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
     const body = await request.json();
     const { customerInfo, items, subtotal, tax, total } = body;
 
@@ -16,8 +18,7 @@ export async function POST(request: NextRequest) {
     // Create order
     const order = await prisma.order.create({
       data: {
-        // For now, create without userId (guest checkout)
-        userId: null,
+        userId: session?.user?.id || null,
         status: 'PENDING',
         total: total,
         shippingAddress: {
@@ -56,7 +57,6 @@ export async function POST(request: NextRequest) {
       customerName: `${customerInfo.firstName} ${customerInfo.lastName}`,
       customerEmail: customerInfo.email,
       items: order.orderItems.map((item) => {
-        // Safety check - make sure product exists
         if (!item.product) {
           console.error('Product not found for order item:', item.id);
           throw new Error(`Product not found for item ${item.productId}`);
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       }),
       subtotal: Number(subtotal),
       tax: Number(tax),
-      shipping: 0, // Free shipping
+      shipping: 0,
       total: Number(total),
       shippingAddress: {
         firstName: customerInfo.firstName,
@@ -103,7 +103,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating order:', error);
 
-    // More detailed error message
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
     const errorStack = error instanceof Error ? error.stack : '';

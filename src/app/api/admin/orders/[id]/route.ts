@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/api-auth';
+import { sendShippingNotificationEmail } from '@/lib/email';
 
 export async function GET(
   request: NextRequest,
@@ -111,7 +112,38 @@ export async function PATCH(
       },
     });
 
-    // TODO: Send email notification to customer about status change
+    // Send email notification when order is shipped
+    const shippingAddress = order.shippingAddress as any;
+    const customerEmail = shippingAddress?.email || order.user?.email;
+
+    if (status === 'SHIPPED' && customerEmail) {
+      sendShippingNotificationEmail({
+        orderId: order.id,
+        customerName:
+          shippingAddress?.firstName && shippingAddress?.lastName
+            ? `${shippingAddress.firstName} ${shippingAddress.lastName}`
+            : order.user?.name || 'Customer',
+        customerEmail,
+        items: order.orderItems.map((item) => ({
+          name: item.product.name,
+          quantity: item.quantity,
+          price: Number(item.price),
+          image: item.product.image,
+        })),
+        subtotal: Number(order.total),
+        tax: 0,
+        shipping: 0,
+        total: Number(order.total),
+        shippingAddress: shippingAddress || {},
+        orderDate: order.createdAt,
+        trackingNumber: undefined,
+        estimatedDelivery: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days
+      })
+        .then(() => console.log('Shipping notification sent to', customerEmail))
+        .catch((error) =>
+          console.error('Failed to send shipping notification:', error)
+        );
+    }
 
     return NextResponse.json({ order });
   } catch (error) {

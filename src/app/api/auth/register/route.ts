@@ -1,17 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
+import { sendWelcomeEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, password, name } = body;
 
-    console.log("Registration attempt:", { email, name });
+    console.log('Registration attempt:', { email, name });
 
     if (!email || !password || !name) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: 'Missing required fields' },
         { status: 400 }
       );
     }
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: "Invalid email format" },
+        { error: 'Invalid email format' },
         { status: 400 }
       );
     }
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "User with this email already exists" },
+        { error: 'User with this email already exists' },
         { status: 400 }
       );
     }
@@ -46,11 +47,25 @@ export async function POST(request: NextRequest) {
         email,
         name,
         hashedPassword,
-        role: "USER",
+        role: 'USER',
       },
     });
 
-    console.log("User created successfully:", user.id);
+    console.log('User created successfully:', user.id);
+
+    // Send welcome email (don't wait for it)
+    console.log('Sending welcome email to:', user.email);
+    sendWelcomeEmail(user.email, user.name || 'Customer')
+      .then((result) => {
+        if (result.success) {
+          console.log('Welcome email sent successfully');
+        } else {
+          console.error('Failed to send welcome email:', result.error);
+        }
+      })
+      .catch((error) => {
+        console.error('Welcome email error:', error);
+      });
 
     return NextResponse.json(
       {
@@ -64,9 +79,9 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("Registration error:", error);
+    console.error('Registration error:', error);
     return NextResponse.json(
-      { error: error.message || "Something went wrong" },
+      { error: error.message || 'Something went wrong' },
       { status: 500 }
     );
   }
