@@ -1,6 +1,12 @@
 // src/lib/email.ts
 import { Resend } from 'resend';
 import { emailMonitor } from './email-monitor';
+import { WelcomeEmail } from '@/emails/welcome';
+import { PasswordResetEmail } from '@/emails/password-reset';
+import { OrderConfirmationEmail } from '@/emails/order-confirmation';
+import { OrderNotificationAdminEmail } from '@/emails/order-notification-admin';
+import { OrderShippedEmail } from '@/emails/order-shipped';
+import { ContactFormEmail } from '@/emails/contact-form';
 
 if (!process.env.RESEND_API_KEY) {
   throw new Error('RESEND_API_KEY is not defined in environment variables');
@@ -208,10 +214,6 @@ export async function sendBatchEmails(
  * Send order confirmation email to customer
  */
 export async function sendOrderConfirmationEmail(orderData: OrderEmailData) {
-  const { OrderConfirmationEmail } = await import(
-    '@/emails/order-confirmation'
-  );
-
   return sendEmail({
     to: orderData.customerEmail,
     subject: `Order Confirmation #${orderData.orderId}`,
@@ -223,10 +225,6 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData) {
  * Send order notification to admin
  */
 export async function sendOrderNotificationToAdmin(orderData: OrderEmailData) {
-  const { OrderNotificationAdminEmail } = await import(
-    '@/emails/order-notification-admin'
-  );
-
   return sendEmail({
     to: ADMIN_EMAIL,
     subject: `New Order Received #${orderData.orderId}`,
@@ -240,8 +238,6 @@ export async function sendOrderNotificationToAdmin(orderData: OrderEmailData) {
 export async function sendShippingNotificationEmail(
   shippingData: ShippingEmailData
 ) {
-  const { OrderShippedEmail } = await import('@/emails/order-shipped');
-
   return sendEmail({
     to: shippingData.customerEmail,
     subject: `Your Order Has Been Shipped #${shippingData.orderId}`,
@@ -253,8 +249,6 @@ export async function sendShippingNotificationEmail(
  * Send welcome email to new users
  */
 export async function sendWelcomeEmail(email: string, name: string) {
-  const { WelcomeEmail } = await import('@/emails/welcome');
-
   return sendEmail({
     to: email,
     subject: 'Welcome to Forge & Steel',
@@ -269,7 +263,6 @@ export async function sendPasswordResetEmail(
   email: string,
   resetToken: string
 ) {
-  const { PasswordResetEmail } = await import('@/emails/password-reset');
   const resetUrl = `${process.env.NEXT_PUBLIC_URL}/reset-password?token=${resetToken}`;
 
   return sendEmail({
@@ -289,8 +282,6 @@ export async function sendContactFormNotification(data: {
   subject: string;
   message: string;
 }) {
-  const { ContactFormEmail } = await import('@/emails/contact-form');
-
   return sendEmail({
     to: ADMIN_EMAIL,
     subject: `Contact Form: ${data.subject}`,

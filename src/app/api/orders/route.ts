@@ -86,17 +86,43 @@ export async function POST(request: NextRequest) {
 
     console.log('Sending emails...');
 
-    // Send emails asynchronously (don't wait for them)
-    Promise.all([
+    // Send emails with better error handling
+    const emailPromises = [
       sendOrderConfirmationEmail(emailData),
       sendOrderNotificationToAdmin(emailData),
-    ])
-      .then(() => {
-        console.log('Order emails sent successfully');
+    ];
+
+    Promise.all(emailPromises)
+      .then((results) => {
+        const [confirmationResult, adminNotificationResult] = results;
+
+        console.log('✅ Email Results:');
+        console.log(
+          'Customer confirmation:',
+          confirmationResult.success ? '✅ SENT' : '❌ FAILED'
+        );
+        console.log(
+          'Admin notification:',
+          adminNotificationResult.success ? '✅ SENT' : '❌ FAILED'
+        );
+
+        if (confirmationResult.success) {
+          console.log('Customer email ID:', confirmationResult.data?.data?.id);
+        } else {
+          console.error('Customer email error:', confirmationResult.error);
+        }
+
+        if (adminNotificationResult.success) {
+          console.log(
+            'Admin email ID:',
+            adminNotificationResult.data?.data?.id
+          );
+        } else {
+          console.error('Admin email error:', adminNotificationResult.error);
+        }
       })
       .catch((error) => {
-        console.error('Error sending order emails:', error);
-        // Don't fail the order if emails fail
+        console.error('❌ Critical email error:', error);
       });
 
     return NextResponse.json({ order });
