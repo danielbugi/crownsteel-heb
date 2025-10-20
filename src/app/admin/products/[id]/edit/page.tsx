@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { ProductForm } from "@/components/admin/product-form";
+import { notFound } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
+import { ProductForm } from '@/components/admin/product-form';
 
 async function getProduct(id: string) {
   const product = await prisma.product.findUnique({
@@ -14,22 +14,26 @@ async function getProduct(id: string) {
     ...product,
     price: product.price.toNumber(),
     comparePrice: product.comparePrice?.toNumber() || null,
+    averageRating: product.averageRating?.toNumber() || 0,
   };
 }
 
 async function getCategories() {
   return await prisma.category.findMany({
-    orderBy: { name: "asc" },
+    orderBy: { name: 'asc' },
   });
 }
 
 export default async function EditProductPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  // Await params before accessing its properties
+  const { id } = await params;
+
   const [product, categories] = await Promise.all([
-    getProduct(params.id),
+    getProduct(id),
     getCategories(),
   ]);
 

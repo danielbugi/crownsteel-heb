@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { CategoryForm } from "@/components/admin/category-form";
+import { notFound } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
+import { CategoryForm } from '@/components/admin/category-form';
 
 async function getCategory(id: string) {
   const category = await prisma.category.findUnique({
@@ -13,9 +13,12 @@ async function getCategory(id: string) {
 export default async function EditCategoryPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const category = await getCategory(params.id);
+  // Await params before accessing its properties
+  const { id } = await params;
+
+  const category = await getCategory(id);
 
   if (!category) {
     notFound();

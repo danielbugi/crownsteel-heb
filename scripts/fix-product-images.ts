@@ -1,37 +1,58 @@
-// scripts/fix-product-images.ts
+// scripts/update-product-images.ts
 
-import { prisma } from '../src/lib/prisma';
+import { PrismaClient } from '@prisma/client';
 
-async function fixProductImages() {
-  console.log('🔄 Updating product images to Cloudinary URLs...');
+const prisma = new PrismaClient();
 
-  const products = await prisma.product.findMany();
+// Cloudinary base URL with your cloud name
+const CLOUDINARY_BASE =
+  'https://res.cloudinary.com/diergd8rm/image/upload/v1/forge-steel';
 
-  for (const product of products) {
-    // Skip if already a Cloudinary URL
-    if (product.image.startsWith('http')) {
-      console.log(`✅ ${product.name} - already has valid URL`);
-      continue;
+// Using a placeholder image URL that will work for all products
+const PLACEHOLDER_IMAGE = `${CLOUDINARY_BASE}/products/placeholder-ring.jpg`;
+
+async function updateProductImages() {
+  console.log('🔄 Starting to update product images...\n');
+
+  try {
+    // Get all products from database
+    const products = await prisma.product.findMany();
+
+    console.log(`Found ${products.length} products to update\n`);
+
+    // Update each product
+    for (const product of products) {
+      console.log(`Updating: ${product.name}`);
+
+      // Update with same Cloudinary URL for main image and all images in array
+      await prisma.product.update({
+        where: { id: product.id },
+        data: {
+          image: PLACEHOLDER_IMAGE,
+          images: [
+            PLACEHOLDER_IMAGE,
+            PLACEHOLDER_IMAGE,
+            PLACEHOLDER_IMAGE,
+            PLACEHOLDER_IMAGE,
+            PLACEHOLDER_IMAGE,
+          ],
+        },
+      });
+
+      console.log(`✅ Updated: ${product.name}`);
     }
 
-    // Replace local path with placeholder Cloudinary URL
-    // YOU NEED TO UPLOAD YOUR IMAGES TO CLOUDINARY FIRST
-    const cloudinaryUrl = `https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/products/${product.slug}.jpg`;
-
-    await prisma.product.update({
-      where: { id: product.id },
-      data: {
-        image: cloudinaryUrl,
-        images: [cloudinaryUrl], // Update images array too
-      },
-    });
-
-    console.log(`✅ Updated ${product.name}`);
+    console.log('\n✅ All products updated successfully!');
+    console.log(`\nAll products now use: ${PLACEHOLDER_IMAGE}`);
+  } catch (error) {
+    console.error('❌ Error updating products:', error);
+    throw error;
   }
-
-  console.log('✅ All products updated!');
 }
 
-fixProductImages()
+updateProductImages()
   .catch(console.error)
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+    console.log('\n🔌 Disconnected from database');
+  });
