@@ -61,6 +61,17 @@ export async function POST(request: NextRequest) {
       categoryId,
       inStock,
       featured,
+      freeShipping,
+      inventory,
+      lowStockThreshold,
+      reorderPoint,
+      reorderQuantity,
+      sku,
+      hasVariants,
+      variantType,
+      variantLabel,
+      variantLabelHe,
+      variants,
     } = body;
 
     // Validate required fields
@@ -91,23 +102,57 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const product = await prisma.product.create({
-      data: {
-        name: name || nameEn,
-        nameEn,
-        nameHe,
-        slug,
-        description: description || descriptionEn,
-        descriptionEn,
-        descriptionHe,
-        price,
-        comparePrice: comparePrice || null,
-        image,
-        images: images || [],
-        categoryId,
-        inStock: inStock ?? true,
-        featured: featured ?? false,
-      },
+    // Create product with variants in transaction
+    const product = await prisma.$transaction(async (tx) => {
+      // Create base product
+      const newProduct = await tx.product.create({
+        data: {
+          name: name || nameEn,
+          nameEn,
+          nameHe,
+          slug,
+          description: description || descriptionEn,
+          descriptionEn,
+          descriptionHe,
+          price,
+          comparePrice: comparePrice || null,
+          image,
+          images: images || [],
+          categoryId,
+          inStock: hasVariants ? true : (inStock ?? true),
+          featured: featured ?? false,
+          freeShipping: freeShipping ?? false,
+          inventory: hasVariants ? 0 : (inventory ?? 0),
+          // NEW: Variant fields
+          hasVariants: hasVariants ?? false,
+          variantType,
+          variantLabel,
+          variantLabelHe,
+        },
+      });
+
+      // Create variants if provided
+      if (hasVariants && variants && variants.length > 0) {
+        await tx.productVariant.createMany({
+          data: variants.map((variant: any, index: number) => ({
+            productId: newProduct.id,
+            name: variant.name,
+            nameEn: variant.nameEn || variant.name,
+            nameHe: variant.nameHe,
+            sku: variant.sku,
+            price: variant.price || null,
+            priceAdjustment: variant.priceAdjustment || null,
+            inventory: variant.inventory || 0,
+            inStock: variant.inStock ?? true,
+            lowStockThreshold: variant.lowStockThreshold || 10,
+            image: variant.image || null,
+            sortOrder: variant.sortOrder ?? index,
+            isDefault: variant.isDefault ?? index === 0,
+          })),
+        });
+      }
+
+      return newProduct;
     });
 
     // Convert Decimal to number

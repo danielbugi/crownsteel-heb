@@ -12,17 +12,19 @@ import {
   Settings,
   Gem,
   Star,
+  Warehouse,
 } from 'lucide-react';
 import { useSettings } from '@/contexts/settings-context';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Products', href: '/admin/products', icon: Package },
+  { name: 'Inventory', href: '/admin/inventory', icon: Warehouse }, // NEW
   { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { name: 'Categories', href: '/admin/categories', icon: FolderTree },
   { name: 'Customers', href: '/admin/customers', icon: Users },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
   { name: 'Reviews', href: '/admin/reviews', icon: Star },
+  { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 export function AdminSidebar() {

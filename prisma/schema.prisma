@@ -15,7 +15,7 @@ model User {
   image          String?
   hashedPassword String
   role           Role      @default(USER)
-   resetToken     String?   @unique
+  resetToken     String?   @unique
   resetTokenExpiry DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
@@ -85,47 +85,106 @@ model Category {
 }
 
 model Product {
-  id            String   @id @default(cuid())
-  name          String
-  nameEn        String?
-  nameHe        String?
-  slug          String   @unique
-  description   String?  @db.Text
-  descriptionEn String?
-  descriptionHe String?
-  price         Decimal  @db.Decimal(10, 2)
-  comparePrice  Decimal? @db.Decimal(10, 2)
-  image         String
-  images        String[]
-  inStock       Boolean  @default(true)
-  featured      Boolean  @default(false)
-  freeShipping  Boolean  @default(false)
-  inventory     Int      @default(0)
-  categoryId    String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  averageRating Decimal?  @db.Decimal(3, 2)
-  reviewCount   Int       @default(0)
+  id                String   @id @default(cuid())
+  name              String
+  nameEn            String?
+  nameHe            String?
+  slug              String   @unique
+  description       String?  @db.Text
+  descriptionEn     String?
+  descriptionHe     String?
+  price             Decimal  @db.Decimal(10, 2)
+  comparePrice      Decimal? @db.Decimal(10, 2)
+  image             String
+  images            String[]
+  inStock           Boolean  @default(true)
+  featured          Boolean  @default(false)
+  freeShipping      Boolean  @default(false)
+  inventory         Int      @default(0)
+  categoryId        String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  averageRating     Decimal?  @db.Decimal(3, 2)
+  reviewCount       Int       @default(0)
+  lowStockThreshold Int      @default(10)  // Alert when stock falls below this
+  reorderPoint      Int      @default(20)  // Suggested reorder point
+  reorderQuantity   Int      @default(50)  // Suggested reorder quantity
+  sku               String?  @unique       // Stock Keeping Unit
 
-  category   Category     @relation(fields: [categoryId], references: [id])
-  cartItems  CartItem[]
-  orderItems OrderItem[]
-  reviews    Review[]
-  wishlists  Wishlist[]
+  // Variant settings
+  hasVariants       Boolean @default(false)     // Does this product have variants?
+  variantType       String?                     // "Size", "Length", "Width", etc (what to call it)
+  variantLabel      String?                     // Display label (e.g., "Ring Size", "Chain Length")
+  variantLabelHe    String?                     // Hebrew label
+
+  category          Category     @relation(fields: [categoryId], references: [id])
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+  reviews           Review[]
+  wishlists         Wishlist[]
+  inventoryLogs     InventoryLog[]
+  inventoryAlerts   InventoryAlert[]
+  stockReservations StockReservation[]
+  variants          ProductVariant[]
 
   @@map("products")
+}
+
+
+model ProductVariant {
+  id          String   @id @default(cuid())
+  productId   String
+  
+  // Simple variant data
+  name        String   // "50cm", "9", "Medium", etc
+  nameEn      String?  // English name
+  nameHe      String?  // Hebrew name
+  sku         String   @unique
+  
+  // Pricing (optional, falls back to product price if not set)
+  price       Decimal?  @db.Decimal(10, 2)  // NULL = use product price
+  priceAdjustment Decimal? @db.Decimal(10, 2)  // e.g., +20 for larger sizes
+  
+  // Inventory (each variant has its own stock)
+  inventory   Int      @default(0)
+  inStock     Boolean  @default(true)
+  
+  // Low stock settings (inherits from product if not set)
+  lowStockThreshold Int? 
+  
+  // Display
+  image       String?  // Optional: variant-specific image
+  sortOrder   Int      @default(0)  // Display order (0, 1, 2, 3...)
+  isDefault   Boolean  @default(false)  // Default selected variant
+  
+  // Tracking
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  product         Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems       CartItem[]       @relation("VariantCartItems")
+  orderItems      OrderItem[]      @relation("VariantOrderItems")
+  inventoryLogs   InventoryLog[]   @relation("VariantInventoryLogs")
+  inventoryAlerts InventoryAlert[] @relation("VariantInventoryAlerts")
+  
+  @@index([productId])
+  @@index([sku])
+  @@map("product_variants")
 }
 
 model CartItem {
   id        String   @id @default(cuid())
   userId    String
   productId String
+  variantId String?  // ADD THIS LINE
   quantity  Int      @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant ProductVariant? @relation("VariantCartItems", fields: [variantId], references: [id], onDelete: SetNull)
 
   @@unique([userId, productId])
   @@map("cart_items")
@@ -149,14 +208,17 @@ model Order {
 }
 
 model OrderItem {
-  id        String  @id @default(cuid())
-  orderId   String
-  productId String
-  quantity  Int
-  price     Decimal @db.Decimal(10, 2)
+  id              String  @id @default(cuid())
+  orderId         String
+  productId       String
+  variantId       String?  // NEW: NULL if product has no variants
+  quantity        Int
+  price           Decimal @db.Decimal(10, 2)
+  variantSnapshot Json?  // NEW: {name: "50cm", sku: "CHAIN-FG-50"}
 
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+  variant   ProductVariant? @relation("VariantOrderItems", fields: [variantId], references: [id], onDelete: SetNull)
 
   @@map("order_items")
 }
@@ -231,4 +293,89 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+model InventoryLog {
+  id          String              @id @default(cuid())
+  productId   String
+  variantId   String?              // NEW: Track which variant changed (NULL for non-variant products)
+  type        InventoryChangeType
+  quantity    Int                 // Positive for additions, negative for reductions
+  reason      String?
+  reference   String?             // Order ID, adjustment ID, etc.
+  previousQty Int
+  newQty      Int
+  createdBy   String?             // Admin user ID
+  createdAt   DateTime            @default(now())
+
+  variant     ProductVariant? @relation("VariantInventoryLogs", fields: [variantId], references: [id], onDelete: Cascade)
+  product     Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([createdAt])
+  @@map("inventory_logs")
+}
+
+model InventoryAlert {
+  id              String    @id @default(cuid())
+  productId       String
+  type            AlertType
+  threshold       Int?      // Low stock threshold
+  variantId       String?
+  message         String
+  acknowledged    Boolean   @default(false)
+  acknowledgedBy  String?   // Admin user ID
+  acknowledgedAt  DateTime?
+  createdAt       DateTime  @default(now())
+  
+  variant   ProductVariant? @relation("VariantInventoryAlerts", fields: [variantId], references: [id], onDelete: Cascade)
+  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([acknowledged])
+  @@index([createdAt])
+  @@map("inventory_alerts")
+}
+
+model StockReservation {
+  id         String   @id @default(cuid())
+  productId  String
+  quantity   Int
+  orderId    String?  // If associated with an order
+  expiresAt  DateTime // Auto-release after expiration
+  status     ReservationStatus @default(ACTIVE)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@index([productId])
+  @@index([expiresAt])
+  @@index([status])
+  @@map("stock_reservations")
+}
+
+enum InventoryChangeType {
+  SALE              // Sold to customer
+  RETURN            // Customer return
+  ADJUSTMENT        // Manual adjustment
+  RESTOCK           // New stock added
+  DAMAGE            // Damaged goods
+  LOSS              // Lost/stolen
+  RESERVATION       // Reserved for order
+  RELEASE           // Released reservation
+}
+
+enum AlertType {
+  LOW_STOCK         // Below threshold
+  OUT_OF_STOCK      // Zero inventory
+  OVERSTOCK         // Too much inventory
+  EXPIRING_RESERVATION // Reservation about to expire
+}
+
+enum ReservationStatus {
+  ACTIVE            // Currently reserved
+  COMPLETED         // Order completed
+  EXPIRED           // Reservation expired
+  CANCELLED         // Order cancelled
 }

@@ -4,6 +4,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 interface CartItem {
   id: string;
   productId: string;
+  variantId?: string | null; // ADD THIS
   name: string;
   price: number;
   image: string;
@@ -14,8 +15,12 @@ interface CartStore {
   items: CartItem[];
   isOpen: boolean;
   addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  removeItem: (productId: string, variantId?: string | null) => void; // UPDATE THIS
+  updateQuantity: (
+    productId: string,
+    quantity: number,
+    variantId?: string | null
+  ) => void; // UPDATE THIS
   clearCart: () => void;
   toggleCart: () => void;
   getTotalItems: () => number;
@@ -29,12 +34,16 @@ export const useCartStore = create<CartStore>()(
       isOpen: false,
       addItem: (item) => {
         const items = get().items;
-        const existingItem = items.find((i) => i.productId === item.productId);
+        // Check for existing item with same product AND variant
+        const existingItem = items.find(
+          (i) =>
+            i.productId === item.productId && i.variantId === item.variantId
+        );
 
         if (existingItem) {
           set({
             items: items.map((i) =>
-              i.productId === item.productId
+              i.productId === item.productId && i.variantId === item.variantId
                 ? { ...i, quantity: i.quantity + (item.quantity || 1) }
                 : i
             ),
@@ -45,20 +54,25 @@ export const useCartStore = create<CartStore>()(
           });
         }
       },
-      removeItem: (productId) => {
+      removeItem: (productId, variantId) => {
         set({
-          items: get().items.filter((item) => item.productId !== productId),
+          items: get().items.filter(
+            (item) =>
+              !(item.productId === productId && item.variantId === variantId)
+          ),
         });
       },
-      updateQuantity: (productId, quantity) => {
+      updateQuantity: (productId, quantity, variantId) => {
         if (quantity <= 0) {
-          get().removeItem(productId);
+          get().removeItem(productId, variantId);
           return;
         }
 
         set({
           items: get().items.map((item) =>
-            item.productId === productId ? { ...item, quantity } : item
+            item.productId === productId && item.variantId === variantId
+              ? { ...item, quantity }
+              : item
           ),
         });
       },

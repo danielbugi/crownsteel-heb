@@ -1,15 +1,16 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Truck, Shield, ArrowLeft } from "lucide-react";
-import { formatPrice, cn } from "@/lib/utils";
-import { useCartStore } from "@/store/cart-store";
-import { toast } from "react-hot-toast";
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ProductVariantSelector } from '@/components/product/product-variant-selector';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { ShoppingCart, Truck, Shield, ArrowLeft } from 'lucide-react';
+import { formatPrice, cn } from '@/lib/utils';
+import { useCartStore } from '@/store/cart-store';
+import { toast } from 'react-hot-toast';
 
 interface ProductDetailProps {
   product: {
@@ -25,6 +26,10 @@ interface ProductDetailProps {
     featured: boolean;
     freeShipping: boolean;
     inventory: number;
+    hasVariants?: boolean;
+    variantLabel?: string;
+    variantLabelHe?: string;
+    variants?: any[];
     category: {
       id: string;
       name: string;
@@ -36,21 +41,40 @@ interface ProductDetailProps {
 export function ProductDetail({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(product.image);
+  const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const { addItem, toggleCart } = useCartStore();
 
   const handleAddToCart = () => {
+    if (product.hasVariants && !selectedVariant) {
+      toast.error('Please select a variant');
+      return;
+    }
+    const availableInventory = product.hasVariants
+      ? selectedVariant?.inventory
+      : product.inventory;
+
+    if (quantity > availableInventory) {
+      toast.error(`Only ${availableInventory} available`);
+      return;
+    }
+
     addItem({
       id: crypto.randomUUID(),
       productId: product.id,
-      name: product.name,
-      price: product.price,
+      variantId: selectedVariant?.id || null, // ADD THIS
+      name:
+        product.name + (selectedVariant ? ` - ${selectedVariant.name}` : ''),
+      price: selectedVariant
+        ? selectedVariant.price ||
+          product.price + (selectedVariant.priceAdjustment || 0)
+        : product.price,
       image: product.image,
       quantity,
     });
+
     toast.success(`Added ${quantity} item(s) to cart`);
     toggleCart();
   };
-
   const discount = product.comparePrice
     ? Math.round(
         ((product.comparePrice - product.price) / product.comparePrice) * 100
@@ -102,10 +126,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   key={index}
                   onClick={() => setSelectedImage(image)}
                   className={cn(
-                    "relative aspect-square overflow-hidden rounded-lg border-2 transition-all",
+                    'relative aspect-square overflow-hidden rounded-lg border-2 transition-all',
                     selectedImage === image
-                      ? "border-accent ring-2 ring-accent"
-                      : "border-border hover:border-accent/50"
+                      ? 'border-accent ring-2 ring-accent'
+                      : 'border-border hover:border-accent/50'
                   )}
                 >
                   <Image
@@ -153,6 +177,20 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
           <Separator className="my-6" />
 
+          {product.hasVariants &&
+            product.variants &&
+            product.variants.length > 0 && (
+              <div className="mb-6">
+                <ProductVariantSelector
+                  variants={product.variants}
+                  basePrice={product.price}
+                  variantLabel={product.variantLabel}
+                  variantLabelHe={product.variantLabelHe}
+                  onVariantChange={setSelectedVariant}
+                />
+              </div>
+            )}
+
           {/* Quantity Selector */}
           <div className="mb-6">
             <label className="block text-sm font-medium mb-2">Quantity</label>
@@ -192,7 +230,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
             disabled={!product.inStock}
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
-            {product.inStock ? "Add to Cart" : "Out of Stock"}
+            {product.inStock ? 'Add to Cart' : 'Out of Stock'}
           </Button>
 
           {/* Product Features */}

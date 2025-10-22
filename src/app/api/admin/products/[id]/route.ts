@@ -5,7 +5,7 @@ import { requireAdmin } from '@/lib/api-auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Check admin authorization
   const authCheck = await requireAdmin();
@@ -13,10 +13,17 @@ export async function GET(
     return authCheck.response;
   }
 
+  const { id } = await params;
+
   try {
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
-      include: { category: true },
+      where: { id },
+      include: {
+        category: true,
+        variants: {
+          orderBy: { sortOrder: 'asc' },
+        },
+      },
     });
 
     if (!product) {
@@ -28,6 +35,11 @@ export async function GET(
       ...product,
       price: product.price.toNumber(),
       comparePrice: product.comparePrice?.toNumber() ?? null,
+      variants: product.variants.map((v) => ({
+        ...v,
+        price: v.price?.toNumber() ?? null,
+        priceAdjustment: v.priceAdjustment?.toNumber() ?? null,
+      })),
     };
 
     return NextResponse.json(productData);
@@ -42,13 +54,15 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Check admin authorization
   const authCheck = await requireAdmin();
   if (!authCheck.authorized) {
     return authCheck.response;
   }
+
+  const { id } = await params;
 
   try {
     const body = await request.json();
@@ -69,11 +83,20 @@ export async function PUT(
       featured,
       freeShipping,
       inventory,
+      lowStockThreshold,
+      reorderPoint,
+      reorderQuantity,
+      sku,
+      hasVariants,
+      variantType,
+      variantLabel,
+      variantLabelHe,
+      variants,
     } = body;
 
     // Check if product exists
     const existingProduct = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingProduct) {
@@ -94,26 +117,76 @@ export async function PUT(
       }
     }
 
-    const product = await prisma.product.update({
-      where: { id: params.id },
-      data: {
-        name: name || nameEn,
-        nameEn,
-        nameHe,
-        slug,
-        description: description || descriptionEn,
-        descriptionEn,
-        descriptionHe,
-        price,
-        comparePrice: comparePrice || null,
-        image,
-        images: images || [],
-        categoryId,
-        inStock: inStock ?? true,
-        featured: featured ?? false,
-        freeShipping: freeShipping ?? false,
-        inventory: inventory ?? 0,
-      },
+    // Update product with variants in transaction
+    const product = await prisma.$transaction(async (tx) => {
+      // Update base product
+      const updatedProduct = await tx.product.update({
+        where: { id },
+        data: {
+          name: name || nameEn,
+          nameEn,
+          nameHe,
+          slug,
+          description: description || descriptionEn,
+          descriptionEn,
+          descriptionHe,
+          price,
+          comparePrice: comparePrice || null,
+          image,
+          images: images || [],
+          categoryId,
+          inStock: hasVariants ? true : (inStock ?? true),
+          featured: featured ?? false,
+          freeShipping: freeShipping ?? false,
+          inventory: hasVariants ? 0 : (inventory ?? 0),
+          lowStockThreshold:
+            lowStockThreshold ?? existingProduct.lowStockThreshold,
+          reorderPoint: reorderPoint ?? existingProduct.reorderPoint,
+          reorderQuantity: reorderQuantity ?? existingProduct.reorderQuantity,
+          sku: sku ?? existingProduct.sku,
+          // NEW: Variant fields
+          hasVariants: hasVariants ?? false,
+          variantType,
+          variantLabel,
+          variantLabelHe,
+        },
+      });
+
+      // Handle variants
+      if (hasVariants && variants) {
+        // Delete existing variants
+        await tx.productVariant.deleteMany({
+          where: { productId: id },
+        });
+
+        // Create new variants
+        if (variants.length > 0) {
+          await tx.productVariant.createMany({
+            data: variants.map((variant: any, index: number) => ({
+              productId: id,
+              name: variant.name,
+              nameEn: variant.nameEn || variant.name,
+              nameHe: variant.nameHe,
+              sku: variant.sku,
+              price: variant.price || null,
+              priceAdjustment: variant.priceAdjustment || null,
+              inventory: variant.inventory || 0,
+              inStock: variant.inStock ?? true,
+              lowStockThreshold: variant.lowStockThreshold || 10,
+              image: variant.image || null,
+              sortOrder: variant.sortOrder ?? index,
+              isDefault: variant.isDefault ?? index === 0,
+            })),
+          });
+        }
+      } else {
+        // If hasVariants is false, delete all variants
+        await tx.productVariant.deleteMany({
+          where: { productId: id },
+        });
+      }
+
+      return updatedProduct;
     });
 
     // Convert Decimal to number
@@ -135,7 +208,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Check admin authorization
   const authCheck = await requireAdmin();
@@ -143,10 +216,12 @@ export async function DELETE(
     return authCheck.response;
   }
 
+  const { id } = await params;
+
   try {
     // Check if product exists
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!product) {
@@ -154,7 +229,7 @@ export async function DELETE(
     }
 
     await prisma.product.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: 'Product deleted successfully' });

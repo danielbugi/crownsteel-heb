@@ -21,6 +21,11 @@ async function getProduct(slug: string) {
     where: { slug },
     include: {
       category: true,
+      variants: {
+        // ADD THIS
+        where: { inStock: true },
+        orderBy: { sortOrder: 'asc' },
+      },
     },
   });
 
@@ -34,6 +39,11 @@ async function getProduct(slug: string) {
     price: product.price.toNumber(),
     comparePrice: product.comparePrice?.toNumber() ?? null,
     averageRating: product.averageRating?.toNumber() ?? 0,
+    variants: product.variants.map((v) => ({
+      ...v,
+      price: v.price?.toNumber() ?? null,
+      priceAdjustment: v.priceAdjustment?.toNumber() ?? null,
+    })),
   };
 }
 

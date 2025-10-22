@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ImageUpload } from '@/components/admin/image-upload';
+import { ProductVariantManager } from '@/components/admin/product-variant-manager';
 import toast from 'react-hot-toast';
 
 interface Category {
@@ -44,6 +45,12 @@ interface ProductFormProps {
     categoryId: string;
     inStock: boolean;
     featured: boolean;
+    freeShipping?: boolean;
+    inventory?: number;
+    lowStockThreshold?: number;
+    reorderPoint?: number;
+    reorderQuantity?: number;
+    sku?: string | null;
   };
   productId?: string;
 }
@@ -79,10 +86,35 @@ export function ProductForm({
   const [categoryId, setCategoryId] = useState(initialData?.categoryId || '');
   const [inStock, setInStock] = useState(initialData?.inStock ?? true);
   const [featured, setFeatured] = useState(initialData?.featured ?? false);
+  const [freeShipping, setFreeShipping] = useState(
+    initialData?.freeShipping ?? false
+  );
+
+  // Inventory fields
+  const [inventory, setInventory] = useState(
+    initialData?.inventory?.toString() || '0'
+  );
+  const [lowStockThreshold, setLowStockThreshold] = useState(
+    initialData?.lowStockThreshold?.toString() || '10'
+  );
+  const [reorderPoint, setReorderPoint] = useState(
+    initialData?.reorderPoint?.toString() || '20'
+  );
+  const [reorderQuantity, setReorderQuantity] = useState(
+    initialData?.reorderQuantity?.toString() || '50'
+  );
+  const [sku, setSku] = useState(initialData?.sku || '');
 
   // Image management
   const [images, setImages] = useState<string[]>(initialData?.images || []);
   const [mainImage, setMainImage] = useState<string>(initialData?.image || '');
+
+  // Variant management
+  const [hasVariants, setHasVariants] = useState(false);
+  const [variantType, setVariantType] = useState('');
+  const [variantLabel, setVariantLabel] = useState('');
+  const [variantLabelHe, setVariantLabelHe] = useState('');
+  const [variants, setVariants] = useState<any[]>([]);
 
   // Auto-generate slug from English name
   const generateSlug = (name: string) => {
@@ -157,6 +189,18 @@ export function ProductForm({
         categoryId,
         inStock,
         featured,
+        freeShipping,
+        inventory: parseInt(inventory) || 0,
+        lowStockThreshold: parseInt(lowStockThreshold) || 10,
+        reorderPoint: parseInt(reorderPoint) || 20,
+        reorderQuantity: parseInt(reorderQuantity) || 50,
+        sku: sku || null,
+
+        hasVariants,
+        variantType,
+        variantLabel,
+        variantLabelHe,
+        variants: hasVariants ? variants : [],
       };
 
       console.log('Sending payload:', payload);
@@ -179,8 +223,10 @@ export function ProductForm({
       );
       router.push('/admin/products');
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || 'Something went wrong');
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Something went wrong'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -323,14 +369,128 @@ export function ProductForm({
             </div>
           </div>
 
+          {/* Inventory Management Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Inventory Management</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="sku">SKU</Label>
+                  <Input
+                    id="sku"
+                    value={sku}
+                    onChange={(e) => setSku(e.target.value)}
+                    placeholder="PROD-001"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Stock Keeping Unit (optional)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="inventory">
+                    Current Stock <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="inventory"
+                    type="number"
+                    min="0"
+                    value={inventory}
+                    onChange={(e) => setInventory(e.target.value)}
+                    placeholder="100"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Total items available in stock
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="lowStockThreshold">Low Stock Alert</Label>
+                  <Input
+                    id="lowStockThreshold"
+                    type="number"
+                    min="0"
+                    value={lowStockThreshold}
+                    onChange={(e) => setLowStockThreshold(e.target.value)}
+                    placeholder="10"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Alert when stock falls below this number
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="reorderPoint">Reorder Point</Label>
+                  <Input
+                    id="reorderPoint"
+                    type="number"
+                    min="0"
+                    value={reorderPoint}
+                    onChange={(e) => setReorderPoint(e.target.value)}
+                    placeholder="20"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Suggested inventory level to reorder
+                  </p>
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="reorderQuantity">Reorder Quantity</Label>
+                  <Input
+                    id="reorderQuantity"
+                    type="number"
+                    min="1"
+                    value={reorderQuantity}
+                    onChange={(e) => setReorderQuantity(e.target.value)}
+                    placeholder="50"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    How many units to order when restocking
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Variants Section */}
+          <div className="space-y-4 border-t pt-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="hasVariants" className="text-base">
+                  Product Variants
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Does this product have different sizes, lengths, or options?
+                </p>
+              </div>
+              <Switch
+                id="hasVariants"
+                checked={hasVariants}
+                onCheckedChange={setHasVariants}
+              />
+            </div>
+
+            {hasVariants && (
+              <ProductVariantManager
+                productSku={slug}
+                basePrice={parseFloat(price) || 0}
+                variants={variants}
+                onChange={setVariants}
+              />
+            )}
+          </div>
+
           {/* Image Upload Section */}
           <div className="space-y-2">
             <Label>
               Product Images <span className="text-red-500">*</span>
             </Label>
             <p className="text-sm text-muted-foreground">
-              Upload product images. The image marked as "Main" will be
-              displayed first.
+              Upload product images. The image marked as &quot;Main&quot; will
+              be displayed first.
             </p>
             <ImageUpload
               images={images}
@@ -358,6 +518,15 @@ export function ProductForm({
               />
               <Label htmlFor="featured">Featured</Label>
             </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="freeShipping"
+                checked={freeShipping}
+                onCheckedChange={setFreeShipping}
+              />
+              <Label htmlFor="freeShipping">Free Shipping</Label>
+            </div>
           </div>
 
           <div className="flex gap-4">
@@ -365,8 +534,8 @@ export function ProductForm({
               {isLoading
                 ? 'Saving...'
                 : productId
-                ? 'Update Product'
-                : 'Create Product'}
+                  ? 'Update Product'
+                  : 'Create Product'}
             </Button>
             <Button
               type="button"

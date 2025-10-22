@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Form,
   FormControl,
@@ -14,23 +14,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { useCartStore } from "@/store/cart-store";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { useSettings } from "@/contexts/settings-context";
+} from '@/components/ui/form';
+import { useCartStore } from '@/store/cart-store';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { useSettings } from '@/contexts/settings-context';
 
 const checkoutSchema = z.object({
   email: z.string().email('כתובת דוא"ל לא תקינה'),
-  firstName: z.string().min(2, "שם פרטי נדרש"),
-  lastName: z.string().min(2, "שם משפחה נדרש"),
-  phone: z.string().regex(/^05\d{8}$/, "מספר טלפון לא תקין (05X-XXX-XXXX)"),
-  address: z.string().min(5, "כתובת נדרשת"),
-  city: z.string().min(2, "עיר נדרשת"),
-  postalCode: z.string().min(5, "מיקוד נדרש").max(7, "מיקוד לא תקין"),
+  firstName: z.string().min(2, 'שם פרטי נדרש'),
+  lastName: z.string().min(2, 'שם משפחה נדרש'),
+  phone: z.string().regex(/^05\d{8}$/, 'מספר טלפון לא תקין (05X-XXX-XXXX)'),
+  address: z.string().min(5, 'כתובת נדרשת'),
+  city: z.string().min(2, 'עיר נדרשת'),
+  postalCode: z.string().min(5, 'מיקוד נדרש').max(7, 'מיקוד לא תקין'),
   idNumber: z
     .string()
-    .regex(/^\d{9}$/, "תעודת זהות לא תקינה (9 ספרות)")
+    .regex(/^\d{9}$/, 'תעודת זהות לא תקינה (9 ספרות)')
     .optional(),
 });
 
@@ -49,14 +49,14 @@ export function CheckoutForm() {
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      email: "",
-      firstName: "",
-      lastName: "",
-      phone: "",
-      address: "",
-      city: "",
-      postalCode: "",
-      idNumber: "",
+      email: '',
+      firstName: '',
+      lastName: '',
+      phone: '',
+      address: '',
+      city: '',
+      postalCode: '',
+      idNumber: '',
     },
   });
 
@@ -65,13 +65,14 @@ export function CheckoutForm() {
 
     try {
       // Create order in database
-      const orderResponse = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const orderResponse = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customerInfo: data,
           items: items.map((item) => ({
             productId: item.productId,
+            variantId: item.variantId || null, // ADD THIS
             quantity: item.quantity,
             price: item.price,
           })),
@@ -82,15 +83,42 @@ export function CheckoutForm() {
       });
 
       if (!orderResponse.ok) {
-        throw new Error("Failed to create order");
+        const errorData = await orderResponse.json();
+
+        // Handle insufficient inventory error
+        if (errorData.error === 'Insufficient inventory' && errorData.product) {
+          toast.error(
+            `${errorData.product.name}: Only ${errorData.product.available} available, but you requested ${errorData.product.requested}`,
+            { duration: 5000 }
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        // Handle product not found error
+        if (errorData.error === 'Product not found') {
+          toast.error(
+            'One or more products in your cart are no longer available'
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        // Generic error
+        toast.error(errorData.error || 'Failed to create order');
+        setIsLoading(false);
+        return;
       }
 
       const { order } = await orderResponse.json();
 
+      // Clear cart
+      clearCart();
+
       // Redirect to Tranzila payment page
-      const tranzilaResponse = await fetch("/api/payment/tranzila", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const tranzilaResponse = await fetch('/api/payment/tranzila', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           orderId: order.id,
           amount: finalTotal,
@@ -105,8 +133,8 @@ export function CheckoutForm() {
       // Redirect to Tranzila
       window.location.href = paymentUrl;
     } catch (error) {
-      console.error("Checkout error:", error);
-      toast.error("שגיאה בביצוע ההזמנה. אנא נסה שנית.");
+      console.error('Checkout error:', error);
+      toast.error('שגיאה בביצוע ההזמנה. אנא נסה שנית.');
     } finally {
       setIsLoading(false);
     }
@@ -270,7 +298,7 @@ export function CheckoutForm() {
           disabled={isLoading || items.length === 0}
         >
           {isLoading
-            ? "מעבד..."
+            ? 'מעבד...'
             : `המשך לתשלום (${settings?.currencySymbol}${finalTotal.toFixed(
                 2
               )})`}

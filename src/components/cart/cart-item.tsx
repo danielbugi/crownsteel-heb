@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Minus, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useCartStore } from '@/store/cart-store';
 import { formatPrice } from '@/lib/utils';
 
@@ -10,6 +11,7 @@ interface CartItemProps {
   item: {
     id: string;
     productId: string;
+    variantId?: string | null; // ADD THIS
     name: string;
     price: number;
     image: string;
@@ -20,7 +22,11 @@ interface CartItemProps {
 export function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeItem } = useCartStore();
 
-  console.log('Rendering CartItem for:', item);
+  // Extract variant info from name if it exists (format: "Product Name - Variant Name")
+  const hasVariant = item.name.includes(' - ');
+  const [productName, variantName] = hasVariant
+    ? item.name.split(' - ')
+    : [item.name, null];
 
   return (
     <div className="p-6 hover:bg-gray-50 transition-colors">
@@ -41,8 +47,14 @@ export function CartItem({ item }: CartItemProps) {
           <div className="flex justify-between gap-2">
             <div className="flex-1">
               <h3 className="font-light uppercase tracking-wide text-sm text-black line-clamp-2">
-                {item.name}
+                {productName}
               </h3>
+              {/* ADD THIS: Show variant badge if exists */}
+              {variantName && (
+                <Badge variant="outline" className="mt-1">
+                  {variantName}
+                </Badge>
+              )}
               <p className="text-sm text-gray-600 mt-1">
                 {formatPrice(item.price)}
               </p>
@@ -51,7 +63,7 @@ export function CartItem({ item }: CartItemProps) {
               variant="ghost"
               size="icon"
               className="h-8 w-8 text-gray-400 hover:text-black hover:bg-gray-100"
-              onClick={() => removeItem(item.productId)}
+              onClick={() => removeItem(item.productId, item.variantId)}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -63,33 +75,38 @@ export function CartItem({ item }: CartItemProps) {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 border-gray-300 hover:bg-gray-100"
+                className="h-8 w-8"
                 onClick={() =>
-                  updateQuantity(item.productId, item.quantity - 1)
+                  updateQuantity(
+                    item.productId,
+                    item.quantity - 1,
+                    item.variantId
+                  )
                 }
-                disabled={item.quantity <= 1}
               >
                 <Minus className="h-3 w-3" />
               </Button>
-              <span className="w-8 text-center text-sm font-medium text-black">
+              <span className="w-12 text-center text-sm font-medium">
                 {item.quantity}
               </span>
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 border-gray-300 hover:bg-gray-100"
+                className="h-8 w-8"
                 onClick={() =>
-                  updateQuantity(item.productId, item.quantity + 1)
+                  updateQuantity(
+                    item.productId,
+                    item.quantity + 1,
+                    item.variantId
+                  )
                 }
               >
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
-
-            {/* Subtotal */}
-            <span className="font-medium text-black">
+            <div className="text-sm font-semibold">
               {formatPrice(item.price * item.quantity)}
-            </span>
+            </div>
           </div>
         </div>
       </div>
