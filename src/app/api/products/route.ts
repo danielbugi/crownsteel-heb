@@ -17,6 +17,10 @@ export async function POST(request: NextRequest) {
       },
       include: {
         category: true,
+        variants: {
+          where: { inStock: true },
+          orderBy: { sortOrder: 'asc' },
+        },
       },
     });
 
@@ -53,6 +57,10 @@ export async function GET(request: NextRequest) {
       },
       include: {
         category: true,
+        variants: {
+          where: { inStock: true },
+          orderBy: { sortOrder: 'asc' },
+        },
       },
       orderBy: {
         createdAt: 'desc',

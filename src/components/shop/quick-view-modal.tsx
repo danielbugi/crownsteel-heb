@@ -27,6 +27,14 @@ interface Product {
   inStock: boolean;
   featured: boolean;
   inventory?: number;
+  hasVariants?: boolean;
+  variantLabel?: string;
+  variants?: Array<{
+    id: string;
+    name: string;
+    inventory: number;
+    inStock: boolean;
+  }>;
   category: {
     id: string;
     name: string;
@@ -52,6 +60,18 @@ export function QuickViewModal({
   if (!product) return null;
 
   const handleAddToCart = () => {
+    // If product has variants, redirect to detail page
+    if (
+      product.hasVariants &&
+      product.variants &&
+      product.variants.length > 0
+    ) {
+      toast.error(`Please select a ${product.variantLabel || 'variant'} first`);
+      onOpenChange(false);
+      window.location.href = `/shop/${product.slug}`;
+      return;
+    }
+
     if (!product.inStock) {
       toast.error('This item is currently out of stock');
       return;
@@ -59,6 +79,7 @@ export function QuickViewModal({
     addItem({
       id: product.id,
       productId: product.id,
+      variantId: null,
       name: product.name,
       price: product.price,
       image: product.image,
@@ -112,6 +133,13 @@ export function QuickViewModal({
                     Featured
                   </Badge>
                 )}
+                {product.hasVariants &&
+                  product.variants &&
+                  product.variants.length > 0 && (
+                    <Badge className="bg-blue-600 text-white border-none">
+                      Multiple {product.variantLabel || 'Options'}
+                    </Badge>
+                  )}
                 {discountPercentage > 0 && (
                   <Badge className="bg-red-500 text-white border-none">
                     -{discountPercentage}% OFF
@@ -234,7 +262,13 @@ export function QuickViewModal({
                 disabled={!product.inStock}
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
-                {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                {!product.inStock
+                  ? 'Out of Stock'
+                  : product.hasVariants &&
+                      product.variants &&
+                      product.variants.length > 0
+                    ? 'Select Options'
+                    : 'Add to Cart'}
               </Button>
 
               <div className="grid grid-cols-2 gap-3">

@@ -45,13 +45,11 @@ export function ProductVariantSelector({
   const { language } = useLanguage();
   const [selectedVariantId, setSelectedVariantId] = useState<string>('');
 
-  // Set default variant on mount
+  // Don't auto-select variant - force user to choose
   useEffect(() => {
-    const defaultVariant = variants.find((v) => v.isDefault) || variants[0];
-    if (defaultVariant) {
-      setSelectedVariantId(defaultVariant.id);
-      onVariantChange(defaultVariant);
-    }
+    // Reset selection when variants change
+    setSelectedVariantId('');
+    onVariantChange(null);
   }, [variants, onVariantChange]);
 
   const handleVariantChange = (variantId: string) => {
@@ -86,7 +84,7 @@ export function ProductVariantSelector({
   }
 
   const label = language === 'he' ? variantLabelHe : variantLabel;
-  const selectedVariant = variants.find((v) => v.id === selectedVariantId);
+  // const selectedVariant = variants.find((v) => v.id === selectedVariantId);
 
   return (
     <div className="space-y-4">
@@ -94,7 +92,7 @@ export function ProductVariantSelector({
         <Label className="text-base font-medium">{label}</Label>
         <Select value={selectedVariantId} onValueChange={handleVariantChange}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder={`Select ${label}`} />
+            <SelectValue placeholder={`Choose ${label}...`} />
           </SelectTrigger>
           <SelectContent>
             {variants
@@ -115,7 +113,7 @@ export function ProductVariantSelector({
                         {getVariantName(variant)}
                       </span>
 
-                      <div className="flex items-center gap-2">
+                      {/* <div className="flex items-center gap-2">
                         {priceDiff !== 0 && (
                           <span className="text-sm text-muted-foreground">
                             {priceDiff > 0 ? '+' : ''}
@@ -139,7 +137,7 @@ export function ProductVariantSelector({
                             {variant.inventory} available
                           </Badge>
                         )}
-                      </div>
+                      </div> */}
                     </div>
                   </SelectItem>
                 );
@@ -147,29 +145,6 @@ export function ProductVariantSelector({
           </SelectContent>
         </Select>
       </div>
-
-      {/* Selected Variant Info */}
-      {selectedVariant && (
-        <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-          <div>
-            <p className="text-sm text-muted-foreground">Selected:</p>
-            <p className="font-medium">{getVariantName(selectedVariant)}</p>
-            <p className="text-xs text-muted-foreground">
-              SKU: {selectedVariant.sku}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-2xl font-bold">
-              {formatPrice(calculatePrice(selectedVariant))}
-            </p>
-            {calculatePrice(selectedVariant) !== basePrice && (
-              <p className="text-sm text-muted-foreground line-through">
-                {formatPrice(basePrice)}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

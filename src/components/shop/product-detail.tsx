@@ -1,3 +1,4 @@
+// src/components/shop/product-detail.tsx
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +8,14 @@ import { ProductVariantSelector } from '@/components/product/product-variant-sel
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingCart, Truck, Shield, ArrowLeft } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  ShoppingCart,
+  Truck,
+  Shield,
+  ArrowLeft,
+  AlertCircle,
+} from 'lucide-react';
 import { formatPrice, cn } from '@/lib/utils';
 import { useCartStore } from '@/store/cart-store';
 import { toast } from 'react-hot-toast';
@@ -45,13 +53,26 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const { addItem, toggleCart } = useCartStore();
 
   const handleAddToCart = () => {
-    if (product.hasVariants && !selectedVariant) {
-      toast.error('Please select a variant');
+    // CRITICAL: Block checkout if product has variants but none is selected
+    if (
+      product.hasVariants &&
+      product.variants &&
+      product.variants.length > 0 &&
+      !selectedVariant
+    ) {
+      toast.error('Please select a variant before adding to cart');
       return;
     }
-    const availableInventory = product.hasVariants
-      ? selectedVariant?.inventory
-      : product.inventory;
+
+    const availableInventory =
+      product.hasVariants && selectedVariant
+        ? selectedVariant.inventory
+        : product.inventory;
+
+    if (!product.inStock || availableInventory === 0) {
+      toast.error('This item is currently out of stock');
+      return;
+    }
 
     if (quantity > availableInventory) {
       toast.error(`Only ${availableInventory} available`);
@@ -61,7 +82,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
     addItem({
       id: crypto.randomUUID(),
       productId: product.id,
-      variantId: selectedVariant?.id || null, // ADD THIS
+      variantId: selectedVariant?.id || null,
       name:
         product.name + (selectedVariant ? ` - ${selectedVariant.name}` : ''),
       price: selectedVariant
@@ -75,6 +96,25 @@ export function ProductDetail({ product }: ProductDetailProps) {
     toast.success(`Added ${quantity} item(s) to cart`);
     toggleCart();
   };
+
+  // Check if add to cart button should be disabled
+  const isAddToCartDisabled = () => {
+    if (!product.inStock) return true;
+    if (
+      product.hasVariants &&
+      product.variants &&
+      product.variants.length > 0 &&
+      !selectedVariant
+    )
+      return true;
+    const availableInventory =
+      product.hasVariants && selectedVariant
+        ? selectedVariant.inventory
+        : product.inventory;
+    if (availableInventory === 0) return true;
+    return false;
+  };
+
   const discount = product.comparePrice
     ? Math.round(
         ((product.comparePrice - product.price) / product.comparePrice) * 100
@@ -160,7 +200,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
           <div className="flex items-center gap-4 mb-6">
             <span className="text-3xl font-bold">
-              {formatPrice(product.price)}
+              {formatPrice(
+                selectedVariant
+                  ? selectedVariant.price ||
+                      product.price + (selectedVariant.priceAdjustment || 0)
+                  : product.price
+              )}
             </span>
             {product.comparePrice && (
               <span className="text-xl text-muted-foreground line-through">
@@ -177,10 +222,18 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
           <Separator className="my-6" />
 
+          {/* Variants Section - CRITICAL UI ELEMENT */}
           {product.hasVariants &&
             product.variants &&
             product.variants.length > 0 && (
-              <div className="mb-6">
+              <div className="mb-6 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertCircle className="h-5 w-5 text-orange-500" />
+                  <span className="font-medium text-sm text-muted-foreground">
+                    {product.variantLabel || 'Variant'} selection required
+                  </span>
+                </div>
+
                 <ProductVariantSelector
                   variants={product.variants}
                   basePrice={product.price}
@@ -203,47 +256,83 @@ export function ProductDetail({ product }: ProductDetailProps) {
               >
                 -
               </Button>
-              <span className="text-lg font-medium w-12 text-center">
-                {quantity}
-              </span>
+              <span className="w-16 text-center font-medium">{quantity}</span>
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() =>
-                  setQuantity(Math.min(product.inventory, quantity + 1))
+                onClick={() => {
+                  const maxQty =
+                    product.hasVariants && selectedVariant
+                      ? selectedVariant.inventory
+                      : product.inventory;
+                  setQuantity(Math.min(maxQty, quantity + 1));
+                }}
+                disabled={
+                  quantity >=
+                  (product.hasVariants && selectedVariant
+                    ? selectedVariant.inventory
+                    : product.inventory)
                 }
-                disabled={quantity >= product.inventory}
               >
                 +
               </Button>
-              <span className="text-sm text-muted-foreground ml-2">
-                ({product.inventory} available)
-              </span>
             </div>
           </div>
 
-          {/* Add to Cart */}
+          {/* Stock Info */}
+          <div className="mb-6">
+            {product.hasVariants && selectedVariant ? (
+              <Badge
+                variant={
+                  selectedVariant.inventory > 0 ? 'default' : 'destructive'
+                }
+              >
+                {selectedVariant.inventory > 0
+                  ? `${selectedVariant.inventory} in stock`
+                  : 'Out of stock'}
+              </Badge>
+            ) : (
+              !product.hasVariants && (
+                <Badge
+                  variant={product.inventory > 0 ? 'default' : 'destructive'}
+                >
+                  {product.inventory > 0
+                    ? `${product.inventory} in stock`
+                    : 'Out of stock'}
+                </Badge>
+              )
+            )}
+          </div>
+
+          {/* Add to Cart Button - BLOCKED if variants required but not selected */}
           <Button
             size="lg"
-            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground mb-4"
+            className="w-full mb-6"
             onClick={handleAddToCart}
-            disabled={!product.inStock}
+            disabled={isAddToCartDisabled()}
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
-            {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+            {isAddToCartDisabled()
+              ? product.hasVariants &&
+                product.variants &&
+                product.variants.length > 0 &&
+                !selectedVariant
+                ? `Choose ${product.variantLabel || 'Variant'} First`
+                : 'Out of Stock'
+              : 'Add to Cart'}
           </Button>
 
           {/* Product Features */}
-          <div className="space-y-3 mt-6">
+          <div className="space-y-4">
             {product.freeShipping && (
-              <div className="flex items-center gap-3 text-sm">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <Truck className="h-5 w-5 text-accent" />
                 <span>Free shipping on this item</span>
               </div>
             )}
-            <div className="flex items-center gap-3 text-sm">
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <Shield className="h-5 w-5 text-accent" />
-              <span>Lifetime warranty on craftsmanship</span>
+              <span>Secure checkout</span>
             </div>
           </div>
         </div>

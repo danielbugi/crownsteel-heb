@@ -1,10 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ShoppingCart, Search, Menu, User, Globe, Heart } from 'lucide-react';
+import { ShoppingCart, Search, Menu, User, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -85,117 +84,222 @@ export function Navbar() {
       />
 
       <header className="sticky top-0 py-2 z-40 w-full bg-black text-white shadow-lg">
-        <nav
-          className="container flex h-20 items-center justify-between px-4 md:px-6"
-          aria-label="Main navigation"
-          dir={direction}
-        >
-          {/* Left Side - Hamburger Menu */}
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/10"
-              onClick={() => setIsSidebarOpen(true)}
-              aria-label="Open menu"
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          </div>
-
-          {/* Center - Logo */}
-          <Logo />
-
-          {/* Right Side - Icons Only */}
-          <div className="flex items-center">
-            {/* Search Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/10"
-              onClick={() => setShowSearch(!showSearch)}
-              aria-label="Search"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
-
-            {/* ✅ WISHLIST ICON - ADD THIS */}
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                className=" text-white hover:bg-white/10 "
-                onClick={toggleWishlist}
-                aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
-              >
-                <Heart className="h-5 w-5" />
-              </Button>
-              {wishlistMounted && wishlistCount > 0 && (
-                <span
-                  className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20"
-                  aria-label={`${wishlistCount} items in wishlist`}
-                >
-                  {wishlistCount > 99 ? '99+' : wishlistCount}
-                </span>
-              )}
+        {/* Responsive Navbar Container */}
+        <div className="container px-4 md:px-6">
+          {/* Mobile Layout: Logo on top, icons below */}
+          <div className="sm:hidden flex flex-col space-y-2 py-2">
+            {/* Logo centered on top */}
+            <div className="flex justify-center align-middle">
+              <Logo />
             </div>
 
-            {/* Cart Icon */}
-            <div className="relative">
+            {/* Icons and hamburger on bottom with space-between */}
+            <div className="flex items-center justify-between">
+              {/* Left - Hamburger Menu */}
               <Button
                 variant="ghost"
                 size="icon"
                 className="text-white hover:bg-white/10"
-                onClick={toggleCart}
-                aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
+                onClick={() => setIsSidebarOpen(true)}
+                aria-label="Open menu"
               >
-                <ShoppingCart className="h-5 w-5" />
+                <Menu className="h-6 w-6" />
               </Button>
-              {mounted && totalItems > 0 && (
-                <span
-                  className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20"
-                  aria-label={`${totalItems} items in cart`}
+
+              {/* Right - Icons */}
+              <div className="flex items-center space-x-1">
+                {/* Search Icon */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10"
+                  onClick={() => setShowSearch(!showSearch)}
+                  aria-label="Search"
                 >
-                  {totalItems > 99 ? '99+' : totalItems}
-                </span>
-              )}
+                  <Search className="h-5 w-5" />
+                </Button>
+
+                {/* Wishlist Icon */}
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white hover:bg-white/10"
+                    onClick={toggleWishlist}
+                    aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
+                  >
+                    <Heart className="h-5 w-5" />
+                  </Button>
+                  {wishlistMounted && wishlistCount > 0 && (
+                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
+                      {wishlistCount > 99 ? '99+' : wishlistCount}
+                    </span>
+                  )}
+                </div>
+
+                {/* Cart Icon */}
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white hover:bg-white/10"
+                    onClick={toggleCart}
+                    aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                  </Button>
+                  {mounted && totalItems > 0 && (
+                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
+                      {totalItems > 99 ? '99+' : totalItems}
+                    </span>
+                  )}
+                </div>
+
+                {/* Language Toggle */}
+                <LanguageToggle />
+
+                {/* User Icon */}
+                {session ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white hover:bg-white/10"
+                    onClick={() => setIsUserMenuOpen(true)}
+                    aria-label="User menu"
+                  >
+                    <Avatar className="h-7 w-7 border-2 border-gold-400">
+                      <AvatarImage
+                        src={session.user?.image || undefined}
+                        alt={session.user?.name || 'User'}
+                      />
+                      <AvatarFallback className="bg-gold-500 text-white text-xs">
+                        {session.user?.name?.charAt(0) || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white hover:bg-white/10"
+                    onClick={() => setIsAuthModalOpen(true)}
+                    aria-label="Sign in"
+                  >
+                    <User className="h-5 w-5" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Layout: Grid layout */}
+          <nav
+            className="hidden sm:grid h-20 items-center"
+            aria-label="Main navigation"
+            dir={direction}
+            style={{
+              gridTemplateColumns: '1fr auto 1fr',
+              gap: '1rem',
+            }}
+          >
+            {/* Left Side - Hamburger Menu */}
+            <div className="flex items-center justify-start">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/10"
+                onClick={() => setIsSidebarOpen(true)}
+                aria-label="Open menu"
+              >
+                <Menu className="h-6 w-6" />
+              </Button>
             </div>
 
-            {/* Globe Icon - Language Toggle */}
-            <LanguageToggle />
+            {/* Center - Logo */}
+            <div className="flex items-center justify-center">
+              <Logo />
+            </div>
 
-            {/* User Icon */}
-            {session ? (
+            {/* Right Side - Icons */}
+            <div className="flex items-center justify-end space-x-1">
               <Button
                 variant="ghost"
                 size="icon"
                 className="text-white hover:bg-white/10"
-                onClick={() => setIsUserMenuOpen(true)}
-                aria-label="User menu"
+                onClick={() => setShowSearch(!showSearch)}
+                aria-label="Search"
               >
-                <Avatar className="h-7 w-7 md:h-8 md:w-8 border-2 border-gold-400">
-                  <AvatarImage
-                    src={session.user?.image || undefined}
-                    alt={session.user?.name || 'User'}
-                  />
-                  <AvatarFallback className="bg-gold-500 text-white text-xs">
-                    {session.user?.name?.charAt(0) || 'U'}
-                  </AvatarFallback>
-                </Avatar>
+                <Search className="h-5 w-5" />
               </Button>
-            ) : (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/10"
-                onClick={() => setIsAuthModalOpen(true)}
-                aria-label="Sign in"
-              >
-                <User className="h-5 w-5" />
-              </Button>
-            )}
-          </div>
-        </nav>
+
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10"
+                  onClick={toggleWishlist}
+                  aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
+                >
+                  <Heart className="h-5 w-5" />
+                </Button>
+                {wishlistMounted && wishlistCount > 0 && (
+                  <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
+                    {wishlistCount > 99 ? '99+' : wishlistCount}
+                  </span>
+                )}
+              </div>
+
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10"
+                  onClick={toggleCart}
+                  aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                </Button>
+                {mounted && totalItems > 0 && (
+                  <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
+                    {totalItems > 99 ? '99+' : totalItems}
+                  </span>
+                )}
+              </div>
+
+              <LanguageToggle />
+
+              {session ? (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10"
+                  onClick={() => setIsUserMenuOpen(true)}
+                  aria-label="User menu"
+                >
+                  <Avatar className="h-7 w-7 md:h-8 md:w-8 border-2 border-gold-400">
+                    <AvatarImage
+                      src={session.user?.image || undefined}
+                      alt={session.user?.name || 'User'}
+                    />
+                    <AvatarFallback className="bg-gold-500 text-white text-xs">
+                      {session.user?.name?.charAt(0) || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10"
+                  onClick={() => setIsAuthModalOpen(true)}
+                  aria-label="Sign in"
+                >
+                  <User className="h-5 w-5" />
+                </Button>
+              )}
+            </div>
+          </nav>
+        </div>
 
         {/* Search Bar Dropdown */}
         {showSearch && (

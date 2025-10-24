@@ -19,7 +19,7 @@ function Logo() {
         alt={'BogaRoyal Jewels'}
         width={70}
         height={40}
-        className="object-contain"
+        className="object-contain w-16 h-full sm:w-[70px] sm:h-full"
       />
     </Link>
   );

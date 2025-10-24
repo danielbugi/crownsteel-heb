@@ -11,6 +11,11 @@ export async function GET(
       where: { slug: params.slug },
       include: {
         category: true,
+        variants: {
+          orderBy: {
+            sortOrder: 'asc',
+          },
+        },
       },
     });
 

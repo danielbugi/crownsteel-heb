@@ -26,6 +26,15 @@ interface Product {
   featured: boolean;
   inventory?: number;
   createdAt?: string;
+  hasVariants?: boolean;
+  variantLabel?: string;
+  variantLabelHe?: string;
+  variants?: Array<{
+    id: string;
+    name: string;
+    inventory: number;
+    inStock: boolean;
+  }>;
   category: {
     id: string;
     name: string;
@@ -84,15 +93,28 @@ export function ProductCard({
 
   const handleCartAction = (e: React.MouseEvent) => {
     e.preventDefault();
+
+    // If product has variants, redirect to detail page instead
+    if (
+      product.hasVariants &&
+      product.variants &&
+      product.variants.length > 0
+    ) {
+      toast.error(`Please select a ${product.variantLabel || 'variant'} first`);
+      window.location.href = `/shop/${product.slug}`;
+      return;
+    }
+
     if (!product.inStock) {
       toast.error('This item is currently out of stock');
       return;
     }
 
-    // Add to cart
+    // Add to cart (only for products without variants)
     addItem({
       id: product.id,
       productId: product.id,
+      variantId: null,
       name: product.name,
       price: product.price,
       image: product.image,
@@ -151,7 +173,7 @@ export function ProductCard({
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <div className="relative aspect-square overflow-hidden bg-secondary/30">
+          <div className="relative aspect-square overflow-hidden bg-secondary">
             <Image
               src={product.image}
               alt={product.name}
@@ -169,6 +191,16 @@ export function ProductCard({
                   Out of Stock
                 </Badge>
               )}
+              {product.hasVariants &&
+                product.variants &&
+                product.variants.length > 0 && (
+                  <Badge
+                    variant="outline"
+                    className="bg-blue-50 text-blue-700 border-blue-200 shadow-lg"
+                  >
+                    Multiple {product.variantLabel || 'Options'}
+                  </Badge>
+                )}
               {product.inStock &&
                 product.inventory &&
                 product.inventory <= 3 && (
@@ -249,7 +281,7 @@ export function ProductCard({
             </div>
 
             {/* Cart Button on Hover */}
-            <div
+            {/* <div
               className={`absolute bottom-0 left-0 right-0 p-3 transition-all duration-300 ${
                 isHovered && product.inStock
                   ? 'translate-y-0 opacity-100'
@@ -263,9 +295,17 @@ export function ProductCard({
                 size="sm"
               >
                 <ShoppingCart className="mr-2 h-4 w-4" />
-                {isWishlistItem ? 'Move to Cart' : 'Add to Cart'}
+                {!product.inStock
+                  ? 'Out of Stock'
+                  : product.hasVariants &&
+                      product.variants &&
+                      product.variants.length > 0
+                    ? 'Select Options'
+                    : isWishlistItem
+                      ? 'Move to Cart'
+                      : 'Add to Cart'}
               </Button>
-            </div>
+            </div> */}
           </div>
 
           <CardContent className="p-4">
