@@ -117,7 +117,7 @@ export function QuickViewModal({
           {/* Left - Images */}
           <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative aspect-square rounded-lg overflow-hidden bg-secondary/30">
+            <div className="relative aspect-square overflow-hidden bg-secondary/30">
               <Image
                 src={displayImages[selectedImage]}
                 alt={product.name}
@@ -155,9 +155,9 @@ export function QuickViewModal({
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`relative aspect-square rounded-md overflow-hidden border-2 transition-all ${
+                    className={`relative aspect-square overflow-hidden border-2 transition-all ${
                       selectedImage === index
-                        ? 'border-gold-500 ring-2 ring-gold-500/50'
+                        ? 'border-gold ring-2 ring-gold-500/50'
                         : 'border-border hover:border-gold-400'
                     }`}
                   >
@@ -177,9 +177,9 @@ export function QuickViewModal({
           {/* Right - Product Info */}
           <div className="flex flex-col">
             {/* Category */}
-            <p className="text-sm uppercase tracking-wider text-gold-600 font-semibold mb-2">
+            {/* <p className="text-sm uppercase tracking-wider text-gold-600 font-semibold mb-2">
               {product.category.name}
-            </p>
+            </p> */}
 
             {/* Product Name */}
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
@@ -199,7 +199,7 @@ export function QuickViewModal({
             </div>
 
             {/* Stock Status */}
-            {product.inStock ? (
+            {/* {product.inStock ? (
               <p className="text-sm text-green-600 mb-4 font-medium flex items-center gap-2">
                 <span className="h-2 w-2 bg-green-600 rounded-full"></span>
                 In Stock
@@ -214,7 +214,7 @@ export function QuickViewModal({
                 <span className="h-2 w-2 bg-red-600 rounded-full"></span>
                 Out of Stock
               </p>
-            )}
+            )} */}
 
             {/* Description */}
             {product.description && (
@@ -257,7 +257,7 @@ export function QuickViewModal({
             <div className="space-y-3 mt-auto">
               <Button
                 size="lg"
-                className="w-full bg-gold-600 hover:bg-gold-700 text-white font-semibold"
+                className="uppercase w-full bg-black hover:bg-white text-white hover:text-black border font-semibold flex gap-2"
                 onClick={handleAddToCart}
                 disabled={!product.inStock}
               >

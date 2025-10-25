@@ -12,7 +12,7 @@ export function LanguageToggle() {
       variant="ghost"
       size="icon"
       onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
-      className="text-white/90 hover:text-white hover:bg-white/10 relative group"
+      className="text-white/90 hover:text-gold-400 hover:bg-white/10 relative group"
       aria-label={`Switch to ${language === 'en' ? 'Hebrew' : 'English'}`}
     >
       <Globe className="h-5 w-5" aria-hidden="true" />

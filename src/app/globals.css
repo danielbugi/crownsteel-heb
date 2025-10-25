@@ -331,3 +331,19 @@ html {
   transform: translate(5px, 5px);
   transition-duration: 0.3s;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Smooth scroll behavior */
+.scrollbar-hide {
+  scroll-behavior: smooth;
+}

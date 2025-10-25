@@ -199,7 +199,7 @@ export function Navbar() {
             dir={direction}
             style={{
               gridTemplateColumns: '1fr auto 1fr',
-              gap: '1rem',
+              gap: '2rem',
             }}
           >
             {/* Left Side - Hamburger Menu */}
@@ -207,36 +207,36 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/10"
+                className="text-white hover:text-white hover:bg-white/10"
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open menu"
               >
                 <Menu className="h-6 w-6" />
               </Button>
-            </div>
 
-            {/* Center - Logo */}
-            <div className="flex items-center justify-center">
-              <Logo />
-            </div>
-
-            {/* Right Side - Icons */}
-            <div className="flex items-center justify-end space-x-1">
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/10"
+                className="text-white hover:text-white hover:bg-white/10"
                 onClick={() => setShowSearch(!showSearch)}
                 aria-label="Search"
               >
                 <Search className="h-5 w-5" />
               </Button>
+            </div>
 
+            {/* Center - Logo */}
+            <div className="flex items-center justify-center text-white hover:text-white hover:bg-white/10">
+              <Logo />
+            </div>
+
+            {/* Right Side - Icons */}
+            <div className="flex items-center justify-end space-x-1">
               <div className="relative">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/10"
+                  className="text-white hover:text-white hover:bg-white/10"
                   onClick={toggleWishlist}
                   aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
                 >
@@ -253,7 +253,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/10"
+                  className="text-white hover:text-white hover:bg-white/10"
                   onClick={toggleCart}
                   aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
                 >
@@ -272,7 +272,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/10"
+                  className="text-white hover:text-white hover:bg-white/10"
                   onClick={() => setIsUserMenuOpen(true)}
                   aria-label="User menu"
                 >
@@ -290,7 +290,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/10"
+                  className="text-white hover:text-white hover:bg-white/10"
                   onClick={() => setIsAuthModalOpen(true)}
                   aria-label="Sign in"
                 >
@@ -321,7 +321,7 @@ export function Navbar() {
                   type="submit"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 top-0 text-white hover:bg-white/10"
+                  className="absolute right-0 top-0 text-white hover:bg-gold-400"
                 >
                   <Search className="h-4 w-4" />
                 </Button>
