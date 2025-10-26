@@ -2,10 +2,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/api-auth';
+import { startPerformanceTracking } from '@/lib/track-performance';
 
 export async function GET(request: NextRequest) {
+  const trackEnd = startPerformanceTracking('/api/admin/products', 'GET');
+
   const authCheck = await requireAdmin();
   if (!authCheck.authorized) {
+    trackEnd(401);
     return authCheck.response;
   }
 
@@ -49,8 +53,45 @@ export async function GET(request: NextRequest) {
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
-        include: {
-          category: true,
+        select: {
+          id: true,
+          name: true,
+          nameEn: true,
+          nameHe: true,
+          slug: true,
+          description: true,
+          descriptionEn: true,
+          descriptionHe: true,
+          price: true,
+          comparePrice: true,
+          image: true,
+          images: true,
+          inStock: true,
+          featured: true,
+          freeShipping: true,
+          inventory: true,
+          categoryId: true,
+          createdAt: true,
+          updatedAt: true,
+          averageRating: true,
+          reviewCount: true,
+          sku: true,
+          lowStockThreshold: true,
+          reorderPoint: true,
+          reorderQuantity: true,
+          hasVariants: true,
+          variantType: true,
+          variantLabel: true,
+          variantLabelHe: true,
+          category: {
+            select: {
+              id: true,
+              name: true,
+              nameEn: true,
+              nameHe: true,
+              slug: true,
+            },
+          },
         },
         orderBy: {
           createdAt: 'desc',
@@ -69,6 +110,7 @@ export async function GET(request: NextRequest) {
       averageRating: product.averageRating?.toNumber() ?? null,
     }));
 
+    trackEnd(200);
     return NextResponse.json({
       products: productsData,
       pagination: {
@@ -80,6 +122,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching products:', error);
+    trackEnd(500);
     return NextResponse.json(
       { error: 'Failed to fetch products' },
       { status: 500 }
@@ -88,8 +131,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const trackEnd = startPerformanceTracking('/api/admin/products', 'POST');
+
   const authCheck = await requireAdmin();
   if (!authCheck.authorized) {
+    trackEnd(401);
     return authCheck.response;
   }
 
@@ -211,9 +257,11 @@ export async function POST(request: NextRequest) {
       comparePrice: product.comparePrice?.toNumber() ?? null,
     };
 
+    trackEnd(201);
     return NextResponse.json(productData);
   } catch (error) {
     console.error('Error creating product:', error);
+    trackEnd(500);
     return NextResponse.json(
       { error: 'Failed to create product' },
       { status: 500 }

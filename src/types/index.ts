@@ -1,3 +1,17 @@
+export interface Address {
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  company?: string;
+  address: string;
+  apartment?: string;
+  city: string;
+  state?: string;
+  postalCode: string;
+  country: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -50,8 +64,8 @@ export interface Order {
   userId: string;
   status: 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
   total: number;
-  shippingAddress: any;
-  billingAddress?: any;
+  shippingAddress: Address;
+  billingAddress?: Address;
   paymentIntentId?: string;
   createdAt: Date;
   updatedAt: Date;

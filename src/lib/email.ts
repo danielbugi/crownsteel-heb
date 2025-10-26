@@ -57,8 +57,8 @@ export interface ShippingEmailData extends OrderEmailData {
 
 export interface EmailResult {
   success: boolean;
-  data?: any;
-  error?: any;
+  data?: unknown;
+  error?: unknown;
 }
 
 // Rate limiting

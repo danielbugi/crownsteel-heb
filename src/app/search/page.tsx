@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ProductGrid } from '@/components/shop/product-grid';
 import { SearchFilters } from '@/components/search/search-filters';
@@ -8,6 +8,8 @@ import { SearchSort } from '@/components/search/search-sort';
 import { useLanguage } from '@/contexts/language-context';
 import { Button } from '@/components/ui/button';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 interface Product {
   id: string;
@@ -34,6 +36,20 @@ interface Pagination {
 }
 
 export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
+      <SearchPageContent />
+    </Suspense>
+  );
+}
+
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const { t, language } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);

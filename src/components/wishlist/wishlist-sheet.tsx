@@ -58,15 +58,27 @@ export function WishlistSheet() {
         const response = await fetch('/api/wishlist');
         if (response.ok) {
           const { items: wishlistItems } = await response.json();
-          const productsList = wishlistItems.map((item: any) => ({
-            id: item.product.id,
-            name: item.product.name,
-            slug: item.product.slug,
-            price: item.product.price,
-            comparePrice: item.product.comparePrice,
-            image: item.product.image,
-            inStock: item.product.inStock,
-          }));
+          const productsList = wishlistItems.map(
+            (item: {
+              product: {
+                id: string;
+                name: string;
+                slug: string;
+                price: number;
+                comparePrice?: number;
+                image: string;
+                inStock: boolean;
+              };
+            }) => ({
+              id: item.product.id,
+              name: item.product.name,
+              slug: item.product.slug,
+              price: item.product.price,
+              comparePrice: item.product.comparePrice,
+              image: item.product.image,
+              inStock: item.product.inStock,
+            })
+          );
           setProducts(productsList);
         }
       } else {

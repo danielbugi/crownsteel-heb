@@ -1,14 +1,14 @@
-import { auth } from "@/lib/auth";
-import { redirect, notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { formatPrice } from "@/lib/utils";
-import { format } from "date-fns";
-import { ArrowLeft, MapPin, Package } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { auth } from '@/lib/auth';
+import { redirect, notFound } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { formatPrice } from '@/lib/utils';
+import { format } from 'date-fns';
+import { ArrowLeft, MapPin, Package } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 async function getOrder(orderId: string, userId: string) {
   const order = await prisma.order.findFirst({
@@ -38,31 +38,41 @@ async function getOrder(orderId: string, userId: string) {
 }
 
 const statusColors = {
-  PENDING: "bg-yellow-500",
-  CONFIRMED: "bg-blue-500",
-  SHIPPED: "bg-purple-500",
-  DELIVERED: "bg-green-500",
-  CANCELLED: "bg-red-500",
+  PENDING: 'bg-yellow-500',
+  CONFIRMED: 'bg-blue-500',
+  SHIPPED: 'bg-purple-500',
+  DELIVERED: 'bg-green-500',
+  CANCELLED: 'bg-red-500',
 };
 
 export default async function OrderDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect("/");
+    redirect('/');
   }
 
-  const order = await getOrder(params.id, session.user.id);
+  const { id } = await params;
+  const order = await getOrder(id, session.user.id);
 
   if (!order) {
     notFound();
   }
 
-  const shippingAddress = order.shippingAddress as any;
+  const shippingAddress = order.shippingAddress as {
+    firstName: string;
+    lastName: string;
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phone?: string;
+    email?: string;
+  };
 
   return (
     <div className="space-y-6">
@@ -79,7 +89,7 @@ export default async function OrderDetailPage({
             Order #{order.id.slice(0, 8).toUpperCase()}
           </h1>
           <p className="text-muted-foreground">
-            Placed on {format(new Date(order.createdAt), "MMMM dd, yyyy")}
+            Placed on {format(new Date(order.createdAt), 'MMMM dd, yyyy')}
           </p>
         </div>
         <Badge className={`${statusColors[order.status]} text-white text-lg`}>
@@ -177,11 +187,11 @@ export default async function OrderDetailPage({
                   <div>
                     <p className="font-medium">Order Placed</p>
                     <p className="text-sm text-muted-foreground">
-                      {format(new Date(order.createdAt), "MMM dd, yyyy")}
+                      {format(new Date(order.createdAt), 'MMM dd, yyyy')}
                     </p>
                   </div>
                 </div>
-                {order.status !== "PENDING" && (
+                {order.status !== 'PENDING' && (
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 rounded-full bg-green-500 mt-2" />
                     <div>
@@ -189,8 +199,8 @@ export default async function OrderDetailPage({
                     </div>
                   </div>
                 )}
-                {(order.status === "SHIPPED" ||
-                  order.status === "DELIVERED") && (
+                {(order.status === 'SHIPPED' ||
+                  order.status === 'DELIVERED') && (
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 rounded-full bg-green-500 mt-2" />
                     <div>
@@ -198,7 +208,7 @@ export default async function OrderDetailPage({
                     </div>
                   </div>
                 )}
-                {order.status === "DELIVERED" && (
+                {order.status === 'DELIVERED' && (
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 rounded-full bg-green-500 mt-2" />
                     <div>

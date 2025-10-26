@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import {
-  Gem,
   Facebook,
   Instagram,
   Twitter,
@@ -14,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useSettings } from '@/contexts/settings-context';
 import { useLanguage } from '@/contexts/language-context';
-import Logo from '../ui/logo';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();

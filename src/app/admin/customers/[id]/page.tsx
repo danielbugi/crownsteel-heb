@@ -1,7 +1,7 @@
-import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { notFound } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -9,13 +9,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { formatPrice } from "@/lib/utils";
-import { format } from "date-fns";
-import { User, Mail, Calendar, ShoppingBag, DollarSign } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+} from '@/components/ui/table';
+import { formatPrice } from '@/lib/utils';
+import { format } from 'date-fns';
+import { User, Mail, Calendar, ShoppingBag, DollarSign } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 async function getCustomer(id: string) {
   const customer = await prisma.user.findUnique({
@@ -30,7 +30,7 @@ async function getCustomer(id: string) {
           },
         },
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
       },
     },
@@ -58,19 +58,20 @@ async function getCustomer(id: string) {
 }
 
 const statusColors = {
-  PENDING: "bg-yellow-500",
-  CONFIRMED: "bg-blue-500",
-  SHIPPED: "bg-purple-500",
-  DELIVERED: "bg-green-500",
-  CANCELLED: "bg-red-500",
+  PENDING: 'bg-yellow-500',
+  CONFIRMED: 'bg-blue-500',
+  SHIPPED: 'bg-purple-500',
+  DELIVERED: 'bg-green-500',
+  CANCELLED: 'bg-red-500',
 };
 
 export default async function CustomerDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const customer = await getCustomer(params.id);
+  const { id } = await params;
+  const customer = await getCustomer(id);
 
   if (!customer) {
     notFound();
@@ -91,7 +92,7 @@ export default async function CustomerDetailPage({
         {customer.image ? (
           <img
             src={customer.image}
-            alt={customer.name || "User"}
+            alt={customer.name || 'User'}
             className="w-24 h-24 rounded-full object-cover"
           />
         ) : (
@@ -100,11 +101,11 @@ export default async function CustomerDetailPage({
           </div>
         )}
         <div className="flex-1">
-          <h1 className="text-3xl font-bold">{customer.name || "No name"}</h1>
+          <h1 className="text-3xl font-bold">{customer.name || 'No name'}</h1>
           <p className="text-muted-foreground">{customer.email}</p>
           <div className="flex gap-2 mt-2">
             <Badge
-              variant={customer.role === "ADMIN" ? "default" : "secondary"}
+              variant={customer.role === 'ADMIN' ? 'default' : 'secondary'}
             >
               {customer.role}
             </Badge>
@@ -157,7 +158,7 @@ export default async function CustomerDetailPage({
           </CardHeader>
           <CardContent>
             <div className="text-lg font-bold">
-              {format(new Date(customer.createdAt), "MMM yyyy")}
+              {format(new Date(customer.createdAt), 'MMM yyyy')}
             </div>
           </CardContent>
         </Card>
@@ -182,19 +183,19 @@ export default async function CustomerDetailPage({
           <div>
             <p className="text-sm text-muted-foreground">Account Status</p>
             <p className="font-medium">
-              {customer.emailVerified ? "Verified" : "Not Verified"}
+              {customer.emailVerified ? 'Verified' : 'Not Verified'}
             </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Joined Date</p>
             <p className="font-medium">
-              {format(new Date(customer.createdAt), "MMMM dd, yyyy")}
+              {format(new Date(customer.createdAt), 'MMMM dd, yyyy')}
             </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Last Updated</p>
             <p className="font-medium">
-              {format(new Date(customer.updatedAt), "MMMM dd, yyyy")}
+              {format(new Date(customer.updatedAt), 'MMMM dd, yyyy')}
             </p>
           </div>
         </CardContent>
@@ -240,7 +241,7 @@ export default async function CustomerDetailPage({
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {format(new Date(order.createdAt), "MMM dd, yyyy")}
+                      {format(new Date(order.createdAt), 'MMM dd, yyyy')}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" asChild>

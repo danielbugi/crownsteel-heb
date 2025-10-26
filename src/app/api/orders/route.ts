@@ -7,8 +7,11 @@ import {
   sendOrderNotificationToAdmin,
   type OrderEmailData,
 } from '@/lib/email';
+import { startPerformanceTracking } from '@/lib/track-performance';
 
 export async function POST(request: NextRequest) {
+  const trackEnd = startPerformanceTracking('/api/orders', 'POST');
+
   try {
     const session = await auth();
     const body = await request.json();
@@ -26,6 +29,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (!variant) {
+          trackEnd(404);
           return NextResponse.json(
             {
               error: 'Product variant not found',
@@ -36,6 +40,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (!variant.inStock || variant.inventory < item.quantity) {
+          trackEnd(400);
           return NextResponse.json(
             {
               error: 'Insufficient inventory',
@@ -63,6 +68,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (!product) {
+          trackEnd(404);
           return NextResponse.json(
             {
               error: 'Product not found',
@@ -73,6 +79,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (!product.inStock || product.inventory < item.quantity) {
+          trackEnd(400);
           return NextResponse.json(
             {
               error: 'Insufficient inventory',
@@ -287,9 +294,11 @@ export async function POST(request: NextRequest) {
     console.log('Order created with inventory deduction:', order.id);
 
     // ... rest of email logic stays the same
+    trackEnd(200);
     return NextResponse.json({ order });
   } catch (error) {
     console.error('Error creating order:', error);
+    trackEnd(500);
     return NextResponse.json(
       { error: 'Failed to create order' },
       { status: 500 }

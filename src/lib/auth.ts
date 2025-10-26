@@ -1,5 +1,4 @@
 import NextAuth from 'next-auth';
-import type { NextAuthConfig } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@auth/prisma-adapter';
@@ -8,6 +7,7 @@ import bcrypt from 'bcryptjs';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  trustHost: true, // Fix for UntrustedHost error
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -45,7 +45,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           email: user.email!,
           name: user.name!,
-          image: user.image,
+          image: user.image || undefined,
           role: user.role,
         };
       },
@@ -55,11 +55,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user }) {
       // On sign in, add user data to token
       if (user) {
         token.id = user.id;
-        token.role = (user as any).role;
+        token.role = user.role;
 
         token.needsWishlistSync = true;
       }

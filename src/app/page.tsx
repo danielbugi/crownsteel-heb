@@ -12,7 +12,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
-import { ProductCard } from '@/components/shop/product-card';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { serializeProducts } from '@/lib/serialize';
 
@@ -42,21 +41,6 @@ async function getNewArrivals() {
     orderBy: {
       createdAt: 'desc',
     },
-  });
-
-  // ✅ SERIALIZE
-  return serializeProducts(products);
-}
-
-async function getBestSellers() {
-  const products = await prisma.product.findMany({
-    where: {
-      inventory: { lt: 10 }, // Low stock = best sellers
-    },
-    include: {
-      category: true,
-    },
-    take: 6,
   });
 
   // ✅ SERIALIZE
@@ -97,7 +81,7 @@ export default async function HomePage() {
               <div className="space-y-4 md:space-y-6 text-white animate-fade-in">
                 <div className="flex items-center gap-3">
                   <Sparkles className="h-5 w-5 text-gold-400" />
-                  <h6 className="text-gold-400 font-thin uppercase tracking-widest text-xs md:text-sm font-semibold font-sans drop-shadow-lg">
+                  <h6 className="text-gold-400 uppercase tracking-widest text-xs md:text-sm font-semibold font-sans drop-shadow-lg">
                     Premium Handcrafted Jewelry
                   </h6>
                 </div>

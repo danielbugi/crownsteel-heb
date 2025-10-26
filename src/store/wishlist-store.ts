@@ -208,7 +208,9 @@ export const useWishlistStore = create<WishlistStore>()(
           if (response.ok) {
             const { items } = await response.json();
             // Extract product IDs from wishlist items
-            const productIds = items.map((item: any) => item.productId);
+            const productIds = items.map(
+              (item: { productId: string }) => item.productId
+            );
             set({ items: productIds });
           } else if (response.status === 401) {
             // Not authenticated - keep local items

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { z } from 'zod';
+import { startPerformanceTracking } from '@/lib/track-performance';
 
 const reviewSchema = z.object({
   productId: z.string(),
@@ -13,6 +14,8 @@ const reviewSchema = z.object({
 
 // GET - Fetch reviews for a product
 export async function GET(request: NextRequest) {
+  const trackEnd = startPerformanceTracking('/api/reviews', 'GET');
+
   try {
     const { searchParams } = new URL(request.url);
     const productId = searchParams.get('productId');
@@ -21,6 +24,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
 
     if (!productId) {
+      trackEnd(400);
       return NextResponse.json(
         { error: 'Product ID is required' },
         { status: 400 }
@@ -57,6 +61,7 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
+    trackEnd(200);
     return NextResponse.json({
       reviews,
       pagination: {
@@ -68,6 +73,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching reviews:', error);
+    trackEnd(500);
     return NextResponse.json(
       { error: 'Failed to fetch reviews' },
       { status: 500 }
@@ -77,10 +83,13 @@ export async function GET(request: NextRequest) {
 
 // POST - Submit a new review
 export async function POST(request: NextRequest) {
+  const trackEnd = startPerformanceTracking('/api/reviews', 'POST');
+
   try {
     const session = await auth();
 
     if (!session || !session.user) {
+      trackEnd(401);
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -101,6 +110,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingReview) {
+      trackEnd(400);
       return NextResponse.json(
         { error: 'You have already reviewed this product' },
         { status: 400 }
@@ -141,6 +151,7 @@ export async function POST(request: NextRequest) {
     // Update product rating stats
     await updateProductRatingStats(validatedData.productId);
 
+    trackEnd(201);
     return NextResponse.json(
       {
         review,
@@ -151,13 +162,15 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
+      trackEnd(400);
       return NextResponse.json(
-        { error: 'Invalid data', details: error.errors },
+        { error: 'Invalid data', details: error.issues },
         { status: 400 }
       );
     }
 
     console.error('Error creating review:', error);
+    trackEnd(500);
     return NextResponse.json(
       { error: 'Failed to create review' },
       { status: 500 }

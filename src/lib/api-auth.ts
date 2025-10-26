@@ -1,5 +1,5 @@
 // src/lib/api-auth.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 
 /**
@@ -19,7 +19,7 @@ export async function requireAdmin() {
     };
   }
 
-  const userRole = (session.user as any)?.role;
+  const userRole = session.user.role;
   if (userRole !== 'ADMIN') {
     return {
       authorized: false,

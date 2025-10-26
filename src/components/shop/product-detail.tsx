@@ -37,7 +37,19 @@ interface ProductDetailProps {
     hasVariants?: boolean;
     variantLabel?: string;
     variantLabelHe?: string;
-    variants?: any[];
+    variants?: Array<{
+      id: string;
+      name: string;
+      nameEn?: string;
+      nameHe?: string;
+      sku: string;
+      price?: number;
+      priceAdjustment?: number;
+      inventory: number;
+      inStock: boolean;
+      isDefault: boolean;
+      sortOrder: number;
+    }>;
     category: {
       id: string;
       name: string;
@@ -49,7 +61,10 @@ interface ProductDetailProps {
 export function ProductDetail({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(product.image);
-  const [selectedVariant, setSelectedVariant] = useState<any>(null);
+  type VariantType = NonNullable<ProductDetailProps['product']['variants']>[0];
+  const [selectedVariant, setSelectedVariant] = useState<VariantType | null>(
+    null
+  );
   const { addItem } = useCartStore();
 
   const handleAddToCart = () => {

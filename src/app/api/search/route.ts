@@ -1,8 +1,11 @@
 // src/app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get('q') || '';
@@ -19,7 +22,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {};
+    const where: Prisma.ProductWhereInput = {};
 
     if (query) {
       where.OR = [
@@ -51,13 +54,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Build orderBy clause
-    let orderBy: any = {};
+    const orderBy: Prisma.ProductOrderByWithRelationInput = {};
     if (sortBy === 'price') {
-      orderBy.price = sortOrder;
+      orderBy.price = sortOrder as Prisma.SortOrder;
     } else if (sortBy === 'name') {
-      orderBy.name = sortOrder;
+      orderBy.name = sortOrder as Prisma.SortOrder;
     } else {
-      orderBy.createdAt = sortOrder;
+      orderBy.createdAt = sortOrder as Prisma.SortOrder;
     }
 
     // Execute query with pagination
@@ -97,6 +100,20 @@ export async function GET(request: NextRequest) {
       },
     }));
 
+    // ← ADDED: Track performance (success)
+    const duration = Date.now() - startTime;
+    prisma.performanceMetric
+      .create({
+        data: {
+          endpoint: '/api/search',
+          method: 'GET',
+          duration,
+          status: 200,
+          timestamp: new Date(),
+        },
+      })
+      .catch(console.error);
+
     return NextResponse.json({
       products: localizedProducts,
       pagination: {
@@ -109,6 +126,21 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Search error:', error);
+
+    // ← ADDED: Track performance (error)
+    const duration = Date.now() - startTime;
+    prisma.performanceMetric
+      .create({
+        data: {
+          endpoint: '/api/search',
+          method: 'GET',
+          duration,
+          status: 500,
+          timestamp: new Date(),
+        },
+      })
+      .catch(console.error);
+
     return NextResponse.json(
       { error: 'Failed to search products' },
       { status: 500 }

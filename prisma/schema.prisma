@@ -127,6 +127,14 @@ model Product {
   stockReservations StockReservation[]
   variants          ProductVariant[]
 
+  // Performance indexes for common queries
+  @@index([categoryId])           // Fast category filtering
+  @@index([featured])             // Fast featured product queries  
+  @@index([inStock])              // Fast stock filtering
+  @@index([createdAt])            // Fast sorting by date
+  @@index([categoryId, featured]) // Fast featured products in category
+  @@index([categoryId, inStock])  // Fast in-stock products in category
+  @@index([featured, inStock])    // Fast featured + in-stock queries
   @@map("products")
 }
 
@@ -378,4 +386,17 @@ enum ReservationStatus {
   COMPLETED         // Order completed
   EXPIRED           // Reservation expired
   CANCELLED         // Order cancelled
+}
+
+model PerformanceMetric {
+  id        String   @id @default(cuid())
+  endpoint  String
+  method    String
+  duration  Int
+  status    Int
+  timestamp DateTime @default(now())
+  
+  @@index([endpoint])
+  @@index([timestamp])
+  @@map("performance_metrics")
 }

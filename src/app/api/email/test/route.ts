@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
           name: 'Silver Steel Ring',
           quantity: 1,
           price: 299,
-          image: `${process.env.NEXT_PUBLIC_URL}/products/ring-1.jpg`,
+          image: `${process.env.NEXT_PUBLIC_URL}/images/ring-4.jpg`,
         },
         {
           name: 'Black Leather Bracelet',
