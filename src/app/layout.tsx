@@ -3,7 +3,7 @@
 // Replace your existing layout.tsx with this version
 
 import type { Metadata, Viewport } from 'next';
-import { Playfair_Display } from 'next/font/google';
+import { Playfair_Display, Rubik, Heebo } from 'next/font/google';
 import './globals.css';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { Navbar } from '@/components/layout/navbar';
@@ -16,6 +16,7 @@ import { Toaster } from 'react-hot-toast';
 import { WishlistSyncProvider } from '@/components/providers/wishlist-sync-provider';
 import { WishlistSheet } from '@/components/wishlist/wishlist-sheet';
 import { StructuredData } from '@/components/seo/structured-data';
+import { HreflangLinks } from '@/components/seo/hreflang-links';
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -27,6 +28,18 @@ const playfair = Playfair_Display({
   variable: '--font-playfair',
   display: 'swap',
   weight: ['400', '500', '600', '700', '800', '900'],
+});
+
+const rubik = Rubik({
+  subsets: ['latin', 'hebrew'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-rubik',
+});
+
+const heebo = Heebo({
+  subsets: ['hebrew'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-heebo',
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
@@ -152,8 +165,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html
+      // lang="en"
+      className={`${rubik.variable} ${heebo.variable}`}
+    >
       <head>
+        <HreflangLinks />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -168,7 +185,7 @@ export default function RootLayout({
         <StructuredData data={[organizationSchema, websiteSchema]} />
       </head>
       <body
-        className={playfair.variable}
+        className="font-sans"
         style={{ fontFamily: "'Rubik', system-ui, sans-serif" }}
       >
         <AuthProvider>

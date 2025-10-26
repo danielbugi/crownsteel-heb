@@ -18,7 +18,9 @@ Allow: /api/products/
 Allow: /api/categories/
 
 # Sitemap location
-Sitemap: https://yoursite.com/sitemap.xml
+Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://yourdomain.com/sitemap-en.xml
+Sitemap: https://yourdomain.com/sitemap-he.xml
 
 # Crawl delay (optional - be nice to the server)
 Crawl-delay: 1
