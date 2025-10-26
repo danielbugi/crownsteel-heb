@@ -1,0 +1,24 @@
+# robots.txt for Forge & Steel
+# Allow all crawlers to access public pages
+
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /checkout/payment/
+Disallow: /cart
+Disallow: /wishlist
+Disallow: /_next/
+Disallow: /auth/
+
+# Allow specific API routes if needed for SEO
+Allow: /api/products/
+Allow: /api/categories/
+
+# Sitemap location
+Sitemap: https://yoursite.com/sitemap.xml
+
+# Crawl delay (optional - be nice to the server)
+Crawl-delay: 1

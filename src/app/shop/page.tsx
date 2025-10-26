@@ -1,3 +1,6 @@
+// src/app/shop/page.tsx
+// ENHANCED VERSION with SEO improvements
+
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
@@ -6,8 +9,12 @@ import { ProductGrid } from '@/components/shop/product-grid';
 import { CategoryFilter } from '@/components/shop/category-filter';
 import { Button } from '@/components/ui/button';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '@/contexts/language-context';
 
 export const dynamic = 'force-dynamic';
+
+// Note: For client components, we can't use generateMetadata
+// Instead, we'll need to create a separate metadata file or use a server component wrapper
 
 interface Product {
   id: string;
@@ -57,6 +64,7 @@ export default function ShopPage() {
 
 function ShopPageContent() {
   const searchParams = useSearchParams();
+  const { t, language } = useLanguage();
   const category = searchParams.get('category');
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -70,6 +78,25 @@ function ShopPageContent() {
   });
 
   useEffect(() => {
+    // Update page title dynamically
+    const categoryName = categories.find((c) => c.slug === category)?.name;
+    document.title = categoryName
+      ? `${categoryName} Collection | Forge & Steel`
+      : 'Shop All Jewelry | Forge & Steel';
+
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        'content',
+        categoryName
+          ? `Shop our ${categoryName} collection. Premium handcrafted jewelry for men.`
+          : 'Shop all premium handcrafted jewelry for men. Rings, bracelets, necklaces and more.'
+      );
+    }
+  }, [category, categories]);
+
+  useEffect(() => {
     fetchCategories();
   }, []);
 
@@ -77,7 +104,6 @@ function ShopPageContent() {
     fetchProducts();
   }, [category, pagination.page]);
 
-  // Reset to page 1 when category changes
   useEffect(() => {
     setPagination((prev) => ({ ...prev, page: 1 }));
   }, [category]);
@@ -121,121 +147,109 @@ function ShopPageContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const currentCategory = categories.find((c) => c.slug === category);
+  const pageTitle =
+    language === 'he'
+      ? currentCategory?.nameHe || 'כל המוצרים'
+      : currentCategory?.nameEn || 'All Products';
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="text-white py-20">
-        <div className="container px-4 mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Our Collection
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Discover handcrafted rings that define your style
+      {/* Header */}
+      <section className="bg-gradient-steel text-white py-16">
+        <div className="container px-4 mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageTitle}</h1>
+          <p className="text-xl text-muted-foreground">
+            {t('shop.description')}
           </p>
         </div>
       </section>
 
-      {/* Products Section */}
-      <section className="py-12">
-        <div className="container px-4 mx-auto">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar - Categories */}
-            <aside className="lg:w-64 flex-shrink-0">
-              <CategoryFilter categories={categories} />
-            </aside>
+      {/* Main Content */}
+      <section className="container px-4 mx-auto py-12">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar - Categories */}
+          <aside className="lg:w-64 flex-shrink-0">
+            <CategoryFilter
+              categories={categories}
+              selectedCategory={category || undefined}
+            />
+          </aside>
 
-            {/* Products Grid */}
-            <div className="flex-1">
-              <div className="flex justify-between items-center mb-6">
+          {/* Products Grid */}
+          <div className="flex-1">
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="text-2xl font-semibold mb-2">
+                  {t('shop.noProducts')}
+                </p>
                 <p className="text-muted-foreground">
-                  {loading
-                    ? 'Loading...'
-                    : `Showing ${pagination.total} products`}
+                  {t('shop.noProductsDesc')}
                 </p>
               </div>
-
-              {/* Loading State */}
-              {loading && (
-                <div className="flex justify-center items-center py-20">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            ) : (
+              <>
+                <div className="mb-6 text-muted-foreground">
+                  {t('shop.productsFound', { count: pagination.total })}
                 </div>
-              )}
+                <ProductGrid products={products} />
 
-              {/* Products */}
-              {!loading && products.length > 0 && (
-                <>
-                  <ProductGrid products={products} />
+                {/* Pagination */}
+                {pagination.pages > 1 && (
+                  <div className="mt-12 flex items-center justify-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => goToPage(pagination.page - 1)}
+                      disabled={pagination.page === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
 
-                  {/* Pagination */}
-                  {pagination.pages > 1 && (
-                    <div className="flex items-center justify-center gap-4 mt-12">
-                      <Button
-                        variant="outline"
-                        onClick={() => goToPage(pagination.page - 1)}
-                        disabled={pagination.page === 1}
-                      >
-                        <ChevronLeft className="h-4 w-4 mr-2" />
-                        Previous
-                      </Button>
+                    {Array.from({ length: pagination.pages }, (_, i) => i + 1)
+                      .filter((page) => {
+                        const current = pagination.page;
+                        return (
+                          page === 1 ||
+                          page === pagination.pages ||
+                          (page >= current - 1 && page <= current + 1)
+                        );
+                      })
+                      .map((page, index, array) => {
+                        const prevPage = array[index - 1];
+                        const showEllipsis = prevPage && page - prevPage > 1;
 
-                      <div className="flex items-center gap-2">
-                        {[...Array(Math.min(5, pagination.pages))].map(
-                          (_, i) => {
-                            let pageNum;
-                            if (pagination.pages <= 5) {
-                              pageNum = i + 1;
-                            } else if (pagination.page <= 3) {
-                              pageNum = i + 1;
-                            } else if (
-                              pagination.page >=
-                              pagination.pages - 2
-                            ) {
-                              pageNum = pagination.pages - 4 + i;
-                            } else {
-                              pageNum = pagination.page - 2 + i;
-                            }
+                        return (
+                          <div key={page} className="flex items-center gap-2">
+                            {showEllipsis && <span className="px-2">...</span>}
+                            <Button
+                              variant={
+                                page === pagination.page ? 'default' : 'outline'
+                              }
+                              onClick={() => goToPage(page)}
+                            >
+                              {page}
+                            </Button>
+                          </div>
+                        );
+                      })}
 
-                            return (
-                              <Button
-                                key={pageNum}
-                                variant={
-                                  pagination.page === pageNum
-                                    ? 'default'
-                                    : 'outline'
-                                }
-                                size="sm"
-                                onClick={() => goToPage(pageNum)}
-                              >
-                                {pageNum}
-                              </Button>
-                            );
-                          }
-                        )}
-                      </div>
-
-                      <Button
-                        variant="outline"
-                        onClick={() => goToPage(pagination.page + 1)}
-                        disabled={pagination.page === pagination.pages}
-                      >
-                        Next
-                        <ChevronRight className="h-4 w-4 ml-2" />
-                      </Button>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* No Products */}
-              {!loading && products.length === 0 && (
-                <div className="text-center py-20">
-                  <h2 className="text-2xl font-bold mb-2">No products found</h2>
-                  <p className="text-muted-foreground">
-                    Try selecting a different category
-                  </p>
-                </div>
-              )}
-            </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => goToPage(pagination.page + 1)}
+                      disabled={pagination.page === pagination.pages}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </section>

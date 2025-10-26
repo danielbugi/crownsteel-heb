@@ -1,4 +1,8 @@
-import type { Metadata } from 'next';
+// src/app/layout.tsx
+// ENHANCED VERSION with improved SEO
+// Replace your existing layout.tsx with this version
+
+import type { Metadata, Viewport } from 'next';
 import { Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
@@ -9,8 +13,13 @@ import { AuthProvider } from '@/components/providers/auth-provider';
 import { SettingsProvider } from '@/contexts/settings-context';
 import { LanguageProvider } from '@/contexts/language-context';
 import { Toaster } from 'react-hot-toast';
-import { WishlistSyncProvider } from '@/components/providers/wishlist-sync-provider'; // ✅ ADD THIS
+import { WishlistSyncProvider } from '@/components/providers/wishlist-sync-provider';
 import { WishlistSheet } from '@/components/wishlist/wishlist-sheet';
+import { StructuredData } from '@/components/seo/structured-data';
+import {
+  generateOrganizationSchema,
+  generateWebSiteSchema,
+} from '@/lib/seo/structured-data';
 
 // Playfair Display - Heading Font
 const playfair = Playfair_Display({
@@ -20,11 +29,122 @@ const playfair = Playfair_Display({
   weight: ['400', '500', '600', '700', '800', '900'],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+const SITE_NAME = 'CrownSteel';
+
+// Enhanced Metadata
 export const metadata: Metadata = {
-  title: "Forge & Steel - Premium Men's Jewelry",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} - Feel Like a King`,
+    template: `%s | ${SITE_NAME}`,
+  },
   description:
-    'Handcrafted rings and jewelry designed for the modern gentleman',
+    'Handcrafted rings and jewelry designed for the modern gentleman. Premium quality materials, expert craftsmanship, and timeless designs.',
+  keywords: [
+    "men's jewelry",
+    'handcrafted rings',
+    'premium jewelry',
+    'steel jewelry',
+    'men accessories',
+    'men rings',
+    'bracelets',
+    'necklaces',
+    'תכשיטים לגברים',
+    'טבעות לגברים',
+  ],
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: SITE_URL,
+    languages: {
+      en: `${SITE_URL}/en`,
+      he: `${SITE_URL}/he`,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    alternateLocale: 'he_IL',
+    url: SITE_URL,
+    title: `${SITE_NAME} - Premium Men's Jewelry`,
+    description:
+      'Handcrafted rings and jewelry designed for the modern gentleman',
+    siteName: SITE_NAME,
+    images: [
+      {
+        url: `${SITE_URL}/images/og-image.jpg`,
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} - Premium Men's Jewelry`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE_NAME} - Premium Men's Jewelry`,
+    description:
+      'Handcrafted rings and jewelry designed for the modern gentleman',
+    images: [`${SITE_URL}/images/twitter-image.jpg`],
+    creator: '@forgeandsteel', // Update with your actual Twitter handle
+  },
+  verification: {
+    google: 'your-google-verification-code', // Add your Google Search Console verification code
+    // yandex: 'your-yandex-verification-code',
+    // bing: 'your-bing-verification-code',
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
 };
+
+// Viewport configuration
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+};
+
+// Generate organization and website schemas
+const organizationSchema = generateOrganizationSchema({
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: `${SITE_URL}/images/logo.png`,
+  contactEmail: 'info@forgeandsteel.com', // Update with actual email
+  contactPhone: '+972-XX-XXXXXXX', // Update with actual phone
+  address: 'Tel Aviv, Israel', // Update with actual address
+  socialLinks: [
+    'https://facebook.com/forgeandsteel',
+    'https://instagram.com/forgeandsteel',
+    'https://twitter.com/forgeandsteel',
+  ],
+});
+
+const websiteSchema = generateWebSiteSchema(SITE_URL, SITE_NAME);
 
 export default function RootLayout({
   children,
@@ -44,6 +164,8 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
           rel="stylesheet"
         />
+        {/* Structured Data */}
+        <StructuredData data={[organizationSchema, websiteSchema]} />
       </head>
       <body
         className={playfair.variable}
