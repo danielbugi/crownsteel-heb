@@ -34,7 +34,7 @@ export function UserMenuSidebar({
   const { t, direction } = useLanguage();
 
   // Debug logging
-  console.log('UserMenuSidebar render:', { isOpen, direction, user: !!user });
+  // console.log('UserMenuSidebar render:', { isOpen, direction, user: !!user });
 
   const handleSignOut = () => {
     signOut();

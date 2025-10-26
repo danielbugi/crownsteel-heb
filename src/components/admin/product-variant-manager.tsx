@@ -1,9 +1,11 @@
 // src/components/admin/product-variant-manager.tsx
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Trash2, Plus, GripVertical } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -35,6 +37,9 @@ export function ProductVariantManager({
   variants,
   onChange,
 }: ProductVariantManagerProps) {
+  const [variantType, setVariantType] = useState('');
+  const [variantLabel, setVariantLabel] = useState('');
+  const [variantLabelHe, setVariantLabelHe] = useState('');
 
   const addVariant = () => {
     const newVariant: Variant = {
@@ -50,7 +55,7 @@ export function ProductVariantManager({
     onChange([...variants, newVariant]);
   };
 
-  const updateVariant = (index: number, field: keyof Variant, value: string | number | boolean | undefined) => {
+  const updateVariant = (index: number, field: keyof Variant, value: any) => {
     const updated = [...variants];
     updated[index] = { ...updated[index], [field]: value };
     onChange(updated);
@@ -76,115 +81,102 @@ export function ProductVariantManager({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold">Product Variants</h3>
-          <p className="text-sm text-muted-foreground">
-            Add different options like sizes, colors, or lengths
-          </p>
-        </div>
-      </div>
-
-      {/* Variant Configuration - Simplified */}
-      {variants.length === 0 && (
-        <div className="bg-muted/30 border border-dashed border-muted-foreground/30 rounded-lg p-6">
-          <div className="text-center space-y-3">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-              <Plus className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h4 className="font-medium">No variants yet</h4>
-              <p className="text-sm text-muted-foreground">
-                Add variants to offer different options like sizes or colors
-              </p>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-              <div className="bg-background rounded p-2">Ring Sizes</div>
-              <div className="bg-background rounded p-2">Chain Lengths</div>
-              <div className="bg-background rounded p-2">Bracelet Sizes</div>
-            </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Product Variants</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Variant Configuration */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <Label>Variant Type</Label>
+            <Input
+              placeholder="e.g., Size, Length, Width"
+              value={variantType}
+              onChange={(e) => setVariantType(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              What varies? (Size, Length, etc.)
+            </p>
+          </div>
+          <div>
+            <Label>Display Label (English)</Label>
+            <Input
+              placeholder="e.g., Ring Size, Chain Length"
+              value={variantLabel}
+              onChange={(e) => setVariantLabel(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>Display Label (Hebrew)</Label>
+            <Input
+              placeholder="e.g., מידת טבעת, אורך שרשרת"
+              value={variantLabelHe}
+              onChange={(e) => setVariantLabelHe(e.target.value)}
+            />
           </div>
         </div>
-      )}
 
-      {/* Variants List */}
-      {variants.length > 0 && (
-        <div className="space-y-3">
+        {/* Variants List */}
+        <div className="space-y-4">
           {variants.map((variant, index) => (
-            <div
-              key={index}
-              className="group bg-background border border-border rounded-lg p-4 hover:shadow-sm transition-shadow"
-            >
-              <div className="flex items-start gap-4">
-                {/* Drag Handle */}
-                <div className="flex-shrink-0 cursor-move pt-2 opacity-40 group-hover:opacity-100 transition-opacity">
-                  <GripVertical className="h-4 w-4 text-muted-foreground" />
-                </div>
+            <Card key={index} className="border-2">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 cursor-move mt-8">
+                    <GripVertical className="h-5 w-5 text-muted-foreground" />
+                  </div>
 
-                {/* Content */}
-                <div className="flex-1 space-y-4">
-                  {/* Main Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div className="space-y-1">
-                      <Label className="text-xs font-medium text-muted-foreground">
-                        Variant Name
-                      </Label>
+                  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* Variant Name */}
+                    <div>
+                      <Label>Variant Name *</Label>
                       <Input
                         placeholder="e.g., 50cm, Size 9"
                         value={variant.name}
                         onChange={(e) =>
                           updateVariant(index, 'name', e.target.value)
                         }
-                        className="h-9"
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <Label className="text-xs font-medium text-muted-foreground">
-                        SKU
-                      </Label>
+                    {/* SKU */}
+                    <div>
+                      <Label>SKU *</Label>
                       <Input
-                        placeholder="AUTO"
+                        placeholder="PRODUCT-VAR-1"
                         value={variant.sku}
                         onChange={(e) =>
                           updateVariant(index, 'sku', e.target.value)
                         }
-                        className="h-9"
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <Label className="text-xs font-medium text-muted-foreground">
-                        Price Adjustment (₪)
-                      </Label>
-                      <div className="relative">
-                        <Input
-                          type="number"
-                          placeholder="0"
-                          value={variant.priceAdjustment || ''}
-                          onChange={(e) =>
-                            updateVariant(
-                              index,
-                              'priceAdjustment',
-                              e.target.value
-                                ? parseFloat(e.target.value)
-                                : undefined
-                            )
-                          }
-                          className="h-9"
-                        />
-                        <div className="absolute -bottom-5 left-0 text-xs text-muted-foreground">
-                          = ₪{calculatePrice(variant)}
-                        </div>
-                      </div>
+                    {/* Price Adjustment */}
+                    <div>
+                      <Label>Price Adjustment (₪)</Label>
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        value={variant.priceAdjustment || ''}
+                        onChange={(e) =>
+                          updateVariant(
+                            index,
+                            'priceAdjustment',
+                            e.target.value
+                              ? parseFloat(e.target.value)
+                              : undefined
+                          )
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Final: ₪{calculatePrice(variant)}
+                      </p>
                     </div>
 
-                    <div className="space-y-1">
-                      <Label className="text-xs font-medium text-muted-foreground">
-                        Stock
-                      </Label>
+                    {/* Inventory */}
+                    <div>
+                      <Label>Inventory *</Label>
                       <Input
                         type="number"
                         placeholder="0"
@@ -196,41 +188,28 @@ export function ProductVariantManager({
                             parseInt(e.target.value) || 0
                           )
                         }
-                        className="h-9"
                       />
                     </div>
                   </div>
 
-                  {/* Status Row */}
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          checked={variant.inStock}
-                          onCheckedChange={(checked) =>
-                            updateVariant(index, 'inStock', checked)
-                          }
-                        />
-                        <span className="text-sm text-muted-foreground">
-                          In Stock
-                        </span>
-                      </div>
+                  {/* Actions */}
+                  <div className="flex-shrink-0 space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={variant.inStock}
+                        onCheckedChange={(checked) =>
+                          updateVariant(index, 'inStock', checked)
+                        }
+                      />
+                      <Label className="text-xs">In Stock</Label>
+                    </div>
 
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          checked={variant.isDefault}
-                          onCheckedChange={() => setAsDefault(index)}
-                        />
-                        <span className="text-sm text-muted-foreground">
-                          Default
-                        </span>
-                      </div>
-
-                      {variant.isDefault && (
-                        <Badge variant="secondary" className="text-xs">
-                          Default Option
-                        </Badge>
-                      )}
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={variant.isDefault}
+                        onCheckedChange={() => setAsDefault(index)}
+                      />
+                      <Label className="text-xs">Default</Label>
                     </div>
 
                     <Button
@@ -238,28 +217,49 @@ export function ProductVariantManager({
                       variant="ghost"
                       size="sm"
                       onClick={() => removeVariant(index)}
-                      className="text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="text-red-500 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
-              </div>
-            </div>
+
+                {/* Preview Badge */}
+                <div className="mt-4">
+                  <Badge variant="outline">
+                    {variant.name} - ₪{calculatePrice(variant)} - Stock:{' '}
+                    {variant.inventory}
+                    {variant.isDefault && ' (Default)'}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
-      )}
 
-      {/* Add Variant Button */}
-      <Button
-        type="button"
-        onClick={addVariant}
-        variant="outline"
-        className="w-full h-11 border-dashed hover:border-solid hover:bg-accent/50"
-      >
-        <Plus className="h-4 w-4 mr-2" />
-        Add New Variant
-      </Button>
-    </div>
+        {/* Add Variant Button */}
+        <Button
+          type="button"
+          onClick={addVariant}
+          variant="outline"
+          className="w-full"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Variant
+        </Button>
+
+        {/* Quick Add Helper */}
+        {variants.length === 0 && (
+          <div className="bg-muted p-4 rounded-lg">
+            <p className="text-sm font-medium mb-2">💡 Quick Examples:</p>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Ring Sizes: 8, 9, 10, 11, 12</li>
+              <li>• Chain Lengths: 45cm, 50cm, 55cm, 60cm</li>
+              <li>• Bracelet Sizes: Small, Medium, Large</li>
+            </ul>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

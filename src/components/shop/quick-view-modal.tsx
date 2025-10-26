@@ -257,7 +257,7 @@ export function QuickViewModal({
             <div className="space-y-3 mt-auto">
               <Button
                 size="lg"
-                className="uppercase w-full bg-black hover:bg-white text-white hover:text-black border font-semibold flex gap-2"
+                className="uppercase w-full bg-black hover:bg-white text-white hover:text-black border- font-semibold flex gap-2"
                 onClick={handleAddToCart}
                 disabled={!product.inStock}
               >

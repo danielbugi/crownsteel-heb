@@ -23,6 +23,8 @@ interface CartStore {
   ) => void; // UPDATE THIS
   clearCart: () => void;
   toggleCart: () => void;
+  openCart: () => void;
+  closeCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
 }
@@ -47,10 +49,12 @@ export const useCartStore = create<CartStore>()(
                 ? { ...i, quantity: i.quantity + (item.quantity || 1) }
                 : i
             ),
+            isOpen: true, // Open cart when item is added
           });
         } else {
           set({
             items: [...items, { ...item, quantity: item.quantity || 1 }],
+            isOpen: true, // Open cart when item is added
           });
         }
       },
@@ -78,6 +82,8 @@ export const useCartStore = create<CartStore>()(
       },
       clearCart: () => set({ items: [] }),
       toggleCart: () => set({ isOpen: !get().isOpen }),
+      openCart: () => set({ isOpen: true }),
+      closeCart: () => set({ isOpen: false }),
       getTotalItems: () =>
         get().items.reduce((total, item) => total + item.quantity, 0),
       getTotalPrice: () =>

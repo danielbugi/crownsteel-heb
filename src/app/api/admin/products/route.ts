@@ -3,31 +3,81 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/api-auth';
 
-export async function GET() {
-  // Check admin authorization
+export async function GET(request: NextRequest) {
   const authCheck = await requireAdmin();
   if (!authCheck.authorized) {
     return authCheck.response;
   }
 
   try {
-    const products = await prisma.product.findMany({
-      include: {
-        category: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const skip = (page - 1) * limit;
+    const search = searchParams.get('search') || '';
+    const categoryId = searchParams.get('categoryId');
+    const featured = searchParams.get('featured');
+    const inStock = searchParams.get('inStock');
+
+    // Build where clause
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { nameEn: { contains: search, mode: 'insensitive' } },
+        { nameHe: { contains: search, mode: 'insensitive' } },
+        { sku: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+
+    if (featured === 'true') {
+      where.featured = true;
+    }
+
+    if (inStock === 'true') {
+      where.inStock = true;
+    } else if (inStock === 'false') {
+      where.inStock = false;
+    }
+
+    // Fetch products and total count in parallel
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        include: {
+          category: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.product.count({ where }),
+    ]);
 
     // Convert Decimal to number for all products
     const productsData = products.map((product) => ({
       ...product,
       price: product.price.toNumber(),
       comparePrice: product.comparePrice?.toNumber() ?? null,
+      averageRating: product.averageRating?.toNumber() ?? null,
     }));
 
-    return NextResponse.json(productsData);
+    return NextResponse.json({
+      products: productsData,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(
@@ -38,7 +88,6 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  // Check admin authorization
   const authCheck = await requireAdmin();
   if (!authCheck.authorized) {
     return authCheck.response;
@@ -104,7 +153,6 @@ export async function POST(request: NextRequest) {
 
     // Create product with variants in transaction
     const product = await prisma.$transaction(async (tx) => {
-      // Create base product
       const newProduct = await tx.product.create({
         data: {
           name: name || nameEn,
@@ -123,28 +171,30 @@ export async function POST(request: NextRequest) {
           featured: featured ?? false,
           freeShipping: freeShipping ?? false,
           inventory: hasVariants ? 0 : (inventory ?? 0),
-          // NEW: Variant fields
+          lowStockThreshold: lowStockThreshold ?? 10,
+          reorderPoint: reorderPoint ?? 20,
+          reorderQuantity: reorderQuantity ?? 50,
+          sku: sku || null,
           hasVariants: hasVariants ?? false,
-          variantType,
-          variantLabel,
-          variantLabelHe,
+          variantType: variantType || null,
+          variantLabel: variantLabel || null,
+          variantLabelHe: variantLabelHe || null,
         },
       });
 
-      // Create variants if provided
-      if (hasVariants && variants && variants.length > 0) {
+      if (hasVariants && Array.isArray(variants) && variants.length > 0) {
         await tx.productVariant.createMany({
           data: variants.map((variant: any, index: number) => ({
             productId: newProduct.id,
             name: variant.name,
             nameEn: variant.nameEn || variant.name,
-            nameHe: variant.nameHe,
+            nameHe: variant.nameHe || null,
             sku: variant.sku,
             price: variant.price || null,
             priceAdjustment: variant.priceAdjustment || null,
-            inventory: variant.inventory || 0,
+            inventory: variant.inventory ?? 0,
             inStock: variant.inStock ?? true,
-            lowStockThreshold: variant.lowStockThreshold || 10,
+            lowStockThreshold: variant.lowStockThreshold || null,
             image: variant.image || null,
             sortOrder: variant.sortOrder ?? index,
             isDefault: variant.isDefault ?? index === 0,
@@ -155,14 +205,13 @@ export async function POST(request: NextRequest) {
       return newProduct;
     });
 
-    // Convert Decimal to number
     const productData = {
       ...product,
       price: product.price.toNumber(),
       comparePrice: product.comparePrice?.toNumber() ?? null,
     };
 
-    return NextResponse.json(productData, { status: 201 });
+    return NextResponse.json(productData);
   } catch (error) {
     console.error('Error creating product:', error);
     return NextResponse.json(

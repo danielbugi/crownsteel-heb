@@ -1,3 +1,4 @@
+// src/app/api/products/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { serializeProducts } from '@/lib/serialize';
@@ -24,7 +25,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Serialize prices
     const serializedProducts = serializeProducts(products);
 
     return NextResponse.json({ products: serializedProducts });
@@ -43,53 +43,54 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const featured = searchParams.get('featured');
     const lang = searchParams.get('lang') || 'en';
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const skip = (page - 1) * limit;
 
-    const products = await prisma.product.findMany({
-      where: {
-        ...(category && {
-          category: {
-            slug: category,
+    // Build where clause
+    const where: any = {};
+
+    if (category) {
+      where.category = {
+        slug: category,
+      };
+    }
+
+    if (featured === 'true') {
+      where.featured = true;
+    }
+
+    // Fetch products and total count in parallel
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        include: {
+          category: true,
+          variants: {
+            where: { inStock: true },
+            orderBy: { sortOrder: 'asc' },
           },
-        }),
-        ...(featured === 'true' && {
-          featured: true,
-        }),
-      },
-      include: {
-        category: true,
-        variants: {
-          where: { inStock: true },
-          orderBy: { sortOrder: 'asc' },
         },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    // Localize product and category names
-    // const localizedProducts = products.map((product) => ({
-    //   ...product,
-    //   name:
-    //     lang === 'he' && product.nameHe
-    //       ? product.nameHe
-    //       : product.nameEn || product.name,
-    //   description:
-    //     lang === 'he' && product.descriptionHe
-    //       ? product.descriptionHe
-    //       : product.descriptionEn || product.description,
-    //   category: {
-    //     ...product.category,
-    //     name:
-    //       lang === 'he' && product.category.nameHe
-    //         ? product.category.nameHe
-    //         : product.category.nameEn || product.category.name,
-    //   },
-    // }));
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.product.count({ where }),
+    ]);
 
     const serializedProducts = serializeProducts(products);
 
-    return NextResponse.json(serializedProducts);
+    return NextResponse.json({
+      products: serializedProducts,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(

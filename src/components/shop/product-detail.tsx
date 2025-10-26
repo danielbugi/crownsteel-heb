@@ -50,7 +50,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(product.image);
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
-  const { addItem, toggleCart } = useCartStore();
+  const { addItem } = useCartStore();
 
   const handleAddToCart = () => {
     // CRITICAL: Block checkout if product has variants but none is selected
@@ -94,7 +94,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
     });
 
     toast.success(`Added ${quantity} item(s) to cart`);
-    toggleCart();
   };
 
   // Check if add to cart button should be disabled
@@ -142,7 +141,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
         {/* Product Images Gallery */}
         <div className="space-y-4">
           {/* Main Image */}
-          <div className="relative aspect-square overflow-hidden rounded-lg bg-secondary">
+          <div className="relative aspect-square overflow-hidden bg-secondary">
             <Image
               src={selectedImage}
               alt={product.name}
@@ -166,7 +165,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   key={index}
                   onClick={() => setSelectedImage(image)}
                   className={cn(
-                    'relative aspect-square overflow-hidden rounded-lg border-2 transition-all',
+                    'relative aspect-square overflow-hidden border-2 transition-all',
                     selectedImage === image
                       ? 'border-accent ring-2 ring-accent'
                       : 'border-border hover:border-accent/50'

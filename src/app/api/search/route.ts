@@ -1,32 +1,37 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+// src/app/api/search/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const query = searchParams.get("q") || "";
-    const category = searchParams.get("category");
-    const minPrice = searchParams.get("minPrice");
-    const maxPrice = searchParams.get("maxPrice");
-    const sortBy = searchParams.get("sortBy") || "createdAt";
-    const sortOrder = searchParams.get("sortOrder") || "desc";
-    const inStock = searchParams.get("inStock");
-    const featured = searchParams.get("featured");
-    const lang = searchParams.get("lang") || "en";
+    const query = searchParams.get('q') || '';
+    const category = searchParams.get('category');
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const inStock = searchParams.get('inStock');
+    const featured = searchParams.get('featured');
+    const lang = searchParams.get('lang') || 'en';
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {
-      OR: [
-        { name: { contains: query, mode: "insensitive" } },
-        { nameEn: { contains: query, mode: "insensitive" } },
-        { nameHe: { contains: query, mode: "insensitive" } },
-        { description: { contains: query, mode: "insensitive" } },
-        { descriptionEn: { contains: query, mode: "insensitive" } },
-        { descriptionHe: { contains: query, mode: "insensitive" } },
-      ],
-    };
+    const where: any = {};
 
-    // Add filters
+    if (query) {
+      where.OR = [
+        { name: { contains: query, mode: 'insensitive' } },
+        { nameEn: { contains: query, mode: 'insensitive' } },
+        { nameHe: { contains: query, mode: 'insensitive' } },
+        { description: { contains: query, mode: 'insensitive' } },
+        { descriptionEn: { contains: query, mode: 'insensitive' } },
+        { descriptionHe: { contains: query, mode: 'insensitive' } },
+      ];
+    }
+
     if (category) {
       where.category = { slug: category };
     }
@@ -37,50 +42,56 @@ export async function GET(request: NextRequest) {
       if (maxPrice) where.price.lte = parseFloat(maxPrice);
     }
 
-    if (inStock === "true") {
+    if (inStock === 'true') {
       where.inStock = true;
     }
 
-    if (featured === "true") {
+    if (featured === 'true') {
       where.featured = true;
     }
 
     // Build orderBy clause
     let orderBy: any = {};
-    if (sortBy === "price") {
+    if (sortBy === 'price') {
       orderBy.price = sortOrder;
-    } else if (sortBy === "name") {
+    } else if (sortBy === 'name') {
       orderBy.name = sortOrder;
     } else {
       orderBy.createdAt = sortOrder;
     }
 
-    // Execute query
-    const products = await prisma.product.findMany({
-      where,
-      include: {
-        category: true,
-      },
-      orderBy,
-    });
+    // Execute query with pagination
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        include: {
+          category: true,
+        },
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      prisma.product.count({ where }),
+    ]);
 
     // Localize and serialize
     const localizedProducts = products.map((product) => ({
       ...product,
       price: product.price.toNumber(),
       comparePrice: product.comparePrice?.toNumber() || null,
+      averageRating: product.averageRating?.toNumber() || null,
       name:
-        lang === "he" && product.nameHe
+        lang === 'he' && product.nameHe
           ? product.nameHe
           : product.nameEn || product.name,
       description:
-        lang === "he" && product.descriptionHe
+        lang === 'he' && product.descriptionHe
           ? product.descriptionHe
           : product.descriptionEn || product.description,
       category: {
         ...product.category,
         name:
-          lang === "he" && product.category.nameHe
+          lang === 'he' && product.category.nameHe
             ? product.category.nameHe
             : product.category.nameEn || product.category.name,
       },
@@ -88,13 +99,18 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       products: localizedProducts,
-      total: localizedProducts.length,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
       query,
     });
   } catch (error) {
-    console.error("Search error:", error);
+    console.error('Search error:', error);
     return NextResponse.json(
-      { error: "Failed to search products" },
+      { error: 'Failed to search products' },
       { status: 500 }
     );
   }

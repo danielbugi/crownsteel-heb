@@ -172,7 +172,7 @@ export default async function HomePage() {
                 </CardContent>
               </Card>
 
-              <Card className="backdrop-blur-sm ">
+              <Card className="backdrop-blur-sm">
                 <CardContent className="flex flex-col items-center text-center pt-6 md:pt-8 pb-6 md:pb-8">
                   <div className="flex items-center justify-center mb-2 md:mb-2">
                     <HeadphonesIcon className="font-bold text-sm md:text-sm mb-2 md:mb-0" />

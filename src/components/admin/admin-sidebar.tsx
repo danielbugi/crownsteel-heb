@@ -13,6 +13,7 @@ import {
   Gem,
   Star,
   Warehouse,
+  Activity,
 } from 'lucide-react';
 import { useSettings } from '@/contexts/settings-context';
 
@@ -24,6 +25,7 @@ const navigation = [
   { name: 'Categories', href: '/admin/categories', icon: FolderTree },
   { name: 'Customers', href: '/admin/customers', icon: Users },
   { name: 'Reviews', href: '/admin/reviews', icon: Star },
+  { name: 'Performance', href: '/admin/performance', icon: Activity },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 

@@ -45,7 +45,7 @@ export default function CartPage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Continue Shopping
           </Link>
-          <h1 className="text-4xl font-bold">Shopping Cart</h1>
+          <h1 className="text-4xl font-bold text-white">Shopping Cart</h1>
           <p className="text-white/80 mt-2">{totalItems} items in your cart</p>
         </div>
       </section>
@@ -60,7 +60,7 @@ export default function CartPage() {
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Cart Items</CardTitle>
                   <Button
-                    variant="ghost"
+                    variant="default"
                     size="sm"
                     onClick={clearCart}
                     className="text-destructive hover:text-destructive"
