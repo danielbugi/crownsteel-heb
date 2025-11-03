@@ -8,6 +8,7 @@ import { useWishlistStore } from '@/store/wishlist-store';
 import { useLanguage } from '@/contexts/language-context';
 import { ProductCard } from '@/components/shop/product-card';
 import { Button } from '@/components/ui/button';
+import { HeroSection } from '@/components/layout/hero-section';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Heart, ShoppingBag, Loader2, AlertCircle } from 'lucide-react';
@@ -40,46 +41,104 @@ export default function WishlistPage() {
   const { items, getItemCount, syncWithServer } = useWishlistStore();
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Start with false to allow initial load
   const [synced, setSynced] = useState(false);
+  const [initialized, setInitialized] = useState(false); // Add initialization flag
+  // Fix hydration mismatch by not reading count during SSR
+  const [wishlistCount, setWishlistCount] = useState(0);
 
   const isAuthenticated = !!session?.user;
-  const wishlistCount = getItemCount();
+
+  console.log('🔍 Component render:', {
+    isAuthenticated,
+    loading,
+    synced,
+    initialized,
+    itemsLength: items.length,
+    wishlistCount,
+  });
+
+  // Update count after component mounts to prevent hydration mismatch
+  useEffect(() => {
+    setWishlistCount(getItemCount());
+  }, [getItemCount]);
+
+  // Update count when items change
+  useEffect(() => {
+    setWishlistCount(getItemCount());
+  }, [items, getItemCount]);
 
   // Load product details
   const loadProducts = useCallback(async () => {
+    console.log('🔄 Loading wishlist products...', {
+      isAuthenticated,
+      itemsLength: items.length,
+    });
     setLoading(true);
 
     try {
       if (isAuthenticated) {
+        console.log('👤 Authenticated user - fetching from server');
         // Fetch from server with full product details
         const response = await fetch('/api/wishlist');
         if (response.ok) {
           const { items: wishlistItems } = await response.json();
-          const productsList = wishlistItems.map((item: any) => ({
-            id: item.product.id,
-            name: item.product.name,
-            slug: item.product.slug,
-            price: item.product.price,
-            comparePrice: item.product.comparePrice,
-            image: item.product.image,
-            images: item.product.images || [item.product.image],
-            description: item.product.description || '',
-            inStock: item.product.inStock,
-            featured: item.product.featured || false,
-            inventory: item.product.inventory,
-            createdAt: item.product.createdAt,
-            category: {
-              id: item.product.category.id,
-              name: item.product.category.name,
-              slug: item.product.category.slug,
-            },
-          }));
+          console.log(
+            '✅ Server response:',
+            wishlistItems?.length || 0,
+            'items'
+          );
+          const productsList = wishlistItems.map(
+            (item: {
+              product: {
+                id: string;
+                name: string;
+                slug: string;
+                price: number;
+                comparePrice: number | null;
+                image: string;
+                images?: string[];
+                description?: string;
+                inStock: boolean;
+                featured?: boolean;
+                inventory?: number;
+                createdAt?: string;
+                category: {
+                  id: string;
+                  name: string;
+                  slug: string;
+                };
+              };
+            }) => ({
+              id: item.product.id,
+              name: item.product.name,
+              slug: item.product.slug,
+              price: item.product.price,
+              comparePrice: item.product.comparePrice,
+              image: item.product.image,
+              images: item.product.images || [item.product.image],
+              description: item.product.description || '',
+              inStock: item.product.inStock,
+              featured: item.product.featured || false,
+              inventory: item.product.inventory,
+              createdAt: item.product.createdAt,
+              category: {
+                id: item.product.category.id,
+                name: item.product.category.name,
+                slug: item.product.category.slug,
+              },
+            })
+          );
           setProducts(productsList);
+        } else {
+          console.log('❌ Server error:', response.status);
+          setProducts([]);
         }
       } else {
+        console.log('👤 Guest user - items in localStorage:', items.length);
         // Guest user - fetch basic product info
         if (items.length > 0) {
+          console.log('📦 Fetching products for guest user...');
           const response = await fetch('/api/products', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -90,7 +149,23 @@ export default function WishlistPage() {
             const data = await response.json();
             // Map the products to match the expected interface
             const mappedProducts = (data.products || []).map(
-              (product: any) => ({
+              (product: {
+                id: string;
+                name: string;
+                slug: string;
+                price: number;
+                comparePrice: number | null;
+                image: string;
+                images?: string[];
+                description?: string;
+                inStock: boolean;
+                featured?: boolean;
+                category?: {
+                  id: string;
+                  name: string;
+                  slug: string;
+                };
+              }) => ({
                 ...product,
                 images: product.images || [product.image],
                 description: product.description || '',
@@ -102,41 +177,62 @@ export default function WishlistPage() {
                 },
               })
             );
+            console.log('✅ Mapped products for guest:', mappedProducts.length);
             setProducts(mappedProducts);
+          } else {
+            console.log('❌ API error for guest products:', response.status);
+            setProducts([]);
           }
         } else {
+          console.log('📭 No items for guest user - setting empty array');
           setProducts([]);
         }
       }
     } catch (error) {
-      console.error('Error loading wishlist products:', error);
+      console.error('💥 Error loading wishlist products:', error);
+      setProducts([]);
     } finally {
+      console.log('✅ loadProducts completed, setting loading=false');
       setLoading(false);
     }
   }, [isAuthenticated, items]);
 
-  // Sync/Load wishlist on mount
+  // Initialize on mount only
   useEffect(() => {
-    const initializeWishlist = async () => {
+    console.log('🚀 Initial mount useEffect');
+
+    if (initialized) {
+      console.log('⚠️ Already initialized, skipping...');
+      return;
+    }
+
+    setInitialized(true);
+
+    const initialize = async () => {
       if (isAuthenticated && !synced) {
-        // User is logged in - sync guest items with server
+        console.log('🔄 Syncing with server...');
         await syncWithServer();
         setSynced(true);
       }
 
-      // Load products for display
-      await loadProducts();
+      console.log('📦 Initial load products...');
+      loadProducts();
     };
 
-    initializeWishlist();
-  }, [isAuthenticated, synced, syncWithServer, loadProducts]);
+    initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only on mount
 
-  // Reload products when items change
+  // Reload when items change
   useEffect(() => {
+    console.log('� Items changed useEffect:', { itemsLength: items.length });
+
     if (!loading) {
+      console.log('📦 Loading products due to items change...');
       loadProducts();
     }
-  }, [items.length, loadProducts, loading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.length]); // Run when items count changes
 
   // Guest user banner
   const showGuestBanner = !isAuthenticated && wishlistCount > 0;
@@ -144,29 +240,22 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-white py-12">
-        <div className="container px-4 mx-auto">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-                <Heart className="h-8 w-8 fill-current" />
-                {t('wishlist.title')}
-              </h1>
-              <p className="text-white/80">
-                {wishlistCount} {t('wishlist.itemsCount')}
-              </p>
-            </div>
-
-            {isNearLimit && (
-              <Badge variant="destructive" className="text-sm">
-                <AlertCircle className="h-4 w-4 mr-1" />
-                {20 - wishlistCount} spots left
-              </Badge>
-            )}
+      <HeroSection
+        title={
+          <div className="flex items-center gap-3">
+            <Heart className="h-8 w-8 fill-current" />
+            {t('wishlist.title')}
           </div>
-        </div>
-      </section>
+        }
+        description={`${wishlistCount} ${t('wishlist.itemsCount')}`}
+      >
+        {isNearLimit && (
+          <Badge variant="destructive" className="text-sm">
+            <AlertCircle className="h-4 w-4 mr-1" />
+            {20 - wishlistCount} spots left
+          </Badge>
+        )}
+      </HeroSection>
 
       {/* Guest Sign-In Banner */}
       {showGuestBanner && (

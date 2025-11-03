@@ -17,6 +17,7 @@ import { WishlistSyncProvider } from '@/components/providers/wishlist-sync-provi
 import { WishlistSheet } from '@/components/wishlist/wishlist-sheet';
 import { StructuredData } from '@/components/seo/structured-data';
 import { HreflangLinks } from '@/components/seo/hreflang-links';
+import { CookieAndSignupFlow } from '@/components/layout/cookie-and-signup-flow';
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -200,6 +201,7 @@ export default function RootLayout({
                 </div>
                 <CartSheet />
                 <WishlistSheet />
+                <CookieAndSignupFlow />
                 <Toaster position="bottom-right" />
               </WishlistSyncProvider>
             </SettingsProvider>

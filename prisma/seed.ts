@@ -14,10 +14,22 @@ async function main() {
         siteDescription: "Premium Men's Jewelry",
         contactEmail: 'contact@forgesteel.com',
         contactPhone: '+972-50-123-4567',
-        address: '123 Main Street, Tel Aviv, Israel',
+        address: 'Online E-commerce Store',
         currency: 'ILS',
         currencySymbol: '₪',
-        taxRate: 17,
+        taxRate: 18,
+
+        // Email Settings
+        smtpFromEmail: 'contact@forgesteel.com',
+        smtpReplyToEmail: null,
+        emailNotificationsEnabled: true,
+        adminNotificationEmail: 'admin@forgesteel.com',
+
+        // Shipping Settings
+        shippingCost: 20,
+        freeShippingThreshold: 350,
+        shippingDescription: 'Standard shipping within Israel',
+        processingTime: '2-3 business days',
       },
     });
     console.log('Default settings created');

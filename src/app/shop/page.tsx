@@ -10,6 +10,7 @@ import { CategoryFilter } from '@/components/shop/category-filter';
 import { Button } from '@/components/ui/button';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/language-context';
+import { HeroSection } from '@/components/layout/hero-section';
 
 export const dynamic = 'force-dynamic';
 
@@ -155,15 +156,11 @@ function ShopPageContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <section className="bg-gradient-steel text-white py-16">
-        <div className="container px-4 mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageTitle}</h1>
-          <p className="text-xl text-muted-foreground">
-            {t('shop.description')}
-          </p>
-        </div>
-      </section>
+      <HeroSection
+        title={pageTitle}
+        description={t('shop.description')}
+        size="lg"
+      />
 
       {/* Main Content */}
       <section className="container px-4 mx-auto py-12">

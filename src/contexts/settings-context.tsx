@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface Settings {
   id: string;
@@ -12,6 +12,18 @@ interface Settings {
   currency: string;
   currencySymbol: string;
   taxRate: number;
+
+  // Email Settings
+  smtpFromEmail: string;
+  smtpReplyToEmail?: string;
+  emailNotificationsEnabled: boolean;
+  adminNotificationEmail: string;
+
+  // Shipping Settings
+  shippingCost: number;
+  freeShippingThreshold: number;
+  shippingDescription: string;
+  processingTime: string;
 }
 
 interface SettingsContextType {
@@ -30,11 +42,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch("/api/settings");
+      const response = await fetch('/api/settings');
       const data = await response.json();
       setSettings(data.settings);
     } catch (error) {
-      console.error("Failed to fetch settings:", error);
+      console.error('Failed to fetch settings:', error);
     } finally {
       setLoading(false);
     }
@@ -58,7 +70,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 export function useSettings() {
   const context = useContext(SettingsContext);
   if (context === undefined) {
-    throw new Error("useSettings must be used within a SettingsProvider");
+    throw new Error('useSettings must be used within a SettingsProvider');
   }
   return context;
 }

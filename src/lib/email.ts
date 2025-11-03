@@ -1,6 +1,7 @@
 // src/lib/email.ts
 import { Resend } from 'resend';
 import { emailMonitor } from './email-monitor';
+import { prisma } from './prisma';
 import { WelcomeEmail } from '@/emails/welcome';
 import { PasswordResetEmail } from '@/emails/password-reset';
 import { OrderConfirmationEmail } from '@/emails/order-confirmation';
@@ -14,8 +15,32 @@ if (!process.env.RESEND_API_KEY) {
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
+// Fallback values from environment variables
+const FALLBACK_FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
+const FALLBACK_ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
+
+/**
+ * Get email settings from database
+ */
+async function getEmailSettings() {
+  try {
+    const settings = await prisma.settings.findFirst();
+    return {
+      fromEmail: settings?.smtpFromEmail || FALLBACK_FROM_EMAIL,
+      replyToEmail: settings?.smtpReplyToEmail || undefined,
+      adminEmail: settings?.adminNotificationEmail || FALLBACK_ADMIN_EMAIL,
+      notificationsEnabled: settings?.emailNotificationsEnabled ?? true,
+    };
+  } catch (error) {
+    console.error('Failed to fetch email settings from database:', error);
+    return {
+      fromEmail: FALLBACK_FROM_EMAIL,
+      replyToEmail: undefined,
+      adminEmail: FALLBACK_ADMIN_EMAIL,
+      notificationsEnabled: true,
+    };
+  }
+}
 
 export interface EmailOptions {
   to: string | string[];
@@ -90,12 +115,28 @@ export async function sendEmail({
   to,
   subject,
   react,
-  from = FROM_EMAIL,
+  from,
   replyTo,
 }: EmailOptions): Promise<EmailResult> {
   const recipient = Array.isArray(to) ? to[0] : to;
 
   try {
+    // Get email settings from database
+    const emailSettings = await getEmailSettings();
+
+    // Use provided from address or fall back to settings
+    const fromEmail = from || emailSettings.fromEmail;
+    const replyToEmail = replyTo || emailSettings.replyToEmail;
+
+    // Check if email notifications are enabled
+    if (!emailSettings.notificationsEnabled) {
+      console.log('Email notifications are disabled in settings');
+      return {
+        success: false,
+        error: 'Email notifications are disabled in settings',
+      };
+    }
+
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const recipients = Array.isArray(to) ? to : [to];
@@ -132,11 +173,11 @@ export async function sendEmail({
 
     // Send email
     const data = await resend.emails.send({
-      from,
+      from: fromEmail,
       to,
       subject,
       react,
-      ...(replyTo && { replyTo }),
+      ...(replyToEmail && { replyTo: replyToEmail }),
     });
 
     console.log('Email sent successfully:', {
@@ -225,8 +266,9 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData) {
  * Send order notification to admin
  */
 export async function sendOrderNotificationToAdmin(orderData: OrderEmailData) {
+  const emailSettings = await getEmailSettings();
   return sendEmail({
-    to: ADMIN_EMAIL,
+    to: emailSettings.adminEmail,
     subject: `New Order Received #${orderData.orderId}`,
     react: OrderNotificationAdminEmail(orderData),
   });
@@ -282,8 +324,9 @@ export async function sendContactFormNotification(data: {
   subject: string;
   message: string;
 }) {
+  const emailSettings = await getEmailSettings();
   return sendEmail({
-    to: ADMIN_EMAIL,
+    to: emailSettings.adminEmail,
     subject: `Contact Form: ${data.subject}`,
     react: ContactFormEmail(data),
   });

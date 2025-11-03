@@ -10,9 +10,10 @@ import {
   MapPin,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useSettings } from '@/contexts/settings-context';
 import { useLanguage } from '@/contexts/language-context';
+// ✅ NEW: Import newsletter component
+import { NewsletterSignup } from '@/components/footer/newsletter-signup';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -20,15 +21,14 @@ export function Footer() {
   const { t, language } = useLanguage();
 
   return (
-    <footer className="bg-zinc-900 text-white">
+    <footer className="bg-zinc-900">
       <div className="container px-4 py-12 mx-auto">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Company Info */}
           <div className="space-y-4">
-            {/* <div className="flex items-center ">
-              <Logo />
-            </div> */}
-            <h3 className="text-gold-300 text-lg font-light">תמצאו אותנו</h3>
+            <h3 className="text-gray-200 text-lg font-light">
+              {t('footer.findUs')}
+            </h3>
             <div className="space-y-2 text-gray-400">
               <p className="text-gray-400">
                 {settings?.siteDescription || t('footer.description')}
@@ -94,7 +94,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="text-gold-300 text-lg font-light">
+            <h3 className="text-gray-200 text-lg font-light">
               {t('footer.quickLinks')}
             </h3>
             <ul className="space-y-2 text-gray-400">
@@ -135,7 +135,7 @@ export function Footer() {
 
           {/* Customer Service */}
           <div className="space-y-4">
-            <h3 className="text-gold-300 text-lg font-light">
+            <h3 className="text-gray-200 text-lg font-light">
               {t('footer.customerService')}
             </h3>
             <ul className="space-y-2 text-gray-400">
@@ -174,28 +174,15 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter */}
+          {/* ✅ UPDATED: Newsletter Section - Now uses working component */}
           <div className="space-y-4">
-            <h3 className="text-gold-300 text-lg font-light">
-              {t('footer.newsletter')}
-            </h3>
-            <p className="text-gray-400">{t('footer.newsletterDesc')}</p>
-            <div className="flex space-x-2">
-              <Input
-                type="email"
-                placeholder={t('footer.emailPlaceholder')}
-                className="bg-gray-800 border-gray-700 text-white"
-              />
-              <Button className="bg-accent hover:bg-accent/90">
-                <Mail className="h-4 w-4" />
-              </Button>
-            </div>
+            <NewsletterSignup />
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <div className="border-t border-gray-400 mt-8 pt-8 text-center text-gray-400">
           <p>
-            &copy; {currentYear} {settings?.siteName || 'Forge & Steel'}.{' '}
+            &copy; {currentYear} {settings?.siteName || 'CrownSteel'}.{' '}
             {t('footer.allRightsReserved')}.
           </p>
         </div>

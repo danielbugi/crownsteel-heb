@@ -169,11 +169,48 @@ const config: Config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        gold: {
+          50: '#fdfcf7',
+          100: '#faf8ed',
+          200: '#f5f0d9',
+          300: '#ede4b8',
+          400: '#e4d495',
+          500: '#d4a574',
+          600: '#c48e5c',
+          700: '#a8754a',
+          800: '#8a5f3e',
+          900: '#6f4e34',
+          950: '#3d2818',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      keyframes: {
+        'slide-left': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'announce-in': {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0%)', opacity: '1' },
+        },
+        'announce-out': {
+          '0%': { transform: 'translateX(0%)', opacity: '1' },
+          '100%': { transform: 'translateX(-100%)', opacity: '0' },
+        },
+      },
+      animation: {
+        'slide-left': 'slide-left 4s infinite linear',
+        marquee: 'marquee 20s infinite linear',
+        'announce-in': 'announce-in 0.7s ease-out forwards',
+        'announce-out': 'announce-out 0.7s ease-in forwards',
       },
     },
   },

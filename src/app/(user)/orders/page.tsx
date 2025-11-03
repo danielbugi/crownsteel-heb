@@ -1,13 +1,14 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { formatPrice } from "@/lib/utils";
-import { format } from "date-fns";
-import Link from "next/link";
-import { Eye, Package } from "lucide-react";
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { formatPrice } from '@/lib/utils';
+import { format } from 'date-fns';
+import Link from 'next/link';
+import { Eye, Package } from 'lucide-react';
+import { UserPageHeader } from '@/components/ui/page-header';
 
 async function getUserOrders(userId: string) {
   const orders = await prisma.order.findMany({
@@ -20,7 +21,7 @@ async function getUserOrders(userId: string) {
       },
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
   });
 
@@ -35,28 +36,28 @@ async function getUserOrders(userId: string) {
 }
 
 const statusColors = {
-  PENDING: "bg-yellow-500",
-  CONFIRMED: "bg-blue-500",
-  SHIPPED: "bg-purple-500",
-  DELIVERED: "bg-green-500",
-  CANCELLED: "bg-red-500",
+  PENDING: 'bg-yellow-500',
+  CONFIRMED: 'bg-blue-500',
+  SHIPPED: 'bg-purple-500',
+  DELIVERED: 'bg-green-500',
+  CANCELLED: 'bg-red-500',
 };
 
 export default async function OrdersPage() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect("/");
+    redirect('/');
   }
 
   const orders = await getUserOrders(session.user.id);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">My Orders</h1>
-        <p className="text-muted-foreground">View and track your orders</p>
-      </div>
+      <UserPageHeader
+        title="My Orders"
+        description="View and track your orders"
+      />
 
       {orders.length === 0 ? (
         <Card>
@@ -84,8 +85,8 @@ export default async function OrdersPage() {
                       Order #{order.id.slice(0, 8).toUpperCase()}
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Placed on{" "}
-                      {format(new Date(order.createdAt), "MMMM dd, yyyy")}
+                      Placed on{' '}
+                      {format(new Date(order.createdAt), 'MMMM dd, yyyy')}
                     </p>
                   </div>
                   <Badge className={`${statusColors[order.status]} text-white`}>
@@ -126,7 +127,7 @@ export default async function OrdersPage() {
                   <div className="flex justify-between items-center pt-4 border-t">
                     <div className="text-sm text-muted-foreground">
                       {order.orderItems.length} item
-                      {order.orderItems.length !== 1 ? "s" : ""}
+                      {order.orderItems.length !== 1 ? 's' : ''}
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">Total</p>
@@ -144,7 +145,7 @@ export default async function OrdersPage() {
                         View Details
                       </Link>
                     </Button>
-                    {order.status === "SHIPPED" && (
+                    {order.status === 'SHIPPED' && (
                       <Button variant="outline" size="sm">
                         Track Order
                       </Button>

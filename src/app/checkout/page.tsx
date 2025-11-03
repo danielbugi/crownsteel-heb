@@ -1,15 +1,24 @@
+// src/app/checkout/page.tsx
 'use client';
 
+import { useState } from 'react';
 import { useCartStore } from '@/store/cart-store';
 import { CheckoutForm } from '@/components/checkout/checkout-form';
 import { OrderSummary } from '@/components/checkout/order-summary';
-import { redirect } from 'next/navigation';
 import { ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { HeroSection } from '@/components/layout/hero-section';
 
 export default function CheckoutPage() {
   const { items } = useCartStore();
+
+  // Shared coupon state between CheckoutForm and OrderSummary
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount: number;
+    id: string;
+  } | null>(null);
 
   if (items.length === 0) {
     return (
@@ -32,13 +41,11 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <section className="bg-gradient-steel text-white py-12">
-        <div className="container px-4 mx-auto">
-          <h1 className="text-4xl font-bold">Checkout</h1>
-          <p className="text-white/80 mt-2">Complete your order</p>
-        </div>
-      </section>
+      <HeroSection
+        title="Checkout"
+        description="Complete your order"
+        size="md"
+      />
 
       {/* Checkout Content */}
       <section className="py-12">
@@ -46,12 +53,15 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}
             <div className="lg:col-span-2">
-              <CheckoutForm />
+              <CheckoutForm
+                appliedCoupon={appliedCoupon}
+                setAppliedCoupon={setAppliedCoupon}
+              />
             </div>
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <OrderSummary />
+              <OrderSummary appliedCoupon={appliedCoupon} />
             </div>
           </div>
         </div>

@@ -55,18 +55,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user }) {
-      // On sign in, add user data to token
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-
-        token.needsWishlistSync = true;
-      }
-
-      // Don't fetch from database in middleware - just return token
-      return token;
-    },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
@@ -75,6 +63,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.needsWishlistSync = token.needsWishlistSync as boolean;
       }
       return session;
+    },
+    async jwt({ token, user }) {
+      // On sign in, add user data to token
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.needsWishlistSync = true;
+      }
+
+      // בדוק אם המשתמש עדיין קיים בבסיס הנתונים
+      if (token.id) {
+        try {
+          const existingUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+          });
+
+          if (!existingUser) {
+            console.log('🚨 JWT user not found in DB, invalidating token');
+            return {}; // מחזיר token ריק שיגרום ל-logout
+          }
+        } catch (error) {
+          console.log('⚠️ Error checking user existence:', error);
+        }
+      }
+
+      return token;
     },
   },
   pages: {

@@ -42,6 +42,8 @@ export const useWishlistStore = create<WishlistStore>()(
 
       // Add item to wishlist
       addItem: async (productId: string, isAuthenticated: boolean) => {
+        console.log('🛍️ Adding to wishlist:', { productId, isAuthenticated });
+
         const currentItems = get().items;
 
         // Check if already in wishlist
@@ -66,24 +68,58 @@ export const useWishlistStore = create<WishlistStore>()(
         // If authenticated, save to server
         if (isAuthenticated) {
           try {
+            console.log('🌐 Sending to server...');
             const response = await fetch('/api/wishlist', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ productId }),
             });
 
+            console.log('📡 Response status:', response.status);
+
             if (!response.ok) {
+              const errorData = await response.text();
+              console.log('❌ Error response:', errorData);
+
               // Revert optimistic update on error
               set({ items: currentItems });
+
+              // בדוק אם זה session שתוקף או foreign key error
+              try {
+                const errorJson = JSON.parse(errorData);
+                if (errorJson.code === 'STALE_SESSION') {
+                  toast.error('Please sign in again to save favorites', {
+                    duration: 5000,
+                  });
+                  // יכול להוסיף כאן redirect לדף התחברות
+                  return;
+                }
+              } catch {
+                // אם זה לא JSON, בדוק אם זה foreign key error
+                if (
+                  errorData.includes('foreign key constraint') ||
+                  errorData.includes('wishlists_userId_fkey')
+                ) {
+                  console.log(
+                    '🔑 Foreign key constraint - treating as stale session'
+                  );
+                  toast.error('Please sign in again to save favorites', {
+                    duration: 5000,
+                  });
+                  return;
+                }
+              }
 
               if (response.status === 401) {
                 toast.error('Please sign in to save favorites');
               } else {
                 toast.error('Failed to add to favorites');
               }
+            } else {
+              console.log('✅ Successfully added to server');
             }
           } catch (error) {
-            console.error('Error adding to wishlist:', error);
+            console.error('💥 Error adding to wishlist:', error);
             // Revert optimistic update
             set({ items: currentItems });
             toast.error('Failed to add to favorites');

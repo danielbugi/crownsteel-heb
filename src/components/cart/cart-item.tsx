@@ -1,32 +1,52 @@
 'use client';
 
 import Image from 'next/image';
-import { Minus, Plus, X } from 'lucide-react';
+import { Minus, Plus, X, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCartStore } from '@/store/cart-store';
 import { formatPrice } from '@/lib/utils';
+import { useState } from 'react';
 
 interface CartItemProps {
   item: {
     id: string;
     productId: string;
-    variantId?: string | null; // ADD THIS
+    variantId?: string | null;
     name: string;
     price: number;
     image: string;
     quantity: number;
+    inStock?: boolean;
+    maxQuantity?: number;
   };
 }
 
 export function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeItem } = useCartStore();
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  // Extract variant info from name if it exists (format: "Product Name - Variant Name")
+  // Extract variant info from name if it exists
   const hasVariant = item.name.includes(' - ');
   const [productName, variantName] = hasVariant
     ? item.name.split(' - ')
     : [item.name, null];
+
+  // Stock and quantity limits
+  const maxQuantity = item.maxQuantity || 10;
+  const isOutOfStock = item.inStock === false;
+  const isAtMaxQuantity = item.quantity >= maxQuantity;
+
+  const handleQuantityChange = async (newQuantity: number) => {
+    if (newQuantity < 1 || newQuantity > maxQuantity) return;
+
+    setIsUpdating(true);
+    try {
+      updateQuantity(item.productId, newQuantity, item.variantId);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   return (
     <div className="p-6 hover:bg-gray-50 transition-colors">
@@ -71,18 +91,21 @@ export function CartItem({ item }: CartItemProps) {
 
           {/* Quantity Controls */}
           <div className="flex items-center justify-between mt-3">
+            {/* Out of Stock Warning */}
+            {isOutOfStock && (
+              <div className="flex items-center gap-1 text-red-500 text-xs">
+                <AlertTriangle className="h-3 w-3" />
+                <span>Out of stock</span>
+              </div>
+            )}
+
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() =>
-                  updateQuantity(
-                    item.productId,
-                    item.quantity - 1,
-                    item.variantId
-                  )
-                }
+                disabled={item.quantity <= 1 || isUpdating}
+                onClick={() => handleQuantityChange(item.quantity - 1)}
               >
                 <Minus className="h-3 w-3" />
               </Button>
@@ -93,19 +116,22 @@ export function CartItem({ item }: CartItemProps) {
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() =>
-                  updateQuantity(
-                    item.productId,
-                    item.quantity + 1,
-                    item.variantId
-                  )
-                }
+                disabled={isAtMaxQuantity || isOutOfStock || isUpdating}
+                onClick={() => handleQuantityChange(item.quantity + 1)}
               >
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
-            <div className="text-sm font-semibold">
-              {formatPrice(item.price * item.quantity)}
+
+            <div className="text-right">
+              <div className="text-sm font-semibold">
+                {formatPrice(item.price * item.quantity)}
+              </div>
+              {isAtMaxQuantity && !isOutOfStock && (
+                <div className="text-xs text-orange-500 mt-1">
+                  Max: {maxQuantity}
+                </div>
+              )}
             </div>
           </div>
         </div>

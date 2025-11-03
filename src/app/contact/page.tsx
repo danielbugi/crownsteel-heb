@@ -1,27 +1,28 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useLanguage } from "@/contexts/language-context";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
-import toast from "react-hot-toast";
-import { useSettings } from "@/contexts/settings-context";
+import { useState } from 'react';
+import { useLanguage } from '@/contexts/language-context';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useSettings } from '@/contexts/settings-context';
+import { HeroSection } from '@/components/layout/hero-section';
 
 export default function ContactPage() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const { settings } = useSettings();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,35 +30,35 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to send message");
+        throw new Error('Failed to send message');
       }
 
       toast.success(
-        language === "he"
-          ? "ההודעה נשלחה בהצלחה! נחזור אליך בקרוב"
+        language === 'he'
+          ? 'ההודעה נשלחה בהצלחה! נחזור אליך בקרוב'
           : "Message sent successfully! We'll get back to you soon"
       );
 
       // Reset form
       setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: '',
       });
     } catch (error) {
       toast.error(
-        language === "he"
-          ? "שגיאה בשליחת ההודעה. נסה שוב מאוחר יותר"
-          : "Failed to send message. Please try again later"
+        language === 'he'
+          ? 'שגיאה בשליחת ההודעה. נסה שוב מאוחר יותר'
+          : 'Failed to send message. Please try again later'
       );
     } finally {
       setIsSubmitting(false);
@@ -76,52 +77,48 @@ export default function ContactPage() {
   const contactInfo = [
     {
       icon: Mail,
-      labelEn: "Email",
+      labelEn: 'Email',
       labelHe: 'דוא"ל',
-      value: settings?.contactEmail || "contact@forgesteel.com",
-      href: `mailto:${settings?.contactEmail || "contact@forgesteel.com"}`,
+      value: settings?.contactEmail || 'contact@forgesteel.com',
+      href: `mailto:${settings?.contactEmail || 'contact@forgesteel.com'}`,
     },
     {
       icon: Phone,
-      labelEn: "Phone",
-      labelHe: "טלפון",
-      value: settings?.contactPhone || "+972-50-123-4567",
-      href: `tel:${settings?.contactPhone || "+972501234567"}`,
+      labelEn: 'Phone',
+      labelHe: 'טלפון',
+      value: settings?.contactPhone || '+972-50-123-4567',
+      href: `tel:${settings?.contactPhone || '+972501234567'}`,
     },
     {
       icon: MapPin,
-      labelEn: "Address",
-      labelHe: "כתובת",
-      value: settings?.address || "123 Main Street, Tel Aviv, Israel",
+      labelEn: 'Address',
+      labelHe: 'כתובת',
+      value: settings?.address || '123 Main Street, Tel Aviv, Israel',
       href: null,
     },
     {
       icon: Clock,
-      labelEn: "Hours",
-      labelHe: "שעות פתיחה",
+      labelEn: 'Hours',
+      labelHe: 'שעות פתיחה',
       value:
-        language === "he"
-          ? "ראשון - חמישי: 9:00 - 18:00"
-          : "Sun - Thu: 9:00 AM - 6:00 PM",
+        language === 'he'
+          ? 'ראשון - חמישי: 9:00 - 18:00'
+          : 'Sun - Thu: 9:00 AM - 6:00 PM',
       href: null,
     },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="bg-gradient-steel text-white py-20">
-        <div className="container px-4 mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            {language === "he" ? "צור קשר" : "Contact Us"}
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {language === "he"
-              ? "יש לך שאלה? רוצה לקבוע פגישה? נשמח לעזור!"
-              : "Have a question? Want to schedule an appointment? We're here to help!"}
-          </p>
-        </div>
-      </section>
+      <HeroSection
+        title={language === 'he' ? 'צור קשר' : 'Contact Us'}
+        description={
+          language === 'he'
+            ? 'יש לך שאלה? רוצה לקבוע פגישה? נשמח לעזור!'
+            : "Have a question? Want to schedule an appointment? We're here to help!"
+        }
+        size="lg"
+      />
 
       {/* Contact Content */}
       <section className="py-16">
@@ -130,7 +127,7 @@ export default function ContactPage() {
             {/* Contact Info */}
             <div className="space-y-6">
               <h2 className="text-2xl font-bold mb-6">
-                {language === "he" ? "פרטי התקשרות" : "Contact Information"}
+                {language === 'he' ? 'פרטי התקשרות' : 'Contact Information'}
               </h2>
               {contactInfo.map((info, index) => {
                 const Icon = info.icon;
@@ -143,7 +140,7 @@ export default function ContactPage() {
                         </div>
                         <div>
                           <h3 className="font-semibold mb-1">
-                            {language === "he" ? info.labelHe : info.labelEn}
+                            {language === 'he' ? info.labelHe : info.labelEn}
                           </h3>
                           <p className="text-sm text-muted-foreground">
                             {info.value}
@@ -174,9 +171,9 @@ export default function ContactPage() {
                     <MapPin className="h-12 w-12 text-muted-foreground" />
                   </div>
                   <p className="text-sm text-muted-foreground mt-4 text-center">
-                    {language === "he"
-                      ? "בקר באולם התצוגה שלנו"
-                      : "Visit our showroom"}
+                    {language === 'he'
+                      ? 'בקר באולם התצוגה שלנו'
+                      : 'Visit our showroom'}
                   </p>
                 </CardContent>
               </Card>
@@ -187,7 +184,7 @@ export default function ContactPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    {language === "he" ? "שלח לנו הודעה" : "Send us a Message"}
+                    {language === 'he' ? 'שלח לנו הודעה' : 'Send us a Message'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -195,7 +192,7 @@ export default function ContactPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="name">
-                          {language === "he" ? "שם מלא" : "Full Name"}{" "}
+                          {language === 'he' ? 'שם מלא' : 'Full Name'}{' '}
                           <span className="text-red-500">*</span>
                         </Label>
                         <Input
@@ -205,14 +202,14 @@ export default function ContactPage() {
                           onChange={handleChange}
                           required
                           placeholder={
-                            language === "he" ? "ישראל ישראלי" : "John Doe"
+                            language === 'he' ? 'ישראל ישראלי' : 'John Doe'
                           }
                         />
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="email">
-                          {language === "he" ? 'דוא"ל' : "Email"}{" "}
+                          {language === 'he' ? 'דוא"ל' : 'Email'}{' '}
                           <span className="text-red-500">*</span>
                         </Label>
                         <Input
@@ -223,9 +220,9 @@ export default function ContactPage() {
                           onChange={handleChange}
                           required
                           placeholder={
-                            language === "he"
-                              ? "example@email.com"
-                              : "john@example.com"
+                            language === 'he'
+                              ? 'example@email.com'
+                              : 'john@example.com'
                           }
                         />
                       </div>
@@ -234,7 +231,7 @@ export default function ContactPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="phone">
-                          {language === "he" ? "טלפון" : "Phone"}
+                          {language === 'he' ? 'טלפון' : 'Phone'}
                         </Label>
                         <Input
                           id="phone"
@@ -243,16 +240,16 @@ export default function ContactPage() {
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder={
-                            language === "he"
-                              ? "050-123-4567"
-                              : "+972-50-123-4567"
+                            language === 'he'
+                              ? '050-123-4567'
+                              : '+972-50-123-4567'
                           }
                         />
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="subject">
-                          {language === "he" ? "נושא" : "Subject"}{" "}
+                          {language === 'he' ? 'נושא' : 'Subject'}{' '}
                           <span className="text-red-500">*</span>
                         </Label>
                         <Input
@@ -262,9 +259,9 @@ export default function ContactPage() {
                           onChange={handleChange}
                           required
                           placeholder={
-                            language === "he"
-                              ? "איך אוכל לעזור?"
-                              : "How can we help?"
+                            language === 'he'
+                              ? 'איך אוכל לעזור?'
+                              : 'How can we help?'
                           }
                         />
                       </div>
@@ -272,7 +269,7 @@ export default function ContactPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="message">
-                        {language === "he" ? "הודעה" : "Message"}{" "}
+                        {language === 'he' ? 'הודעה' : 'Message'}{' '}
                         <span className="text-red-500">*</span>
                       </Label>
                       <Textarea
@@ -283,21 +280,21 @@ export default function ContactPage() {
                         required
                         rows={6}
                         placeholder={
-                          language === "he"
-                            ? "כתוב את ההודעה שלך כאן..."
-                            : "Write your message here..."
+                          language === 'he'
+                            ? 'כתוב את ההודעה שלך כאן...'
+                            : 'Write your message here...'
                         }
                       />
                     </div>
 
                     <Button type="submit" disabled={isSubmitting} size="lg">
                       {isSubmitting
-                        ? language === "he"
-                          ? "שולח..."
-                          : "Sending..."
-                        : language === "he"
-                        ? "שלח הודעה"
-                        : "Send Message"}
+                        ? language === 'he'
+                          ? 'שולח...'
+                          : 'Sending...'
+                        : language === 'he'
+                          ? 'שלח הודעה'
+                          : 'Send Message'}
                     </Button>
                   </form>
                 </CardContent>

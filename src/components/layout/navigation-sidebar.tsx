@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/language-context';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,7 @@ interface NavigationSidebarProps {
 }
 
 export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
-  const { t, language, direction } = useLanguage();
+  const { t, language, direction, setLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState<'shop' | 'menu'>('menu');
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -77,14 +77,28 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
           <h2 className="text-xl font-bold text-black">
             {t('nav.menu') || 'Menu'}
           </h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="text-black hover:bg-gray-100"
-          >
-            <X className="h-5 w-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* Language Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
+              className="text-black hover:bg-gray-100"
+              aria-label={`Switch to ${language === 'en' ? 'Hebrew' : 'English'}`}
+            >
+              <Globe className="h-5 w-5" />
+            </Button>
+
+            {/* Close Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="text-black hover:bg-gray-100"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
 
         {/* Tabs */}

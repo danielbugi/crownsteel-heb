@@ -1,3 +1,5 @@
+// src/components/admin/admin-sidebar.tsx
+// ALTERNATIVE VERSION: With Grouped Sections
 'use client';
 
 import Link from 'next/link';
@@ -14,19 +16,50 @@ import {
   Star,
   Warehouse,
   Activity,
+  Mail,
+  Tag,
 } from 'lucide-react';
 import { useSettings } from '@/contexts/settings-context';
 
-const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Products', href: '/admin/products', icon: Package },
-  { name: 'Inventory', href: '/admin/inventory', icon: Warehouse }, // NEW
-  { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
-  { name: 'Categories', href: '/admin/categories', icon: FolderTree },
-  { name: 'Customers', href: '/admin/customers', icon: Users },
-  { name: 'Reviews', href: '/admin/reviews', icon: Star },
-  { name: 'Performance', href: '/admin/performance', icon: Activity },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
+// Grouped navigation for better organization
+const navigationSections = [
+  {
+    title: 'Overview',
+    items: [
+      { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+      { name: 'Performance', href: '/admin/performance', icon: Activity },
+    ],
+  },
+  {
+    title: 'Catalog',
+    items: [
+      { name: 'Products', href: '/admin/products', icon: Package },
+      { name: 'Categories', href: '/admin/categories', icon: FolderTree },
+      { name: 'Inventory', href: '/admin/inventory', icon: Warehouse },
+    ],
+  },
+  {
+    title: 'Sales',
+    items: [
+      { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
+      { name: 'Coupons', href: '/admin/coupons', icon: Tag },
+    ],
+  },
+  {
+    title: 'Marketing',
+    items: [{ name: 'Newsletter', href: '/admin/newsletter', icon: Mail }],
+  },
+  {
+    title: 'Community',
+    items: [
+      { name: 'Customers', href: '/admin/customers', icon: Users },
+      { name: 'Reviews', href: '/admin/reviews', icon: Star },
+    ],
+  },
+  {
+    title: 'System',
+    items: [{ name: 'Settings', href: '/admin/settings', icon: Settings }],
+  },
 ];
 
 export function AdminSidebar() {
@@ -41,34 +74,46 @@ export function AdminSidebar() {
           <Gem className="h-8 w-8 text-accent" />
           <div>
             <h1 className="font-bold text-lg">
-              {settings?.siteName || 'Forge & Steel'}
+              {settings?.siteName || 'CrownSteel'}
             </h1>
             <p className="text-xs text-muted-foreground">Admin Panel</p>
           </div>
         </Link>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
-        {navigation.map((item) => {
-          const isActive =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-accent text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              {item.name}
-            </Link>
-          );
-        })}
+      {/* Navigation with Sections */}
+      <nav className="flex-1 p-4 space-y-6 overflow-y-auto">
+        {navigationSections.map((section) => (
+          <div key={section.title}>
+            {/* Section Title */}
+            <h3 className="px-3 mb-2 text-xs font-semibold text-black uppercase tracking-wider">
+              {section.title}
+            </h3>
+            {/* Section Items */}
+            <div className="space-y-1">
+              {section.items.map((item) => {
+                const isActive =
+                  pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`);
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-accent text-accent-foreground'
+                        : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                    )}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Back to Store */}

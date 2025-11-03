@@ -84,9 +84,12 @@ const translations = {
     'footer.customerService': 'Customer Service',
     'footer.faq': 'FAQ',
     'footer.newsletter': 'Newsletter',
-    'footer.newsletterDesc': 'Subscribe for updates and exclusive offers',
+    'footer.newsletterDesc':
+      'Get the latest updates, exclusive offers, and new arrivals',
     'footer.emailPlaceholder': 'Enter your email',
     'footer.allRightsReserved': 'All rights reserved',
+    'footer.subscribe': 'Subscribe',
+    'footer.newsletterPrivacy': 'We respect your privacy. Unsubscribe anytime.',
 
     // Shop
     'shop.title': 'Shop All Jewelry',
@@ -285,6 +288,9 @@ const translations = {
     'footer.newsletterDesc': 'הירשם לעדכונים והצעות בלעדיות',
     'footer.emailPlaceholder': 'הזן דוא"ל',
     'footer.allRightsReserved': 'כל הזכויות שמורות',
+    'footer.subscribe': 'הרשם',
+    'footer.newsletterPrivacy':
+      'אנו מכבדים את הפרטיות שלך. ניתן לבטל את המנוי בכל עת.',
 
     // Shop
     'shop.title': 'כל התכשיטים',

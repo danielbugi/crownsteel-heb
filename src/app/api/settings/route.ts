@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
@@ -10,14 +10,26 @@ export async function GET() {
     if (!settings) {
       settings = await prisma.settings.create({
         data: {
-          siteName: "Forge & Steel",
+          siteName: 'Forge & Steel',
           siteDescription: "Premium Men's Jewelry",
-          contactEmail: "contact@forgesteel.com",
-          contactPhone: "+972-50-123-4567",
-          address: "123 Main Street, Tel Aviv, Israel",
-          currency: "ILS",
-          currencySymbol: "₪",
-          taxRate: 17,
+          contactEmail: 'contact@forgesteel.com',
+          contactPhone: '+972-50-123-4567',
+          address: 'Online E-commerce Store',
+          currency: 'ILS',
+          currencySymbol: '₪',
+          taxRate: 18,
+
+          // Email Settings
+          smtpFromEmail: 'contact@forgesteel.com',
+          smtpReplyToEmail: null,
+          emailNotificationsEnabled: true,
+          adminNotificationEmail: 'admin@forgesteel.com',
+
+          // Shipping Settings
+          shippingCost: 20,
+          freeShippingThreshold: 350,
+          shippingDescription: 'Standard shipping within Israel',
+          processingTime: '2-3 business days',
         },
       });
     }
@@ -26,12 +38,14 @@ export async function GET() {
       settings: {
         ...settings,
         taxRate: settings.taxRate.toNumber(),
+        shippingCost: settings.shippingCost.toNumber(),
+        freeShippingThreshold: settings.freeShippingThreshold.toNumber(),
       },
     });
   } catch (error) {
-    console.error("Error fetching settings:", error);
+    console.error('Error fetching settings:', error);
     return NextResponse.json(
-      { error: "Failed to fetch settings" },
+      { error: 'Failed to fetch settings' },
       { status: 500 }
     );
   }
@@ -79,12 +93,14 @@ export async function PUT(request: NextRequest) {
       settings: {
         ...settings,
         taxRate: settings.taxRate.toNumber(),
+        shippingCost: settings.shippingCost.toNumber(),
+        freeShippingThreshold: settings.freeShippingThreshold.toNumber(),
       },
     });
   } catch (error) {
-    console.error("Error updating settings:", error);
+    console.error('Error updating settings:', error);
     return NextResponse.json(
-      { error: "Failed to update settings" },
+      { error: 'Failed to update settings' },
       { status: 500 }
     );
   }

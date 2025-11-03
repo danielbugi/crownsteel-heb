@@ -1,19 +1,43 @@
-"use client";
+// src/components/checkout/order-summary.tsx
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useCartStore } from "@/store/cart-store";
-import { useSettings } from "@/contexts/settings-context";
-import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { useCartStore } from '@/store/cart-store';
+import { useSettings } from '@/contexts/settings-context';
+import { calculateShipping, formatShippingInfo } from '@/lib/shipping';
+import Image from 'next/image';
 
-export function OrderSummary() {
+interface OrderSummaryProps {
+  appliedCoupon?: {
+    code: string;
+    discount: number;
+    id: string;
+  } | null;
+}
+
+export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
   const { items, getTotalPrice } = useCartStore();
   const { settings } = useSettings();
+
   const subtotal = getTotalPrice();
-  const taxRate = settings?.taxRate || 17;
-  const taxAmount = (subtotal * taxRate) / 100;
-  const total = subtotal + taxAmount;
-  const currencySymbol = settings?.currencySymbol || "₪";
+  const discountAmount = appliedCoupon?.discount || 0;
+  const subtotalAfterDiscount = subtotal - discountAmount;
+
+  // Calculate shipping
+  const shippingCost = settings?.shippingCost ?? 20;
+  const freeShippingThreshold = settings?.freeShippingThreshold ?? 350;
+  const shippingInfo = formatShippingInfo(
+    subtotalAfterDiscount,
+    shippingCost,
+    freeShippingThreshold,
+    settings?.currencySymbol || '₪'
+  );
+
+  const taxRate = settings?.taxRate ?? 18;
+  const taxAmount = (subtotalAfterDiscount * taxRate) / 100;
+  const total = subtotalAfterDiscount + shippingInfo.cost + taxAmount;
+  const currencySymbol = settings?.currencySymbol || '₪';
 
   return (
     <Card className="sticky top-4">
@@ -58,10 +82,34 @@ export function OrderSummary() {
               {subtotal.toFixed(2)}
             </span>
           </div>
+
+          {/* Discount Row */}
+          {discountAmount > 0 && appliedCoupon && (
+            <div className="flex justify-between text-sm text-green-600">
+              <span className="font-medium">הנחה ({appliedCoupon.code})</span>
+              <span className="font-medium">
+                -{currencySymbol}
+                {discountAmount.toFixed(2)}
+              </span>
+            </div>
+          )}
+
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">משלוח</span>
-            <span className="font-medium text-green-600">חינם</span>
+            <span
+              className={`font-medium ${shippingInfo.isFree ? 'text-green-600' : ''}`}
+            >
+              {shippingInfo.displayText}
+            </span>
           </div>
+
+          {/* Free shipping progress indicator */}
+          {!shippingInfo.isFree && (
+            <div className="text-xs text-muted-foreground">
+              {shippingInfo.message}
+            </div>
+          )}
+
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">מע"מ ({taxRate}%)</span>
             <span className="font-medium">
@@ -69,7 +117,9 @@ export function OrderSummary() {
               {taxAmount.toFixed(2)}
             </span>
           </div>
+
           <Separator />
+
           <div className="flex justify-between text-lg font-bold">
             <span>סה"כ</span>
             <span>

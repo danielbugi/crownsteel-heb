@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCartStore } from '@/store/cart-store';
-import { LanguageToggle } from '@/components/ui/language-toggle';
 import { NavigationSidebar } from './navigation-sidebar';
 import { UserMenuSidebar } from './user-menu-sidebar';
 import { AuthSidebar } from '@/components/auth/auth-sidebar';
@@ -103,7 +102,7 @@ export function Navbar() {
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open menu"
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="size-5" />
               </Button>
 
               {/* Right - Icons */}
@@ -116,7 +115,7 @@ export function Navbar() {
                   onClick={() => setShowSearch(!showSearch)}
                   aria-label="Search"
                 >
-                  <Search className="h-5 w-5" />
+                  <Search className="size-8" />
                 </Button>
 
                 {/* Wishlist Icon */}
@@ -128,7 +127,7 @@ export function Navbar() {
                     onClick={toggleWishlist}
                     aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
                   >
-                    <Heart className="h-5 w-5" />
+                    <Heart className="size-5" />
                   </Button>
                   {wishlistMounted && wishlistCount > 0 && (
                     <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
@@ -146,7 +145,7 @@ export function Navbar() {
                     onClick={toggleCart}
                     aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
                   >
-                    <ShoppingCart className="h-5 w-5" />
+                    <ShoppingCart className="size-5" />
                   </Button>
                   {mounted && totalItems > 0 && (
                     <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
@@ -154,9 +153,6 @@ export function Navbar() {
                     </span>
                   )}
                 </div>
-
-                {/* Language Toggle */}
-                <LanguageToggle />
 
                 {/* User Icon */}
                 {session ? (
@@ -185,7 +181,7 @@ export function Navbar() {
                     onClick={() => setIsAuthModalOpen(true)}
                     aria-label="Sign in"
                   >
-                    <User className="h-5 w-5" />
+                    <User className="size-5" />
                   </Button>
                 )}
               </div>
@@ -211,7 +207,7 @@ export function Navbar() {
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open menu"
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="size-5" />
               </Button>
 
               <Button
@@ -221,7 +217,7 @@ export function Navbar() {
                 onClick={() => setShowSearch(!showSearch)}
                 aria-label="Search"
               >
-                <Search className="h-5 w-5" />
+                <Search className="size-5" />
               </Button>
             </div>
 
@@ -240,7 +236,7 @@ export function Navbar() {
                   onClick={toggleWishlist}
                   aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
                 >
-                  <Heart className="h-5 w-5" />
+                  <Heart className="size-5" />
                 </Button>
                 {wishlistMounted && wishlistCount > 0 && (
                   <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
@@ -257,7 +253,7 @@ export function Navbar() {
                   onClick={toggleCart}
                   aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
                 >
-                  <ShoppingCart className="h-5 w-5" />
+                  <ShoppingCart className="size-5" />
                 </Button>
                 {mounted && totalItems > 0 && (
                   <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
@@ -265,8 +261,6 @@ export function Navbar() {
                   </span>
                 )}
               </div>
-
-              <LanguageToggle />
 
               {session ? (
                 <Button
@@ -294,7 +288,7 @@ export function Navbar() {
                   onClick={() => setIsAuthModalOpen(true)}
                   aria-label="Sign in"
                 >
-                  <User className="h-5 w-5" />
+                  <User className="size-5" />
                 </Button>
               )}
             </div>

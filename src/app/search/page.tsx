@@ -8,6 +8,7 @@ import { SearchSort } from '@/components/search/search-sort';
 import { useLanguage } from '@/contexts/language-context';
 import { Button } from '@/components/ui/button';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { HeroSection } from '@/components/layout/hero-section';
 
 export const dynamic = 'force-dynamic';
 
@@ -134,21 +135,19 @@ function SearchPageContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <section className="bg-gradient-steel text-white py-12">
-        <div className="container px-4 mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            {query
-              ? `${t('search.resultsFor')}: "${query}"`
-              : t('search.allProducts')}
-          </h1>
-          <p className="text-muted-foreground">
-            {loading
-              ? t('common.loading')
-              : `${pagination.total} ${t('search.productsFound')}`}
-          </p>
-        </div>
-      </section>
+      <HeroSection
+        title={
+          query
+            ? `${t('search.resultsFor')}: "${query}"`
+            : t('search.allProducts')
+        }
+        description={
+          loading
+            ? t('common.loading')
+            : `${pagination.total} ${t('search.productsFound')}`
+        }
+        size="md"
+      />
 
       {/* Content */}
       <section className="py-12">

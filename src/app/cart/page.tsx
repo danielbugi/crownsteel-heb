@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 import { ShoppingBag, ArrowLeft } from 'lucide-react';
+import { HeroSection } from '@/components/layout/hero-section';
 
 export default function CartPage() {
   const { items, getTotalItems, getTotalPrice, clearCart } = useCartStore();
@@ -35,20 +36,16 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <section className="bg-gradient-steel text-white py-12">
-        <div className="container px-4 mx-auto">
-          <Link
-            href="/shop"
-            className="inline-flex items-center text-sm text-white/80 hover:text-white mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Continue Shopping
-          </Link>
-          <h1 className="text-4xl font-bold text-white">Shopping Cart</h1>
-          <p className="text-white/80 mt-2">{totalItems} items in your cart</p>
-        </div>
-      </section>
+      <HeroSection title="Shopping Cart" size="md">
+        <Link
+          href="/shop"
+          className="inline-flex items-center text-sm text-white/80 hover:text-white"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Continue Shopping
+        </Link>
+        <p className="text-white/80 mt-1">{totalItems} items in your cart</p>
+      </HeroSection>
 
       {/* Cart Content */}
       <section className="py-12">

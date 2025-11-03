@@ -7,17 +7,39 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { useCartStore } from '@/store/cart-store';
 import { CartItem } from '@/components/cart/cart-item';
 import { formatPrice } from '@/lib/utils';
+import { calculateShipping, formatShippingInfo } from '@/lib/shipping';
+import { useSettings } from '@/contexts/settings-context';
 import Link from 'next/link';
-import { ShoppingBag, X } from 'lucide-react';
+import { ShoppingBag, X, Truck, Gift } from 'lucide-react';
 
 export function CartSheet() {
   const { items, isOpen, toggleCart, getTotalPrice, getTotalItems } =
     useCartStore();
+  const { settings } = useSettings();
   const totalPrice = getTotalPrice();
   const totalItems = getTotalItems();
+
+  // Calculate shipping
+  const subtotal = totalPrice;
+  const shippingCost = calculateShipping(
+    subtotal,
+    settings?.shippingCost || 20,
+    settings?.freeShippingThreshold || 200
+  );
+  const freeShippingThreshold = settings?.freeShippingThreshold || 200;
+  const remainingForFreeShipping = Math.max(
+    0,
+    freeShippingThreshold - subtotal
+  );
+  const freeShippingProgress = Math.min(
+    100,
+    (subtotal / freeShippingThreshold) * 100
+  );
+  const totalWithShipping = subtotal + shippingCost;
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
@@ -48,13 +70,39 @@ export function CartSheet() {
 
             {/* Summary Section */}
             <div className="border-t border-gray-200 p-6 space-y-4 bg-white">
+              {/* Free Shipping Progress */}
+              {remainingForFreeShipping > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <Truck className="h-4 w-4 text-blue-600" />
+                      <span className="text-gray-600">
+                        Add {formatPrice(remainingForFreeShipping)} for free
+                        shipping
+                      </span>
+                    </div>
+                  </div>
+                  <Progress value={freeShippingProgress} className="h-2" />
+                </div>
+              )}
+
+              {/* Free Shipping Achieved */}
+              {remainingForFreeShipping === 0 && shippingCost === 0 && (
+                <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-3 rounded-lg">
+                  <Gift className="h-4 w-4" />
+                  <span className="font-medium">
+                    You have earned free shipping!
+                  </span>
+                </div>
+              )}
+
               {/* Subtotal */}
               <div className="flex justify-between text-sm">
                 <span className="font-light uppercase tracking-wide text-gray-600">
                   Subtotal
                 </span>
                 <span className="font-medium text-black">
-                  {formatPrice(totalPrice)}
+                  {formatPrice(subtotal)}
                 </span>
               </div>
 
@@ -63,7 +111,11 @@ export function CartSheet() {
                 <span className="font-light uppercase tracking-wide text-gray-600">
                   Shipping
                 </span>
-                <span className="font-medium text-green-600">Free</span>
+                <span
+                  className={`font-medium ${shippingCost === 0 ? 'text-green-600' : 'text-black'}`}
+                >
+                  {shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}
+                </span>
               </div>
 
               {/* Separator */}
@@ -75,7 +127,7 @@ export function CartSheet() {
                   Total
                 </span>
                 <span className="font-bold text-black text-lg">
-                  {formatPrice(totalPrice)}
+                  {formatPrice(totalWithShipping)}
                 </span>
               </div>
 
