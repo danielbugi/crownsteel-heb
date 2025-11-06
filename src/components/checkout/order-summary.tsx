@@ -49,7 +49,7 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
         <div className="space-y-4 max-h-[300px] overflow-y-auto">
           {items.map((item) => (
             <div key={item.id} className="flex gap-3">
-              <div className="relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden bg-secondary">
+              <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden bg-secondary">
                 <Image
                   src={item.image}
                   alt={item.name}

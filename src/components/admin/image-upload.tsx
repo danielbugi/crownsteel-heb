@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Upload, X, Star } from "lucide-react";
-import { cn } from "@/lib/utils";
-import toast from "react-hot-toast";
+import { useState, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Upload, X, Star } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
 interface ImageUploadProps {
   images: string[];
@@ -34,7 +34,7 @@ export function ImageUpload({
         const file = files[i];
 
         // Validate file type
-        if (!file.type.startsWith("image/")) {
+        if (!file.type.startsWith('image/')) {
           toast.error(`${file.name} is not an image`);
           continue;
         }
@@ -67,11 +67,11 @@ export function ImageUpload({
 
       toast.success(`${newImages.length} image(s) uploaded`);
     } catch (error) {
-      toast.error("Failed to upload images");
+      toast.error('Failed to upload images');
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+        fileInputRef.current.value = '';
       }
     }
   };
@@ -84,13 +84,13 @@ export function ImageUpload({
     if (imageUrl === mainImage && updatedImages.length > 0) {
       onMainImageChange(updatedImages[0]);
     } else if (updatedImages.length === 0) {
-      onMainImageChange("");
+      onMainImageChange('');
     }
   };
 
   const handleSetMainImage = (imageUrl: string) => {
     onMainImageChange(imageUrl);
-    toast.success("Main image updated");
+    toast.success('Main image updated');
   };
 
   return (
@@ -112,7 +112,7 @@ export function ImageUpload({
           disabled={isUploading}
         >
           <Upload className="h-4 w-4 mr-2" />
-          {isUploading ? "Uploading..." : "Upload Images"}
+          {isUploading ? 'Uploading...' : 'Upload Images'}
         </Button>
         <p className="text-sm text-muted-foreground mt-2">
           Upload multiple images. Max 5MB per image. Supported: JPG, PNG, WebP
@@ -125,10 +125,10 @@ export function ImageUpload({
             <div
               key={index}
               className={cn(
-                "relative group rounded-lg border-2 overflow-hidden",
+                'relative group border-2 overflow-hidden',
                 imageUrl === mainImage
-                  ? "border-primary ring-2 ring-primary"
-                  : "border-border"
+                  ? 'border-primary ring-2 ring-primary'
+                  : 'border-border'
               )}
             >
               <img

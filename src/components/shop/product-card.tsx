@@ -322,18 +322,15 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingCart, Eye, Heart, Sparkles } from 'lucide-react';
+import { Eye, Heart } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
 import { useWishlistStore } from '@/store/wishlist-store';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { QuickViewModal } from '@/components/shop/quick-view-modal';
-// ✅ UPDATED: Correct import path for stock alert badges
-import {
-  StockAlertBadge,
-  StockAlertBadgeCompact,
-} from '@/components/ui/stock-alert-badge';
+// ✅ UPDATED: Only importing StockAlertBadgeCompact for bottom section
+import { StockAlertBadgeCompact } from '@/components/ui/stock-alert-badge';
 
 interface Product {
   id: string;
@@ -491,10 +488,6 @@ export function ProductCard({
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     : false;
 
-  const isBestSeller = product.inventory
-    ? product.inventory < 10 && product.inventory > 0
-    : false;
-
   return (
     <>
       <Link href={`/shop/${product.slug}`}>
@@ -503,44 +496,24 @@ export function ProductCard({
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <div className="relative aspect-square overflow-hidden bg-secondary">
+          <div className="relative aspect-square overflow-hidden bg-secondary h-[380px]">
             <Image
               src={product.image}
               alt={product.name}
               fill
-              className={`object-cover transition-all duration-700 ${
+              className={`object-cover transition-all duration-700  ${
                 imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
               } ${isHovered ? 'scale-110' : 'scale-100'}`}
               onLoad={() => setImageLoaded(true)}
             />
 
-            {/* ✅ UPDATED: Badges with Stock Alert Integration */}
+            {/* Badges - Only New and Percentage Off */}
             <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
-              {/* ✅ NEW: Stock Alert Badge (replaces old "Out of Stock" and "Only X left") */}
-              {product.inventory !== undefined && (
-                <StockAlertBadge
-                  inventory={product.inventory}
-                  lowStockThreshold={product.lowStockThreshold || 10}
-                />
-              )}
-
-              {/* Variants Badge */}
-              {product.hasVariants &&
-                product.variants &&
-                product.variants.length > 0 && (
-                  <Badge
-                    variant="outline"
-                    className="bg-blue-50 text-blue-700 border-blue-200 shadow-lg"
-                  >
-                    Multiple {product.variantLabel || 'Options'}
-                  </Badge>
-                )}
-
               {/* Discount Badge */}
               {discountPercentage > 0 && (
                 <Badge
                   variant="outline"
-                  className="bg-green-50 text-green-700 border-green-200 shadow-lg"
+                  className="bg-white text-black border-gray-300 shadow-lg rounded-none"
                 >
                   {discountPercentage}% OFF
                 </Badge>
@@ -550,20 +523,9 @@ export function ProductCard({
               {isNew && (
                 <Badge
                   variant="outline"
-                  className="bg-blue-50 text-blue-700 border-blue-200 shadow-lg"
+                  className="bg-white text-black border-gray-300 shadow-lg rounded-none"
                 >
-                  <Sparkles className="h-3 w-3 mr-1" />
                   New
-                </Badge>
-              )}
-
-              {/* Best Seller Badge */}
-              {isBestSeller && (
-                <Badge
-                  variant="outline"
-                  className="bg-purple-50 text-purple-700 border-purple-200 shadow-lg"
-                >
-                  Best Seller
                 </Badge>
               )}
             </div>
@@ -603,7 +565,7 @@ export function ProductCard({
               <Button
                 size="icon"
                 variant="secondary"
-                className="rounded-full bg-white/95 hover:bg-white shadow-lg backdrop-blur-sm h-9 w-9"
+                className="bg-white/95 hover:bg-white shadow-lg backdrop-blur-sm h-9 w-9"
                 onClick={handleQuickView}
               >
                 <Eye className="h-4 w-4" />
@@ -611,19 +573,15 @@ export function ProductCard({
             </div>
           </div>
 
-          <CardContent className="p-4">
-            <p className="text-xs uppercase tracking-wider text-black font-semibold mb-2">
-              {product.category.name}
-            </p>
-
-            <h3 className="text-base md:text-m mb-3 line-clamp-2 leading-tight">
+          <CardContent>
+            <h3 className="text-xs md:text-s line-clamp-2 leading-tight">
               {product.name}
             </h3>
 
             {/* Price Section */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-s md:text-s font-bold text-foreground">
+                <p className="text-s md:text-s text-foreground">
                   {formatPrice(product.price)}
                 </p>
                 {product.comparePrice && (

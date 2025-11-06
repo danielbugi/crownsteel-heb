@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface ProductImageSliderProps {
   images: string[];
@@ -75,7 +75,7 @@ export function ProductImageSlider({
         <Button
           variant="secondary"
           size="icon"
-          className="h-8 w-8 rounded-full bg-white/90 hover:bg-white shadow-lg"
+          className="h-8 w-8 bg-white/90 hover:bg-white shadow-lg"
           onClick={handlePrevious}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -83,7 +83,7 @@ export function ProductImageSlider({
         <Button
           variant="secondary"
           size="icon"
-          className="h-8 w-8 rounded-full bg-white/90 hover:bg-white shadow-lg"
+          className="h-8 w-8 bg-white/90 hover:bg-white shadow-lg"
           onClick={handleNext}
         >
           <ChevronRight className="h-4 w-4" />
@@ -97,10 +97,10 @@ export function ProductImageSlider({
             key={index}
             onClick={(e) => handleDotClick(e, index)}
             className={cn(
-              "h-2 rounded-full transition-all",
+              'h-2 rounded-full transition-all',
               index === currentIndex
-                ? "w-6 bg-white"
-                : "w-2 bg-white/50 hover:bg-white/75"
+                ? 'w-6 bg-white'
+                : 'w-2 bg-white/50 hover:bg-white/75'
             )}
             aria-label={`Go to image ${index + 1}`}
           />

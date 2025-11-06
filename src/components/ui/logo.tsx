@@ -9,16 +9,16 @@ function Logo() {
     <Link
       href="/"
       className="flex items-center"
-      aria-label={`${settings?.siteName || 'BogaRoyal Jewels'} home`}
+      aria-label={`${settings?.siteName || 'Crown Steel'} home`}
     >
       {/* <h1 className="font-sans text-xl md:text-2xl text-white tracking-wide">
                 {settings?.siteName || 'FORGE & STEEL'}
               </h1> */}
       <Image
-        src={'/images/logo/logo-2-white.png'}
-        alt={'BogaRoyal Jewels'}
-        width={70}
-        height={40}
+        src={'/images/logo/logo-black.png'}
+        alt={'CrownSteel'}
+        width={100}
+        height={100}
         className="object-contain w-16 h-full sm:w-[70px] sm:h-full"
       />
     </Link>

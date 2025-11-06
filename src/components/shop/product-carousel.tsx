@@ -3,8 +3,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ProductCard } from './product-card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { useLanguage } from '@/contexts/language-context';
 
 interface Product {
   id: string;
@@ -45,8 +47,15 @@ export function ProductCarousel({
   error = null,
 }: ProductCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { direction } = useLanguage();
+  const isRTL = direction === 'rtl';
+  const [rtlScrollType, setRtlScrollType] = useState<
+    'normal' | 'negative' | 'reverse'
+  >('normal');
+
+  // Set initial state - left disabled (at start), right enabled if we have scrollable content
   const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -60,19 +69,114 @@ export function ProductCarousel({
   const lastTimeRef = useRef(0);
   const autoPlayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Detect RTL scroll behavior on mount
+  const detectRTLScrollBehavior = useCallback(() => {
+    if (!isRTL) return;
+
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    // Create a temporary scroll to detect behavior
+    const originalScrollLeft = container.scrollLeft;
+    container.scrollLeft = 1;
+
+    setTimeout(() => {
+      const testScrollLeft = container.scrollLeft;
+
+      if (testScrollLeft < 0) {
+        setRtlScrollType('negative'); // Firefox
+      } else if (testScrollLeft === 1) {
+        setRtlScrollType('normal'); // Chrome/Safari
+      } else {
+        setRtlScrollType('reverse'); // IE/Edge
+      }
+
+      // Restore original position
+      container.scrollLeft = originalScrollLeft;
+
+      console.log('RTL Scroll Type detected:', {
+        testScrollLeft,
+        type:
+          testScrollLeft < 0
+            ? 'negative'
+            : testScrollLeft === 1
+              ? 'normal'
+              : 'reverse',
+      });
+    }, 10);
+  }, [isRTL]);
+
+  const scroll = useCallback(
+    (direction: 'left' | 'right') => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+
+      // Calculate scroll amount based on single card width + gap
+      // Card widths: 280px (mobile), 320px (md), 280px (lg)
+      // Gap: 24px (gap-6)
+      const cardWidth =
+        window.innerWidth >= 768 && window.innerWidth < 1024 ? 320 : 280;
+      const gap = 24; // gap-6 in Tailwind
+      const scrollAmount = cardWidth + gap;
+      let increment: number;
+
+      // In RTL, we need to reverse the scroll direction based on browser behavior
+      if (isRTL) {
+        if (rtlScrollType === 'normal') {
+          // Chrome/Safari: scrollLeft increases when scrolling left visually
+          // To scroll visually right (previous content), decrease scrollLeft
+          // To scroll visually left (next content), increase scrollLeft
+          increment = direction === 'left' ? scrollAmount : -scrollAmount;
+        } else if (rtlScrollType === 'negative') {
+          // Firefox: scrollLeft is negative
+          // To scroll visually right, increase scrollLeft (toward 0)
+          // To scroll visually left, decrease scrollLeft (more negative)
+          increment = direction === 'left' ? -scrollAmount : scrollAmount;
+        } else {
+          // reverse: IE/Edge
+          // To scroll visually right, decrease scrollLeft
+          // To scroll visually left, increase scrollLeft
+          increment = direction === 'left' ? scrollAmount : -scrollAmount;
+        }
+      } else {
+        // LTR: standard behavior
+        increment = direction === 'left' ? -scrollAmount : scrollAmount;
+      }
+
+      const target = container.scrollLeft + increment;
+      container.scrollTo({ left: target, behavior: 'smooth' });
+      setTimeout(checkScroll, 400);
+    },
+    [isRTL, rtlScrollType]
+  );
+
   // Auto-play functionality
   useEffect(() => {
-    if (!autoPlay || isHovered || isDragging || !canScrollRight) return;
+    if (!autoPlay || isHovered || isDragging) return;
 
     autoPlayTimerRef.current = setInterval(() => {
       const container = scrollContainerRef.current;
       if (!container) return;
 
-      if (container.scrollLeft >= container.scrollWidth - container.clientWidth - 10) {
-        // Reset to beginning when reached end
-        container.scrollTo({ left: 0, behavior: 'smooth' });
+      const { scrollLeft, scrollWidth, clientWidth } = container;
+      const maxScrollLeft = scrollWidth - clientWidth;
+
+      if (isRTL) {
+        // In RTL, start from maxScrollLeft and go towards 0
+        if (scrollLeft <= 1) {
+          // Reset to end when reached beginning
+          container.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
+        } else {
+          scroll('left'); // Move forward through content (visually left in RTL)
+        }
       } else {
-        scroll('right');
+        // Normal LTR behavior
+        if (scrollLeft >= maxScrollLeft - 1) {
+          // Reset to beginning when reached end
+          container.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          scroll('right'); // Move forward through content
+        }
       }
     }, autoPlayInterval);
 
@@ -81,7 +185,7 @@ export function ProductCarousel({
         clearInterval(autoPlayTimerRef.current);
       }
     };
-  }, [autoPlay, autoPlayInterval, isHovered, isDragging, canScrollRight]);
+  }, [autoPlay, autoPlayInterval, isHovered, isDragging, isRTL, scroll]);
 
   // Pause auto-play on hover
   const handleMouseEnter = useCallback(() => {
@@ -99,7 +203,7 @@ export function ProductCarousel({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target !== document.body) return; // Only work when no input is focused
-      
+
       switch (e.key) {
         case 'ArrowLeft':
           e.preventDefault();
@@ -117,7 +221,10 @@ export function ProductCarousel({
           e.preventDefault();
           const container = scrollContainerRef.current;
           if (container) {
-            container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+            container.scrollTo({
+              left: container.scrollWidth,
+              behavior: 'smooth',
+            });
           }
           break;
       }
@@ -125,51 +232,76 @@ export function ProductCarousel({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [canScrollLeft, canScrollRight]);
+  }, [canScrollLeft, canScrollRight, scroll]);
 
-  // Check scroll position
+  // Check scroll position and update arrow states
   const checkScroll = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    setCanScrollLeft(container.scrollLeft > 0);
-    setCanScrollRight(
-      container.scrollLeft < container.scrollWidth - container.clientWidth - 10
-    );
-  }, []);
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+    const maxScrollLeft = scrollWidth - clientWidth;
+    const tolerance = 5; // widen slightly to handle smooth scrolling
+    let atStart = false;
+    let atEnd = false;
+
+    if (isRTL) {
+      if (rtlScrollType === 'normal') {
+        atStart = Math.abs(scrollLeft) <= tolerance;
+        atEnd = Math.abs(scrollLeft - maxScrollLeft) <= tolerance;
+      } else if (rtlScrollType === 'negative') {
+        const absLeft = Math.abs(scrollLeft);
+        atStart = absLeft >= maxScrollLeft - tolerance;
+        atEnd = absLeft <= tolerance;
+      } else if (rtlScrollType === 'reverse') {
+        atStart = scrollLeft >= maxScrollLeft - tolerance;
+        atEnd = scrollLeft <= tolerance;
+      }
+    } else {
+      atStart = scrollLeft <= tolerance;
+      atEnd = scrollLeft >= maxScrollLeft - tolerance;
+    }
+
+    // Round logic ensures tiny scroll jitter won't flip states incorrectly
+    setCanScrollLeft(!atStart);
+    setCanScrollRight(!atEnd);
+    console.log({
+      atStart,
+      atEnd,
+      scrollLeft,
+      maxScrollLeft,
+      isRTL,
+      rtlScrollType,
+    });
+  }, [isRTL, rtlScrollType]);
 
   useEffect(() => {
-    checkScroll();
+    // Initial check with a small delay to ensure DOM is fully rendered
+    const timer = setTimeout(() => {
+      detectRTLScrollBehavior();
+      checkScroll();
+    }, 100);
+
     const container = scrollContainerRef.current;
     if (container) {
       container.addEventListener('scroll', checkScroll);
+
       // Check on resize as well
-      const resizeObserver = new ResizeObserver(checkScroll);
+      const resizeObserver = new ResizeObserver(() => {
+        // Add a small delay for resize events too
+        setTimeout(checkScroll, 100);
+      });
       resizeObserver.observe(container);
 
       return () => {
+        clearTimeout(timer);
         container.removeEventListener('scroll', checkScroll);
         resizeObserver.disconnect();
       };
     }
-  }, [products, checkScroll]);
 
-  // Scroll functions
-  const scroll = (direction: 'left' | 'right') => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const scrollAmount = container.clientWidth * 0.75;
-    const targetScroll =
-      direction === 'left'
-        ? container.scrollLeft - scrollAmount
-        : container.scrollLeft + scrollAmount;
-
-    container.scrollTo({
-      left: targetScroll,
-      behavior: 'smooth',
-    });
-  };
+    return () => clearTimeout(timer);
+  }, [products, checkScroll, detectRTLScrollBehavior]);
 
   // Start drag
   const handleDragStart = useCallback((clientX: number) => {
@@ -248,15 +380,17 @@ export function ProductCarousel({
     (e: React.MouseEvent) => {
       // Only prevent drag on actual clickable buttons and input elements
       const target = e.target as HTMLElement;
-      
+
       // More permissive approach - only block on specific interactive elements
-      const isClickableElement = 
+      const isClickableElement =
         target.tagName === 'BUTTON' ||
         target.tagName === 'INPUT' ||
         target.tagName === 'SELECT' ||
         target.tagName === 'TEXTAREA' ||
         // Only block links that have actual href (not wrapper links)
-        (target.tagName === 'A' && target.getAttribute('href') && target.textContent?.trim()) ||
+        (target.tagName === 'A' &&
+          target.getAttribute('href') &&
+          target.textContent?.trim()) ||
         // Check if it's inside a button with specific click handlers
         target.closest('button') ||
         target.closest('input') ||
@@ -295,9 +429,9 @@ export function ProductCarousel({
       if (e.touches.length === 1) {
         // For touch, be even more permissive since drag scrolling is expected
         const target = e.target as HTMLElement;
-        
+
         // Only prevent on actual buttons and inputs
-        const isFormElement = 
+        const isFormElement =
           target.tagName === 'BUTTON' ||
           target.tagName === 'INPUT' ||
           target.tagName === 'SELECT' ||
@@ -306,7 +440,7 @@ export function ProductCarousel({
           target.closest('input') ||
           target.closest('select') ||
           target.closest('textarea');
-        
+
         if (!isFormElement) {
           handleDragStart(e.touches[0].clientX);
         }
@@ -343,12 +477,17 @@ export function ProductCarousel({
           <div className="flex items-center justify-between mb-8 md:mb-10">
             <div>
               <div className="h-8 bg-muted rounded-md w-48 mb-2 animate-pulse"></div>
-              {subtitle && <div className="h-6 bg-muted rounded-md w-32 animate-pulse"></div>}
+              {subtitle && (
+                <div className="h-6 bg-muted rounded-md w-32 animate-pulse"></div>
+              )}
             </div>
           </div>
           <div className="flex gap-6 overflow-hidden">
             {Array.from({ length: 4 }).map((_, idx) => (
-              <div key={idx} className="flex-none w-[280px] md:w-[320px] lg:w-[360px]">
+              <div
+                key={idx}
+                className="flex-none w-[280px] md:w-[320px] lg:w-[360px]"
+              >
                 <div className="bg-muted rounded-lg h-80 animate-pulse"></div>
               </div>
             ))}
@@ -363,7 +502,9 @@ export function ProductCarousel({
       <section className="py-12 md:py-16">
         <div className="px-4 mx-auto text-center">
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
-            <p className="text-destructive font-medium">Failed to load products</p>
+            <p className="text-destructive font-medium">
+              Failed to load products
+            </p>
             <p className="text-muted-foreground text-sm mt-1">{error}</p>
           </div>
         </div>
@@ -386,158 +527,185 @@ export function ProductCarousel({
   return (
     <section className="py-12 md:py-16 overflow-hidden">
       <div className="px-4 mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8 md:mb-10">
-          <div>
-            <h2 className="text-2xl md:text-2xl font-bold mb-2">{title}</h2>
-            {subtitle && (
-              <p className="text-muted-foreground text-lg">{subtitle}</p>
-            )}
+        {/* Grid Layout: Title Section (1/6) + Carousel (5/6) */}
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 items-center">
+          {/* Title Section - Left Side */}
+          <div className="lg:col-span-1 space-y-4">
+            <div>
+              <h2 className="text-2xl lg:text-3xl font-light mb-6">{title}</h2>
+              {/* {subtitle && (
+                <p className="text-muted-foreground text-lg mb-6">{subtitle}</p>
+              )} */}
+            </div>
+            <Link href="/shop">
+              <Button className="w-full lg:w-full group block">
+                Shop Now
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
           </div>
 
-          {/* Desktop Navigation Buttons */}
-          <div className="hidden md:flex gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => scroll('left')}
-              disabled={!canScrollLeft}
-              className={cn(
-                'rounded-full transition-all duration-200 border-2',
-                'hover:scale-105 hover:shadow-md',
-                canScrollLeft 
-                  ? 'hover:bg-primary hover:text-primary-foreground hover:border-primary' 
-                  : 'opacity-40 cursor-not-allowed'
-              )}
+          {/* Carousel Section - Right Side */}
+          <div className="lg:col-span-5">
+            {/* Carousel Container */}
+            <div
+              className=" relative -mx-4 md:mx-0"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeaveCarousel}
             >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => scroll('right')}
-              disabled={!canScrollRight}
-              className={cn(
-                'rounded-full transition-all duration-200 border-2',
-                'hover:scale-105 hover:shadow-md',
-                canScrollRight 
-                  ? 'hover:bg-primary hover:text-primary-foreground hover:border-primary' 
-                  : 'opacity-40 cursor-not-allowed'
-              )}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Carousel Container */}
-        <div 
-          className="relative -mx-4 md:mx-0"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeaveCarousel}
-        >
-          {/* Gradient Overlays */}
-          <div 
-            className={cn(
-              "absolute left-0 top-0 bottom-0 w-8 md:w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none transition-opacity duration-300",
-              canScrollLeft ? "opacity-100" : "opacity-0"
-            )}
-          />
-          <div 
-            className={cn(
-              "absolute right-0 top-0 bottom-0 w-8 md:w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none transition-opacity duration-300",
-              canScrollRight ? "opacity-100" : "opacity-0"
-            )}
-          />
-
-          {/* Scrollable Products */}
-          <div
-            ref={scrollContainerRef}
-            className={cn(
-              'flex gap-6 overflow-x-auto scrollbar-hide px-4 md:px-0',
-              isDragging ? 'cursor-grabbing' : 'cursor-grab',
-              'select-none' // Prevent text selection during drag
-            )}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseLeave}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            onClick={handleClick}
-            style={{
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              WebkitOverflowScrolling: 'touch',
-              scrollBehavior: 'smooth',
-            }}
-          >
-            {products.map((product, index) => (
+              {/* Gradient Overlays */}
+              {/* <div
+                className={cn(
+                  'absolute left-0 top-0 bottom-0 w-8 md:w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none transition-opacity duration-300',
+                  canScrollLeft ? 'opacity-100' : 'opacity-0'
+                )}
+              />
               <div
-                key={product.id}
-                className="flex-none w-[280px] md:w-[320px] lg:w-[360px] transition-transform duration-200 hover:scale-[1.02]"
-                style={{
-                  pointerEvents: hasDraggedRef.current ? 'none' : 'auto',
-                  animationDelay: `${index * 100}ms`,
-                }}
-                // Add drag handlers to individual cards as backup
-                onMouseDown={(e) => {
-                  const target = e.target as HTMLElement;
-                  const isClickableElement = 
-                    target.tagName === 'BUTTON' ||
-                    target.tagName === 'INPUT' ||
-                    target.tagName === 'A' ||
-                    target.closest('button') ||
-                    target.closest('input') ||
-                    target.closest('a[href]');
-                  
-                  if (!isClickableElement) {
-                    e.preventDefault();
-                    handleDragStart(e.clientX);
-                  }
-                }}
-                onTouchStart={(e) => {
-                  if (e.touches.length === 1) {
-                    const target = e.target as HTMLElement;
-                    const isFormElement = 
-                      target.tagName === 'BUTTON' ||
-                      target.tagName === 'INPUT' ||
-                      target.closest('button') ||
-                      target.closest('input');
-                    
-                    if (!isFormElement) {
-                      handleDragStart(e.touches[0].clientX);
-                    }
-                  }
-                }}
-              >
+                className={cn(
+                  'absolute right-0 top-0 bottom-0 w-8 md:w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none transition-opacity duration-300',
+                  canScrollRight ? 'opacity-100' : 'opacity-0'
+                )}
+              /> */}
+
+              {/* Scrollable Products with Navigation */}
+              <div className="relative">
+                {/* Navigation Arrows - Positioned relative to products container */}
+                <div className="absolute left-2 top-1/2 -translate-y-1/2 z-30">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => scroll('left')}
+                    disabled={!canScrollLeft}
+                    className={cn(
+                      'transition-all duration-200 bg-background/60 backdrop-blur-sm shadow-lg',
+                      'hover:scale-105 hover:shadow-xl hover:bg-background h-16 w-12',
+                      canScrollLeft
+                        ? 'hover:bg-primary/50 hover:text-primary-foreground border-none opacity-100'
+                        : 'opacity-0 pointer-events-none',
+                      'hidden md:flex' // Only show on desktop
+                    )}
+                  >
+                    <ChevronLeft className="size-8" />
+                  </Button>
+                </div>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 z-30">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => scroll('right')}
+                    disabled={!canScrollRight}
+                    className={cn(
+                      'transition-all duration-200 bg-background/60 backdrop-blur-sm shadow-lg',
+                      'hover:scale-105 hover:shadow-xl hover:bg-background h-16 w-12',
+                      canScrollRight
+                        ? 'hover:bg-primary/50 hover:text-primary-foreground border-none opacity-100'
+                        : 'opacity-0 pointer-events-none',
+                      'hidden md:flex' // Only show on desktop
+                    )}
+                  >
+                    <ChevronRight className="size-8" />
+                  </Button>
+                </div>
+
+                {/* Scrollable Products */}
                 <div
-                  onClick={(e) => {
-                    // Prevent navigation if we just dragged
-                    if (hasDraggedRef.current) {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }
+                  ref={scrollContainerRef}
+                  className={cn(
+                    'flex gap-6 overflow-x-auto scrollbar-hide px-4 md:px-0',
+                    isDragging ? 'cursor-grabbing' : 'cursor-grab',
+                    'select-none' // Prevent text selection during drag
+                  )}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseLeave}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                  onClick={handleClick}
+                  style={{
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    WebkitOverflowScrolling: 'touch',
+                    scrollBehavior: 'smooth',
                   }}
                 >
-                  <ProductCard product={product} />
+                  {products.map((product, index) => (
+                    <div
+                      key={product.id}
+                      className="flex-none w-[280px] md:w-[320px] lg:w-[280px] transition-transform duration-200"
+                      style={{
+                        pointerEvents: hasDraggedRef.current ? 'none' : 'auto',
+                        animationDelay: `${index * 100}ms`,
+                      }}
+                      // Add drag handlers to individual cards as backup
+                      onMouseDown={(e) => {
+                        const target = e.target as HTMLElement;
+                        const isClickableElement =
+                          target.tagName === 'BUTTON' ||
+                          target.tagName === 'INPUT' ||
+                          target.tagName === 'A' ||
+                          target.closest('button') ||
+                          target.closest('input') ||
+                          target.closest('a[href]');
+
+                        if (!isClickableElement) {
+                          e.preventDefault();
+                          handleDragStart(e.clientX);
+                        }
+                      }}
+                      onTouchStart={(e) => {
+                        if (e.touches.length === 1) {
+                          const target = e.target as HTMLElement;
+                          const isFormElement =
+                            target.tagName === 'BUTTON' ||
+                            target.tagName === 'INPUT' ||
+                            target.closest('button') ||
+                            target.closest('input');
+
+                          if (!isFormElement) {
+                            handleDragStart(e.touches[0].clientX);
+                          }
+                        }
+                      }}
+                    >
+                      <div
+                        onClick={(e) => {
+                          // Prevent navigation if we just dragged
+                          if (hasDraggedRef.current) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }
+                        }}
+                      >
+                        <ProductCard product={product} />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Mobile Scroll Indicator */}
-        <div className="flex justify-center mt-6 md:hidden">
-          <div className="w-32 h-1 bg-muted rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-primary rounded-full transition-all duration-300"
-              style={{
-                width: `${Math.min(100, (scrollContainerRef.current?.scrollLeft || 0) / 
-                  Math.max(1, (scrollContainerRef.current?.scrollWidth || 1) - (scrollContainerRef.current?.clientWidth || 0)) * 100)}%`
-              }}
-            />
+            {/* Mobile Scroll Indicator */}
+            <div className="flex justify-center mt-6 md:hidden">
+              <div className="w-32 h-1 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-300"
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      ((scrollContainerRef.current?.scrollLeft || 0) /
+                        Math.max(
+                          1,
+                          (scrollContainerRef.current?.scrollWidth || 1) -
+                            (scrollContainerRef.current?.clientWidth || 0)
+                        )) *
+                        100
+                    )}%`,
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

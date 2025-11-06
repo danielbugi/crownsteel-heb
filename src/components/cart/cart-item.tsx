@@ -52,7 +52,7 @@ export function CartItem({ item }: CartItemProps) {
     <div className="p-6 hover:bg-gray-50 transition-colors">
       <div className="flex gap-4">
         {/* Product Image */}
-        <div className="relative h-24 w-24 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
+        <div className="relative h-24 w-24 overflow-hidden flex-shrink-0 bg-gray-100">
           <Image
             src={item.image}
             alt={item.name}

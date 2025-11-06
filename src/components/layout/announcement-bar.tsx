@@ -118,7 +118,7 @@ export function AnnouncementBar() {
   }, [handleNext]);
 
   return (
-    <div className="bg-white text-black py-2 overflow-hidden relative w-full will-change-transform">
+    <div className="bg-gold-400 text-black py-2 overflow-hidden relative w-full will-change-transform">
       <div className="relative w-full h-6">
         {announcements.map((announcement, index) => (
           <AnnouncementItem

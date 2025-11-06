@@ -26,7 +26,7 @@ export function NewsletterList({ subscribers }: NewsletterListProps) {
       {subscribers.map((subscriber) => (
         <div
           key={subscriber.id}
-          className="flex items-center justify-between py-2 px-3 hover:bg-muted rounded-lg transition-colors"
+          className="flex items-center justify-between py-2 px-3 hover:bg-muted transition-colors"
         >
           <div className="flex items-center gap-3">
             <Mail className="h-4 w-4 text-muted-foreground" />

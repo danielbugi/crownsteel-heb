@@ -97,7 +97,7 @@ export function ImageUploader({
   if (value) {
     return (
       <div className="relative group">
-        <div className="relative w-full h-64 rounded-lg overflow-hidden border-2 border-border">
+        <div className="relative w-full h-64 overflow-hidden border-2 border-border">
           <Image
             src={value}
             alt="Uploaded image"

@@ -220,7 +220,7 @@ export default function InventoryLogsPage() {
                         </td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="relative h-10 w-10 rounded overflow-hidden">
+                            <div className="relative h-10 w-10 overflow-hidden">
                               <Image
                                 src={log.product.image}
                                 alt={log.product.name}

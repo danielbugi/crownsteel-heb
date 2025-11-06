@@ -117,7 +117,7 @@ export function MultipleImagesUploader({
                 draggedIndex === index && 'opacity-50'
               )}
             >
-              <div className="relative w-full aspect-square rounded-lg overflow-hidden border-2 border-border">
+              <div className="relative w-full aspect-square overflow-hidden border-2 border-border">
                 <Image
                   src={url}
                   alt={`Product image ${index + 1}`}
@@ -158,7 +158,7 @@ export function MultipleImagesUploader({
       {canAddMore && (
         <div
           className={cn(
-            'relative w-full h-32 rounded-lg border-2 border-dashed border-border hover:border-accent/50 transition-colors',
+            'relative w-full h-32 border-2 border-dashed border-border hover:border-accent/50 transition-colors',
             disabled && 'opacity-50 cursor-not-allowed'
           )}
         >

@@ -93,7 +93,7 @@ export function WishlistSheetItem({
       <Link
         href={`/shop/${product.slug}`}
         onClick={onClose}
-        className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
+        className="relative h-24 w-24 flex-shrink-0 overflow-hidden bg-gray-100"
       >
         <Image
           src={product.image}

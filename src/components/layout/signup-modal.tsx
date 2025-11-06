@@ -226,7 +226,7 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
               <Button
                 type="submit"
                 disabled={loading || success}
-                className="w-full h-12 text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95"
+                className="w-full h-12 text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95"
               >
                 {loading ? (
                   <>

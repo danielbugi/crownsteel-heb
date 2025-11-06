@@ -120,7 +120,7 @@ export function AdminSidebar() {
       <div className="p-4 border-t">
         <Link
           href="/"
-          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+          className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
         >
           <Gem className="h-5 w-5" />
           Back to Store

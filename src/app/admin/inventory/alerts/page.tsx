@@ -226,7 +226,7 @@ export default function InventoryAlertsPage() {
                       </div>
                       <p className="font-medium mb-2">{alert.message}</p>
                       <div className="flex items-center gap-3">
-                        <div className="relative h-10 w-10 rounded overflow-hidden">
+                        <div className="relative h-10 w-10 overflow-hidden">
                           <Image
                             src={alert.product.image}
                             alt={alert.product.name}

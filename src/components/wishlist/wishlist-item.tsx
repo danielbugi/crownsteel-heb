@@ -125,7 +125,7 @@ export function WishlistItem({ product }: WishlistItemProps) {
             <Button
               variant="secondary"
               size="icon"
-              className="rounded-full bg-white/95 hover:bg-white shadow-lg backdrop-blur-sm h-9 w-9"
+              className="bg-white/95 hover:bg-white shadow-lg backdrop-blur-sm h-9 w-9"
               onClick={handleRemove}
             >
               <X className="h-4 w-4" />

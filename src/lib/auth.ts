@@ -72,22 +72,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.needsWishlistSync = true;
       }
 
-      // בדוק אם המשתמש עדיין קיים בבסיס הנתונים
-      if (token.id) {
-        try {
-          const existingUser = await prisma.user.findUnique({
-            where: { id: token.id as string },
-          });
-
-          if (!existingUser) {
-            console.log('🚨 JWT user not found in DB, invalidating token');
-            return {}; // מחזיר token ריק שיגרום ל-logout
-          }
-        } catch (error) {
-          console.log('⚠️ Error checking user existence:', error);
-        }
-      }
-
+      // Note: We removed the database check from here to support edge runtime
+      // User existence validation should be done in API routes or server components instead
       return token;
     },
   },
