@@ -189,6 +189,17 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       keyframes: {
+        'accordion-down': {
+          from: { height: '0', opacity: '0' },
+          to: { height: 'var(--radix-accordion-content-height)', opacity: '1' },
+        },
+        'accordion-up': {
+          from: {
+            height: 'var(--radix-accordion-content-height)',
+            opacity: '1',
+          },
+          to: { height: '0', opacity: '0' },
+        },
         'slide-left': {
           '0%': { transform: 'translateX(0%)' },
           '100%': { transform: 'translateX(-50%)' },
@@ -207,6 +218,8 @@ const config: Config = {
         },
       },
       animation: {
+        'accordion-down': 'accordion-down 0.3s ease-in-out',
+        'accordion-up': 'accordion-up 0.3s ease-in-out',
         'slide-left': 'slide-left 4s infinite linear',
         marquee: 'marquee 20s infinite linear',
         'announce-in': 'announce-in 0.7s ease-out forwards',

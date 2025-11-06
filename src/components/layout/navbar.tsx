@@ -100,7 +100,7 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/10"
+                className="text-black hover:bg-white/10"
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open menu"
               >
@@ -120,7 +120,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/10"
+                  className="text-black hover:bg-white/10"
                   onClick={() => setShowSearch(!showSearch)}
                   aria-label="Search"
                 >
@@ -132,14 +132,14 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:bg-white/10"
+                    className="text-black hover:bg-white/10"
                     onClick={toggleWishlist}
                     aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
                   >
                     <Heart className="size-4" />
                   </Button>
                   {wishlistMounted && wishlistCount > 0 && (
-                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
+                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-black text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
                       {wishlistCount > 99 ? '99+' : wishlistCount}
                     </span>
                   )}
@@ -150,14 +150,14 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:bg-white/10"
+                    className="text-black hover:bg-white/10"
                     onClick={toggleCart}
                     aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
                   >
                     <ShoppingCart className="size-4" />
                   </Button>
                   {mounted && totalItems > 0 && (
-                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
+                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-500 text-black text-[10px] flex items-center justify-center font-bold shadow-lg border border-white/20">
                       {totalItems > 99 ? '99+' : totalItems}
                     </span>
                   )}
@@ -168,7 +168,7 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:bg-white/10"
+                    className="text-black hover:bg-white/10"
                     onClick={() => setIsUserMenuOpen(true)}
                     aria-label="User menu"
                   >
@@ -186,7 +186,7 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:bg-white/10"
+                    className="text-black hover:bg-white/10"
                     onClick={() => setIsAuthModalOpen(true)}
                     aria-label="Sign in"
                   >

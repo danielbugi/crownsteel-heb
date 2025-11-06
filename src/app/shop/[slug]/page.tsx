@@ -1,163 +1,3 @@
-// // src/app/shop/[slug]/page.tsx
-// // UPDATED VERSION - WITH REVIEWS INTEGRATION
-
-// import { notFound } from 'next/navigation';
-// import { prisma } from '@/lib/prisma';
-// import { ProductDetail } from '@/components/shop/product-detail';
-// import { RelatedProducts } from '@/components/shop/related-products';
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-// import { ReviewForm } from '@/components/product/review-form';
-// import { ReviewsList } from '@/components/product/reviews-list';
-// import { RatingSummary } from '@/components/product/rating-summary';
-
-// interface ProductPageProps {
-//   params: Promise<{
-//     slug: string;
-//   }>;
-// }
-
-// async function getProduct(slug: string) {
-//   const product = await prisma.product.findUnique({
-//     where: { slug },
-//     include: {
-//       category: true,
-//       variants: {
-//         // ADD THIS
-//         where: { inStock: true },
-//         orderBy: { sortOrder: 'asc' },
-//       },
-//     },
-//   });
-
-//   if (!product) {
-//     return null;
-//   }
-
-//   // Serialize Decimal to number
-//   return {
-//     ...product,
-//     price: product.price.toNumber(),
-//     comparePrice: product.comparePrice?.toNumber() ?? null,
-//     averageRating: product.averageRating?.toNumber() ?? 0,
-//     variants: product.variants.map((v) => ({
-//       ...v,
-//       price: v.price?.toNumber() ?? null,
-//       priceAdjustment: v.priceAdjustment?.toNumber() ?? null,
-//     })),
-//   };
-// }
-
-// async function getRelatedProducts(
-//   categoryId: string,
-//   currentProductId: string
-// ) {
-//   const products = await prisma.product.findMany({
-//     where: {
-//       categoryId,
-//       id: { not: currentProductId },
-//     },
-//     take: 3,
-//     include: {
-//       category: true,
-//     },
-//   });
-
-//   // Serialize Decimal to number
-//   return products.map((product) => ({
-//     ...product,
-//     price: product.price.toNumber(),
-//     comparePrice: product.comparePrice?.toNumber() ?? null,
-//   }));
-// }
-
-// export async function generateMetadata({ params }: ProductPageProps) {
-//   const { slug } = await params;
-//   const product = await getProduct(slug);
-
-//   if (!product) {
-//     return {
-//       title: 'Product Not Found',
-//     };
-//   }
-
-//   return {
-//     title: `${product.name} - Forge & Steel`,
-//     description: product.description,
-//   };
-// }
-
-// export default async function ProductPage({ params }: ProductPageProps) {
-//   const { slug } = await params;
-//   const product = await getProduct(slug);
-
-//   if (!product) {
-//     notFound();
-//   }
-
-//   const relatedProducts = await getRelatedProducts(
-//     product.categoryId,
-//     product.id
-//   );
-
-//   return (
-//     <div className="min-h-screen bg-background">
-//       <div className="container px-4 py-12 mx-auto">
-//         {/* Product Details */}
-//         <ProductDetail product={product} />
-
-//         {/* Reviews Section */}
-//         <section className="mt-16">
-//           <Tabs defaultValue="reviews" className="w-full">
-//             <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-//               <TabsTrigger value="reviews">
-//                 Reviews ({product.reviewCount || 0})
-//               </TabsTrigger>
-//               <TabsTrigger value="write">Write a Review</TabsTrigger>
-//             </TabsList>
-
-//             {/* Reviews Tab */}
-//             <TabsContent value="reviews" className="mt-8">
-//               {/* Rating Summary */}
-//               <RatingSummary
-//                 productId={product.id}
-//                 averageRating={product.averageRating || 0}
-//                 reviewCount={product.reviewCount || 0}
-//               />
-
-//               {/* Reviews List */}
-//               <div className="mt-8">
-//                 <ReviewsList productId={product.id} />
-//               </div>
-//             </TabsContent>
-
-//             {/* Write Review Tab */}
-//             <TabsContent value="write" className="mt-8">
-//               <div className="max-w-2xl mx-auto">
-//                 <ReviewForm productId={product.id} />
-//               </div>
-//             </TabsContent>
-//           </Tabs>
-//         </section>
-
-//         {/* Related Products */}
-//         {relatedProducts.length > 0 && (
-//           <div className="mt-20">
-//             <RelatedProducts products={relatedProducts} />
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-// src/app/shop/[slug]/page.tsx
-// ENHANCED VERSION with SEO improvements
-// Replace your existing product page with this version
-
-// src/app/shop/[slug]/page.tsx
-// ENHANCED VERSION with SEO improvements
-// Replace your existing product page with this version
-
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
@@ -168,11 +8,13 @@ import { ReviewForm } from '@/components/product/review-form';
 import { ReviewsList } from '@/components/product/reviews-list';
 import { RatingSummary } from '@/components/product/rating-summary';
 import { StructuredData } from '@/components/seo/structured-data';
+import { Breadcrumb } from '@/components/layout/breadcrumb';
 import {
   generateProductSchema,
   generateBreadcrumbSchema,
 } from '@/lib/seo/structured-data';
 import { generateProductMetadata } from '@/lib/seo/metadata';
+import { Star, MessageSquare } from 'lucide-react';
 
 const SITE_URL = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
 
@@ -205,10 +47,21 @@ async function getProduct(slug: string) {
     price: product.price.toNumber(),
     comparePrice: product.comparePrice?.toNumber() ?? null,
     averageRating: product.averageRating?.toNumber() ?? 0,
+    sku: product.sku ?? undefined,
+    variantLabel: product.variantLabel ?? undefined,
+    variantLabelHe: product.variantLabelHe ?? undefined,
     variants: product.variants.map((v) => ({
-      ...v,
-      price: v.price?.toNumber() ?? null,
-      priceAdjustment: v.priceAdjustment?.toNumber() ?? null,
+      id: v.id,
+      name: v.name,
+      nameEn: v.nameEn ?? undefined,
+      nameHe: v.nameHe ?? undefined,
+      sku: v.sku,
+      price: v.price?.toNumber() ?? undefined,
+      priceAdjustment: v.priceAdjustment?.toNumber() ?? undefined,
+      inventory: v.inventory,
+      inStock: v.inStock,
+      isDefault: v.isDefault,
+      sortOrder: v.sortOrder,
     })),
   };
 }
@@ -224,7 +77,7 @@ async function getRelatedProducts(
       id: { not: currentProductId },
       inStock: true,
     },
-    take: 3,
+    take: 4,
     include: {
       category: true,
     },
@@ -235,6 +88,7 @@ async function getRelatedProducts(
     price: product.price.toNumber(),
     comparePrice: product.comparePrice?.toNumber() ?? null,
     averageRating: product.averageRating?.toNumber() ?? 0,
+    createdAt: product.createdAt.toISOString(),
   }));
 }
 
@@ -336,51 +190,82 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <StructuredData data={[productSchema, breadcrumbSchema]} />
 
       <div className="min-h-screen bg-background">
-        {/* Product Detail */}
-        <section className="container mx-auto px-4 py-8 md:py-12">
-          <ProductDetail product={product} />
+        {/* Breadcrumb Navigation */}
+        <section className="container mx-auto px-4 py-4 md:py-6">
+          <Breadcrumb
+            items={[
+              { label: 'Shop', href: '/shop' },
+              {
+                label: product.category.nameEn || product.category.name,
+                labelHe: product.category.nameHe || undefined,
+                href: `/shop?category=${product.category.slug}`,
+              },
+              {
+                label: product.nameEn || product.name,
+                labelHe: product.nameHe || undefined,
+              },
+            ]}
+          />
         </section>
 
-        {/* Tabs Section */}
-        <section className="container mx-auto px-4 md:px-6 py-12">
-          <Tabs defaultValue="reviews" className="w-full max-w-5xl mx-auto">
-            <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-              <TabsTrigger value="reviews">
-                Reviews ({product.reviewCount || 0})
-              </TabsTrigger>
-              <TabsTrigger value="write">Write a Review</TabsTrigger>
-            </TabsList>
-
-            {/* Reviews Tab */}
-            <TabsContent value="reviews" className="mt-8">
-              {/* Rating Summary */}
-              <RatingSummary
-                productId={product.id}
-                averageRating={product.averageRating || 0}
-                reviewCount={product.reviewCount || 0}
-              />
-
-              {/* Reviews List */}
-              <div className="mt-8">
-                <ReviewsList productId={product.id} />
-              </div>
-            </TabsContent>
-
-            {/* Write Review Tab */}
-            <TabsContent value="write" className="mt-8">
-              <div className="max-w-2xl mx-auto">
-                <ReviewForm productId={product.id} />
-              </div>
-            </TabsContent>
-          </Tabs>
+        {/* Product Detail */}
+        <section className="container mx-auto px-4 py-4 md:py-8">
+          <ProductDetail product={product} />
         </section>
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <section className="container mx-auto px-4 md:px-6 py-12 bg-muted/30">
+          <section className="container mx-auto px-4 md:px-6 py-12">
             <RelatedProducts products={relatedProducts} />
           </section>
         )}
+
+        {/* Reviews Section */}
+        <section className="container mx-auto px-4 md:px-6 py-12 bg-muted/30">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-2xl md:text-2xl font-light mb-8 flex items-center gap-2">
+              Customer Reviews
+            </h2>
+
+            <Tabs defaultValue="reviews" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+                <TabsTrigger
+                  value="reviews"
+                  className="flex items-center gap-2"
+                >
+                  <Star className="h-4 w-4" />
+                  Reviews ({product.reviewCount || 0})
+                </TabsTrigger>
+                <TabsTrigger value="write" className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Write a Review
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Reviews Tab */}
+              <TabsContent value="reviews" className="mt-6">
+                {/* Rating Summary */}
+                <RatingSummary
+                  productId={product.id}
+                  averageRating={product.averageRating || 0}
+                  reviewCount={product.reviewCount || 0}
+                />
+
+                {/* Reviews List */}
+                <div className="mt-8">
+                  <ReviewsList productId={product.id} />
+                </div>
+              </TabsContent>
+
+              {/* Write Review Tab */}
+              <TabsContent value="write" className="mt-6">
+                <div className="max-w-2xl mx-auto">
+                  <ReviewForm productId={product.id} />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </section>
       </div>
     </>
   );

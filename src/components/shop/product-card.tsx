@@ -365,11 +365,13 @@ interface Product {
 interface ProductCardProps {
   product: Product;
   isWishlistItem?: boolean;
+  viewMode?: 'grid-2' | 'grid-3' | 'grid-4' | 'carousel';
 }
 
 export function ProductCard({
   product,
   isWishlistItem = false,
+  viewMode = 'carousel',
 }: ProductCardProps) {
   // Cart store
   const { addItem } = useCartStore();
@@ -488,6 +490,12 @@ export function ProductCard({
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     : false;
 
+  // Determine image container class based on viewMode
+  const imageContainerClass =
+    viewMode === 'grid-4' || viewMode === 'carousel'
+      ? 'relative overflow-hidden bg-secondary h-[380px]' // Fixed height for carousel and grid-4
+      : 'relative aspect-square overflow-hidden bg-secondary'; // 1:1 ratio for grid-2 and grid-3
+
   return (
     <>
       <Link href={`/shop/${product.slug}`}>
@@ -496,16 +504,29 @@ export function ProductCard({
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <div className="relative aspect-square overflow-hidden bg-secondary h-[380px]">
+          <div className={imageContainerClass}>
+            {/* Primary Image */}
             <Image
               src={product.image}
               alt={product.name}
               fill
-              className={`object-cover transition-all duration-700  ${
+              className={`object-cover transition-all duration-700 ${
                 imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-              } ${isHovered ? 'scale-110' : 'scale-100'}`}
+              } ${isHovered ? 'scale-110 opacity-0' : 'scale-100 opacity-100'}`}
               onLoad={() => setImageLoaded(true)}
             />
+
+            {/* Secondary Image (shown on hover) */}
+            {product.images && product.images.length > 1 && (
+              <Image
+                src={product.images[1]}
+                alt={`${product.name} - alternate view`}
+                fill
+                className={`object-cover transition-all duration-300 ${
+                  isHovered ? 'scale-110 opacity-100' : 'scale-100 opacity-0'
+                }`}
+              />
+            )}
 
             {/* Badges - Only New and Percentage Off */}
             <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">

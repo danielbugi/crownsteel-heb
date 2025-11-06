@@ -53,9 +53,9 @@ export function ProductSort() {
 
   return (
     <div className="flex items-center gap-2">
-      <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
       <Select value={currentSort} onValueChange={handleSortChange}>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[180px] h-9">
+          <ArrowUpDown className="h-4 w-4 mr-2 text-muted-foreground" />
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>

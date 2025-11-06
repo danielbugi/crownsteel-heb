@@ -678,7 +678,7 @@ export function ProductCarousel({
                           }
                         }}
                       >
-                        <ProductCard product={product} />
+                        <ProductCard product={product} viewMode="carousel" />
                       </div>
                     </div>
                   ))}

@@ -3,12 +3,23 @@
 
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ProductGrid } from '@/components/shop/product-grid';
-import { CategoryFilter } from '@/components/shop/category-filter';
+import { ProductSort } from '@/components/shop/product-sort';
+import { ProductFilters, FilterState } from '@/components/shop/product-filters';
+import { ActiveFilterChips } from '@/components/shop/active-filter-chips';
+import { FILTER_CONSTANTS } from '@/lib/filter-constants';
 import { Button } from '@/components/ui/button';
-import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  LayoutGrid,
+  Columns2,
+  Columns3,
+  LayoutList,
+} from 'lucide-react';
 import { useLanguage } from '@/contexts/language-context';
 import { HeroSection } from '@/components/layout/hero-section';
 
@@ -21,12 +32,14 @@ interface Product {
   id: string;
   name: string;
   slug: string;
+  description: string | null;
   price: number;
   comparePrice: number | null;
   image: string;
   images: string[];
   inStock: boolean;
   featured: boolean;
+  freeShipping: boolean;
   category: {
     id: string;
     name: string;
@@ -71,6 +84,13 @@ function ShopPageContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<
+    'grid-2' | 'grid-3' | 'grid-4' | 'list'
+  >('grid-3');
+  const [filters, setFilters] = useState<FilterState>({
+    priceRange: [0, 2000],
+    metal: '',
+  });
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
     limit: 20,
@@ -97,18 +117,6 @@ function ShopPageContent() {
     }
   }, [category, categories]);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [category, pagination.page]);
-
-  useEffect(() => {
-    setPagination((prev) => ({ ...prev, page: 1 }));
-  }, [category]);
-
   const fetchCategories = async () => {
     try {
       const response = await fetch('/api/categories');
@@ -119,7 +127,7 @@ function ShopPageContent() {
     }
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -129,6 +137,17 @@ function ShopPageContent() {
 
       if (category) {
         params.append('category', category);
+      }
+
+      // Add filter parameters
+      if (filters.metal) {
+        params.append('metal', filters.metal);
+      }
+      if (filters.priceRange[0] > 0) {
+        params.append('minPrice', filters.priceRange[0].toString());
+      }
+      if (filters.priceRange[1] < 2000) {
+        params.append('maxPrice', filters.priceRange[1].toString());
       }
 
       const response = await fetch(`/api/products?${params.toString()}`);
@@ -141,7 +160,19 @@ function ShopPageContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [category, pagination.page, pagination.limit, filters]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  }, [category]);
 
   const goToPage = (page: number) => {
     setPagination((prev) => ({ ...prev, page }));
@@ -164,90 +195,188 @@ function ShopPageContent() {
 
       {/* Main Content */}
       <section className="container px-4 mx-auto py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Categories */}
-          <aside className="lg:w-64 flex-shrink-0">
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={category || undefined}
-            />
-          </aside>
+        {/* Products Section */}
+        <div className="w-full">
+          {/* Elegant Toolbar */}
+          <div className="mb-8 space-y-4">
+            {/* Sort + View Toggle + Filter Options */}
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              {/* Left: Filter Options */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <ProductFilters
+                  currentFilters={filters}
+                  productCount={pagination.total}
+                  onFiltersChange={(newFilters: FilterState) => {
+                    setFilters(newFilters);
+                    setPagination((prev) => ({ ...prev, page: 1 }));
+                  }}
+                />
+              </div>
 
-          {/* Products Grid */}
-          <div className="flex-1">
-            {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              {/* Center: View Toggle */}
+              <div className="flex items-center gap-1 p-1">
+                <Button
+                  variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setViewMode('list')}
+                  title="List View"
+                >
+                  <LayoutList className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'grid-2' ? 'secondary' : 'ghost'}
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setViewMode('grid-2')}
+                  title="2 Columns"
+                >
+                  <Columns2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'grid-3' ? 'secondary' : 'ghost'}
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setViewMode('grid-3')}
+                  title="3 Columns"
+                >
+                  <Columns3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'grid-4' ? 'secondary' : 'ghost'}
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setViewMode('grid-4')}
+                  title="4 Columns"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
               </div>
-            ) : products.length === 0 ? (
-              <div className="text-center py-20">
-                <p className="text-2xl font-semibold mb-2">
-                  {t('shop.noProducts')}
-                </p>
-                <p className="text-muted-foreground">
-                  {t('shop.noProductsDesc')}
-                </p>
+
+              {/* Right: Sort */}
+              <div className="flex items-center gap-3">
+                {/* Sort Dropdown */}
+                <ProductSort />
               </div>
-            ) : (
-              <>
-                <div className="mb-6 text-muted-foreground">
-                  {t('shop.productsFound', { count: pagination.total })}
+            </div>
+
+            {/* Active Category Tag (if filtered) */}
+            {currentCategory && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm text-muted-foreground">
+                  {t('shop.viewing') || 'Viewing'}:
+                </span>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/50 text-sm">
+                  <span>{pageTitle}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4 p-0 hover:bg-transparent"
+                    onClick={() => (window.location.href = '/shop')}
+                  >
+                    <span className="sr-only">Clear filter</span>×
+                  </Button>
                 </div>
-                <ProductGrid products={products} />
-
-                {/* Pagination */}
-                {pagination.pages > 1 && (
-                  <div className="mt-12 flex items-center justify-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => goToPage(pagination.page - 1)}
-                      disabled={pagination.page === 1}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-
-                    {Array.from({ length: pagination.pages }, (_, i) => i + 1)
-                      .filter((page) => {
-                        const current = pagination.page;
-                        return (
-                          page === 1 ||
-                          page === pagination.pages ||
-                          (page >= current - 1 && page <= current + 1)
-                        );
-                      })
-                      .map((page, index, array) => {
-                        const prevPage = array[index - 1];
-                        const showEllipsis = prevPage && page - prevPage > 1;
-
-                        return (
-                          <div key={page} className="flex items-center gap-2">
-                            {showEllipsis && <span className="px-2">...</span>}
-                            <Button
-                              variant={
-                                page === pagination.page ? 'default' : 'outline'
-                              }
-                              onClick={() => goToPage(page)}
-                            >
-                              {page}
-                            </Button>
-                          </div>
-                        );
-                      })}
-
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => goToPage(pagination.page + 1)}
-                      disabled={pagination.page === pagination.pages}
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-              </>
+              </div>
             )}
+
+            {/* Active Filter Chips */}
+            <ActiveFilterChips
+              filters={filters}
+              onRemoveFilter={(filterKey) => {
+                if (filterKey === 'priceRange') {
+                  setFilters({
+                    ...filters,
+                    priceRange: FILTER_CONSTANTS.PRICE.DEFAULT,
+                  });
+                } else {
+                  setFilters({ ...filters, [filterKey]: false });
+                }
+                setPagination((prev) => ({ ...prev, page: 1 }));
+              }}
+              onClearAll={() => {
+                setFilters({
+                  priceRange: FILTER_CONSTANTS.PRICE.DEFAULT,
+                  inStockOnly: false,
+                  freeShippingOnly: false,
+                  onSaleOnly: false,
+                });
+                setPagination((prev) => ({ ...prev, page: 1 }));
+              }}
+            />
           </div>
+
+          {/* Products Grid/List */}
+          {/* Products Grid/List */}
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-2xl font-semibold mb-2">
+                {t('shop.noProducts')}
+              </p>
+              <p className="text-muted-foreground">
+                {t('shop.noProductsDesc')}
+              </p>
+            </div>
+          ) : (
+            <>
+              <ProductGrid products={products} viewMode={viewMode} />
+
+              {/* Pagination */}
+              {pagination.pages > 1 && (
+                <div className="mt-12 flex items-center justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => goToPage(pagination.page - 1)}
+                    disabled={pagination.page === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+
+                  {Array.from({ length: pagination.pages }, (_, i) => i + 1)
+                    .filter((page) => {
+                      const current = pagination.page;
+                      return (
+                        page === 1 ||
+                        page === pagination.pages ||
+                        (page >= current - 1 && page <= current + 1)
+                      );
+                    })
+                    .map((page, index, array) => {
+                      const prevPage = array[index - 1];
+                      const showEllipsis = prevPage && page - prevPage > 1;
+
+                      return (
+                        <div key={page} className="flex items-center gap-2">
+                          {showEllipsis && <span className="px-2">...</span>}
+                          <Button
+                            variant={
+                              page === pagination.page ? 'default' : 'outline'
+                            }
+                            onClick={() => goToPage(page)}
+                          >
+                            {page}
+                          </Button>
+                        </div>
+                      );
+                    })}
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => goToPage(pagination.page + 1)}
+                    disabled={pagination.page === pagination.pages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
     </div>

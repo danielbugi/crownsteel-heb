@@ -8,17 +8,17 @@ import { ProductVariantSelector } from '@/components/product/product-variant-sel
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  ShoppingCart,
-  Truck,
-  Shield,
-  ArrowLeft,
-  AlertCircle,
-} from 'lucide-react';
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Truck, Shield, ArrowLeft, AlertCircle } from 'lucide-react';
 import { formatPrice, cn } from '@/lib/utils';
 import { useCartStore } from '@/store/cart-store';
 import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface ProductDetailProps {
   product: {
@@ -34,6 +34,7 @@ interface ProductDetailProps {
     featured: boolean;
     freeShipping: boolean;
     inventory: number;
+    sku?: string;
     hasVariants?: boolean;
     variantLabel?: string;
     variantLabelHe?: string;
@@ -65,7 +66,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const [selectedVariant, setSelectedVariant] = useState<VariantType | null>(
     null
   );
-  const { addItem } = useCartStore();
+  const { addItem, addItemSilently } = useCartStore();
+  const router = useRouter();
 
   const handleAddToCart = () => {
     // CRITICAL: Block checkout if product has variants but none is selected
@@ -109,6 +111,52 @@ export function ProductDetail({ product }: ProductDetailProps) {
     });
 
     toast.success(`Added ${quantity} item(s) to cart`);
+  };
+
+  const handleBuyNow = () => {
+    // CRITICAL: Block checkout if product has variants but none is selected
+    if (
+      product.hasVariants &&
+      product.variants &&
+      product.variants.length > 0 &&
+      !selectedVariant
+    ) {
+      toast.error('Please select a variant before proceeding');
+      return;
+    }
+
+    const availableInventory =
+      product.hasVariants && selectedVariant
+        ? selectedVariant.inventory
+        : product.inventory;
+
+    if (!product.inStock || availableInventory === 0) {
+      toast.error('This item is currently out of stock');
+      return;
+    }
+
+    if (quantity > availableInventory) {
+      toast.error(`Only ${availableInventory} available`);
+      return;
+    }
+
+    // Add item to cart without opening sidebar
+    addItemSilently({
+      id: crypto.randomUUID(),
+      productId: product.id,
+      variantId: selectedVariant?.id || null,
+      name:
+        product.name + (selectedVariant ? ` - ${selectedVariant.name}` : ''),
+      price: selectedVariant
+        ? selectedVariant.price ||
+          product.price + (selectedVariant.priceAdjustment || 0)
+        : product.price,
+      image: product.image,
+      quantity,
+    });
+
+    // Navigate to checkout immediately
+    router.push('/checkout');
   };
 
   // Check if add to cart button should be disabled
@@ -201,19 +249,19 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         {/* Product Info */}
         <div className="flex flex-col">
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <Link
               href={`/shop?category=${product.category.slug}`}
               className="text-sm text-muted-foreground hover:text-accent"
             >
               {product.category.name}
             </Link>
-          </div>
+          </div> */}
 
-          <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
+          <h1 className="text-xl font-light mb-4">{product.name}</h1>
 
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-3xl font-bold">
+            <span className="text-2xl font-light">
               {formatPrice(
                 selectedVariant
                   ? selectedVariant.price ||
@@ -294,7 +342,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </div>
 
           {/* Stock Info */}
-          <div className="mb-6">
+          <div className="mb-2">
             {product.hasVariants && selectedVariant ? (
               <Badge
                 variant={
@@ -318,14 +366,15 @@ export function ProductDetail({ product }: ProductDetailProps) {
             )}
           </div>
 
+          <Separator className="my-6" />
+
           {/* Add to Cart Button - BLOCKED if variants required but not selected */}
           <Button
             size="lg"
-            className="w-full mb-6"
+            className="w-full mb-3 font-light"
             onClick={handleAddToCart}
             disabled={isAddToCartDisabled()}
           >
-            <ShoppingCart className="mr-2 h-5 w-5" />
             {isAddToCartDisabled()
               ? product.hasVariants &&
                 product.variants &&
@@ -335,6 +384,246 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 : 'Out of Stock'
               : 'Add to Cart'}
           </Button>
+
+          {/* Buy Now Button - Instant Checkout */}
+          <Button
+            size="lg"
+            variant="outline"
+            className="w-full mb-6 border-2 border-black hover:bg-black hover:text-white font-light"
+            onClick={handleBuyNow}
+            disabled={isAddToCartDisabled()}
+          >
+            Buy Now
+          </Button>
+
+          <Separator className="my-2" />
+
+          {/* Product Information Accordion */}
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full mb-6 space-y-2"
+          >
+            {/* Product Details */}
+            <AccordionItem
+              value="details"
+              className="border-0 bg-gray-200 overflow-hidden "
+            >
+              <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40 ">
+                <span className="font-light text-left">Product Details</span>
+              </AccordionTrigger>
+              <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
+                <div className="bg-background p-4 space-y-4">
+                  <div className="space-y-2 text-sm">
+                    <p className="flex justify-between">
+                      <span className="text-muted-foreground">Category:</span>
+                      <span className="font-medium">
+                        {product.category.name}
+                      </span>
+                    </p>
+                    {product.sku && (
+                      <p className="flex justify-between">
+                        <span className="text-muted-foreground">SKU:</span>
+                        <span className="font-mono text-xs">{product.sku}</span>
+                      </p>
+                    )}
+                    <p className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        Availability:
+                      </span>
+                      <span
+                        className={
+                          product.inStock
+                            ? 'text-green-600 font-medium'
+                            : 'text-red-600 font-medium'
+                        }
+                      >
+                        {product.inStock
+                          ? `In Stock (${product.inventory})`
+                          : 'Out of Stock'}
+                      </span>
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-light mb-2 text-sm">Features</h4>
+                    <ul className="space-y-1.5 text-sm text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">✓</span>
+                        Premium handcrafted quality
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">✓</span>
+                        Durable materials
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">✓</span>
+                        Stylish modern design
+                      </li>
+                      {product.freeShipping && (
+                        <li className="flex items-start gap-2">
+                          <span className="text-primary mt-0.5">✓</span>
+                          Free shipping included
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="font-light mb-2 text-sm">
+                      Care Instructions
+                    </h4>
+                    <ul className="space-y-1.5 text-sm text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">•</span>
+                        Clean with soft cloth
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">•</span>
+                        Avoid harsh chemicals
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">•</span>
+                        Store in dry place
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Shipping Policy */}
+            <AccordionItem
+              value="shipping"
+              className="border-0 bg-gray-200 overflow-hidden"
+            >
+              <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40">
+                <span className="font-light text-left">Shipping Policy</span>
+              </AccordionTrigger>
+              <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
+                <div className="bg-background p-4 space-y-3 text-sm">
+                  <div>
+                    <h4 className="font-light mb-1.5">Domestic Shipping</h4>
+                    <ul className="space-y-1 text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <span>•</span>
+                        <span>Standard: 3-5 business days (₪20)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span>•</span>
+                        <span>Express: 1-2 business days (₪40)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span>•</span>
+                        <span>
+                          Free shipping on orders over ₪300
+                          {product.freeShipping && ' - Qualifies!'}
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md p-3">
+                    <p className="text-xs">
+                      <strong>Note:</strong> Orders processed within 1-2
+                      business days. Tracking number provided upon shipment.
+                    </p>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Payment Options */}
+            <AccordionItem
+              value="payment"
+              className="border-0 bg-gray-200 overflow-hidden"
+            >
+              <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40">
+                <span className="font-light text-left">Payment Options</span>
+              </AccordionTrigger>
+              <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
+                <div className="bg-background p-4 space-y-3 text-sm">
+                  <p className="text-muted-foreground">
+                    We accept the following payment methods:
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="border rounded-md p-3">
+                      <h4 className="font-light mb-1.5 text-xs">
+                        Credit Cards
+                      </h4>
+                      <ul className="space-y-0.5 text-xs text-muted-foreground">
+                        <li>• Visa</li>
+                        <li>• Mastercard</li>
+                        <li>• American Express</li>
+                      </ul>
+                    </div>
+
+                    <div className="border rounded-md p-3">
+                      <h4 className="font-light mb-1.5 text-xs">
+                        Digital Wallets
+                      </h4>
+                      <ul className="space-y-0.5 text-xs text-muted-foreground">
+                        <li>• PayPal</li>
+                        <li>• Apple Pay</li>
+                        <li>• Google Pay</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-md p-3">
+                    <div className="flex items-start gap-2">
+                      <Shield className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                      <p className="text-xs">
+                        <strong>Secure Payment:</strong> All transactions
+                        encrypted with SSL technology.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Guarantee */}
+            <AccordionItem
+              value="guarantee"
+              className="border-0 bg-gray-200 overflow-hidden"
+            >
+              <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40">
+                <span className="font-light text-left">Quality Guarantee</span>
+              </AccordionTrigger>
+              <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
+                <div className="bg-background p-4 space-y-3 text-sm">
+                  <div>
+                    <h4 className="font-light mb-1.5">
+                      30-Day Money Back Guarantee
+                    </h4>
+                    <p className="text-muted-foreground text-xs">
+                      Not satisfied? Return within 30 days for a full refund -
+                      no questions asked.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-light mb-1.5">Lifetime Warranty</h4>
+                    <p className="text-muted-foreground text-xs">
+                      We cover manufacturing defects for life. If it breaks due
+                      to defective craftsmanship, we&apos;ll repair or replace
+                      it free.
+                    </p>
+                  </div>
+
+                  <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md p-3">
+                    <p className="text-xs">
+                      <strong>How to Claim:</strong> Contact us with your order
+                      number and photos. We&apos;ll provide a prepaid shipping
+                      label.
+                    </p>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
           {/* Product Features */}
           <div className="space-y-4">

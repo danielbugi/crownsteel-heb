@@ -43,25 +43,21 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
+          <h2 className="text-2xl md:text-2xl font-light flex items-center gap-2">
             {t('product.relatedProducts') || 'You May Also Like'}
           </h2>
-          <p className="text-muted-foreground mt-2">
-            Discover similar items from the same category
-          </p>
         </div>
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
       {/* View More Link */}
-      {products.length >= 3 && (
+      {products.length >= 4 && (
         <div className="mt-8 text-center">
           <a
             href={`/shop?category=${products[0]?.category.slug}`}
