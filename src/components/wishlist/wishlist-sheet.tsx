@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useWishlistStore } from '@/store/wishlist-store';
 import { useLanguage } from '@/contexts/language-context';
+import { t } from '@/lib/translations';
 import { Heart, X, ShoppingBag, ExternalLink, Loader2 } from 'lucide-react';
 import { WishlistSheetItem } from './wishlist-sheet-item';
 
@@ -121,7 +122,12 @@ export function WishlistSheet() {
             <Heart className="h-5 w-5 fill-red-500 text-red-500" />
             FAVORITES ({wishlistCount})
           </SheetTitle>
-          <Button onClick={toggleWishlist} variant="ghost" size="icon">
+          <Button
+            onClick={toggleWishlist}
+            variant="ghost"
+            size="icon"
+            className="text-black hover:text-gray-700"
+          >
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -167,13 +173,14 @@ export function WishlistSheet() {
             /* Empty State */
             <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
               <Heart className="h-16 w-16 text-gray-300 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
+              <h3 className="text-lg font-semibold text-black mb-2">
                 {t('wishlist.empty')}
               </h3>
-              <p className="text-sm text-muted-foreground mb-6">
+              <p className="text-sm text-gray-600 mb-6">
                 {t('wishlist.emptyDesc')}
               </p>
               <Button
+                className="bg-black text-white hover:bg-gray-800"
                 onClick={() => {
                   closeWishlist();
                   router.push('/shop');
@@ -203,7 +210,7 @@ export function WishlistSheet() {
             <Button
               size="lg"
               variant="outline"
-              className="w-full"
+              className="w-full border-black text-black hover:bg-gray-100"
               onClick={handleViewAll}
             >
               <ExternalLink className="mr-2 h-4 w-4" />
@@ -212,14 +219,14 @@ export function WishlistSheet() {
 
             <Button
               size="lg"
-              className="w-full"
+              className="w-full bg-black text-white hover:bg-gray-800"
               onClick={() => {
                 closeWishlist();
                 router.push('/shop');
               }}
             >
               <ShoppingBag className="mr-2 h-4 w-4" />
-              Continue Shopping
+              {t('cart.continueShopping')}
             </Button>
           </div>
         )}

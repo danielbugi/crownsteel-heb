@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { ProductBadge } from '@/components/product/product-badge';
 import { ShoppingCart, ExternalLink, Heart } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
 import toast from 'react-hot-toast';
@@ -128,22 +128,16 @@ export function QuickViewModal({
 
               {/* Badges */}
               <div className="absolute top-3 left-3 flex flex-col gap-2">
-                {product.featured && (
-                  <Badge className="bg-purple-600 text-white border-none">
-                    Featured
-                  </Badge>
-                )}
+                {product.featured && <ProductBadge>Featured</ProductBadge>}
                 {product.hasVariants &&
                   product.variants &&
                   product.variants.length > 0 && (
-                    <Badge className="bg-blue-600 text-white border-none">
+                    <ProductBadge>
                       Multiple {product.variantLabel || 'Options'}
-                    </Badge>
+                    </ProductBadge>
                   )}
                 {discountPercentage > 0 && (
-                  <Badge className="bg-red-500 text-white border-none">
-                    -{discountPercentage}% OFF
-                  </Badge>
+                  <ProductBadge>-{discountPercentage}% OFF</ProductBadge>
                 )}
               </div>
             </div>
@@ -257,7 +251,8 @@ export function QuickViewModal({
             <div className="space-y-3 mt-auto">
               <Button
                 size="lg"
-                className="uppercase w-full bg-black hover:bg-white text-white hover:text-black border- font-semibold flex gap-2"
+                variant="elegant"
+                className="uppercase w-full font-semibold flex gap-2"
                 onClick={handleAddToCart}
                 disabled={!product.inStock}
               >

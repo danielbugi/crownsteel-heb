@@ -1,14 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { startPerformanceTracking } from '@/lib/track-performance';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const trackEnd = startPerformanceTracking('/api/categories', 'GET');
 
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const lang = searchParams.get('lang') || 'en';
-
     const categories = await prisma.category.findMany({
       orderBy: {
         name: 'asc',
@@ -20,21 +17,11 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Map categories to use correct language, with fallbacks
+    // Map categories to include product count
     const localizedCategories = categories.map((category) => {
-      let displayName = category.name; // Default fallback
-
-      if (lang === 'he' && category.nameHe) {
-        displayName = category.nameHe;
-      } else if (lang === 'en' && category.nameEn) {
-        displayName = category.nameEn;
-      } else if (category.nameEn) {
-        displayName = category.nameEn;
-      }
-
       return {
         ...category,
-        name: displayName,
+        name: category.name,
       };
     });
 

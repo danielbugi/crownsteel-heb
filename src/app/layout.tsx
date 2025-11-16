@@ -3,7 +3,7 @@
 // Replace your existing layout.tsx with this version
 
 import type { Metadata, Viewport } from 'next';
-import { Playfair_Display, Rubik, Heebo } from 'next/font/google';
+import { Playfair_Display, Rubik, Heebo, Cinzel } from 'next/font/google';
 import './globals.css';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { Navbar } from '@/components/layout/navbar';
@@ -23,10 +23,17 @@ import {
   generateWebSiteSchema,
 } from '@/lib/seo/structured-data';
 
-// Playfair Display - Heading Font
+// Luxury Fonts
 const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-playfair',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800', '900'],
+});
+
+const cinzel = Cinzel({
+  subsets: ['latin'],
+  variable: '--font-cinzel',
   display: 'swap',
   weight: ['400', '500', '600', '700', '800', '900'],
 });
@@ -64,8 +71,8 @@ export const metadata: Metadata = {
     'men rings',
     'bracelets',
     'necklaces',
-    'תכשיטים לגברים',
-    'טבעות לגברים',
+    'jewelry store',
+    'luxury jewelry',
   ],
   authors: [{ name: SITE_NAME }],
   creator: SITE_NAME,
@@ -167,8 +174,9 @@ export default function RootLayout({
 }) {
   return (
     <html
-      // lang="en"
-      className={`${rubik.variable} ${heebo.variable}`}
+      lang="en"
+      dir="ltr"
+      className={`${rubik.variable} ${heebo.variable} ${cinzel.variable} ${playfair.variable}`}
     >
       <head>
         <HreflangLinks />
@@ -177,10 +185,6 @@ export default function RootLayout({
           rel="preconnect"
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
-          rel="stylesheet"
         />
         {/* Structured Data */}
         <StructuredData data={[organizationSchema, websiteSchema]} />

@@ -12,12 +12,12 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { name, nameEn, nameHe, slug, description, image } = body;
+    const { name, slug, description, image } = body;
 
     // Validate required fields
-    if (!nameEn || !nameHe || !slug) {
+    if (!name || !slug) {
       return NextResponse.json(
-        { error: 'Missing required fields: nameEn, nameHe, slug' },
+        { error: 'Missing required fields: name, slug' },
         { status: 400 }
       );
     }
@@ -36,9 +36,7 @@ export async function POST(request: NextRequest) {
 
     const category = await prisma.category.create({
       data: {
-        name: name || nameEn,
-        nameEn,
-        nameHe,
+        name,
         slug,
         description,
         image,

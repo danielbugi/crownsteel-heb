@@ -18,8 +18,6 @@ export async function GET() {
             product: {
               select: {
                 name: true,
-                nameEn: true,
-                nameHe: true,
                 image: true,
               },
             },

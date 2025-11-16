@@ -175,13 +175,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   // Generate Breadcrumb Schema
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: 'Home', url: SITE_URL },
-    { name: 'Shop', url: `${SITE_URL}/shop` },
+    { name: 'דף הבית', url: SITE_URL },
+    { name: 'חנות', url: `${SITE_URL}/shop` },
     {
-      name: product.category.name,
+      name:
+        product.category.nameHe ||
+        product.category.nameEn ||
+        product.category.name,
       url: `${SITE_URL}/categories/${product.category.slug}`,
     },
-    { name: product.name, url: `${SITE_URL}/shop/${product.slug}` },
+    {
+      name: product.nameHe || product.nameEn || product.name,
+      url: `${SITE_URL}/shop/${product.slug}`,
+    },
   ]);
 
   return (
@@ -194,15 +200,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <section className="container mx-auto px-4 py-4 md:py-6">
           <Breadcrumb
             items={[
-              { label: 'Shop', href: '/shop' },
+              { label: 'חנות', href: '/shop' },
               {
-                label: product.category.nameEn || product.category.name,
-                labelHe: product.category.nameHe || undefined,
+                label:
+                  product.category.nameHe ||
+                  product.category.nameEn ||
+                  product.category.name,
                 href: `/shop?category=${product.category.slug}`,
               },
               {
-                label: product.nameEn || product.name,
-                labelHe: product.nameHe || undefined,
+                label: product.nameHe || product.nameEn || product.name,
               },
             ]}
           />
@@ -224,7 +231,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <section className="container mx-auto px-4 md:px-6 py-12 bg-muted/30">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-2xl md:text-2xl font-light mb-8 flex items-center gap-2">
-              Customer Reviews
+              ביקורות לקוחות
             </h2>
 
             <Tabs defaultValue="reviews" className="w-full">
@@ -234,11 +241,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   className="flex items-center gap-2"
                 >
                   <Star className="h-4 w-4" />
-                  Reviews ({product.reviewCount || 0})
+                  ביקורות ({product.reviewCount || 0})
                 </TabsTrigger>
                 <TabsTrigger value="write" className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
-                  Write a Review
+                  כתיבת ביקורת
                 </TabsTrigger>
               </TabsList>
 

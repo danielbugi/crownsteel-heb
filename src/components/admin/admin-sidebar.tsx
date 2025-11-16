@@ -18,6 +18,7 @@ import {
   Activity,
   Mail,
   Tag,
+  FileText,
 } from 'lucide-react';
 import { useSettings } from '@/contexts/settings-context';
 
@@ -47,7 +48,10 @@ const navigationSections = [
   },
   {
     title: 'Marketing',
-    items: [{ name: 'Newsletter', href: '/admin/newsletter', icon: Mail }],
+    items: [
+      { name: 'Newsletter', href: '/admin/newsletter', icon: Mail },
+      { name: 'Blog', href: '/admin/blog', icon: FileText },
+    ],
   },
   {
     title: 'Community',

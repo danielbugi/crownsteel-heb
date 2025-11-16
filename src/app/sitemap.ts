@@ -22,6 +22,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${SITE_URL}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
       url: `${SITE_URL}/about`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
@@ -97,8 +103,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // Fetch all published blog posts
+  const blogPosts = await prisma.blogPost.findMany({
+    where: {
+      status: 'PUBLISHED',
+      publishedAt: { lte: new Date() },
+    },
+    select: {
+      slug: true,
+      updatedAt: true,
+      publishedAt: true,
+    },
+    orderBy: {
+      publishedAt: 'desc',
+    },
+  });
+
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${SITE_URL}/blog/${post.slug}`,
+    lastModified: post.updatedAt || post.publishedAt,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }));
+
   // Combine all pages
-  return [...staticPages, ...productPages, ...categoryPages];
+  return [...staticPages, ...productPages, ...categoryPages, ...blogPages];
 }
 
 // Optional: Generate separate sitemaps for different languages

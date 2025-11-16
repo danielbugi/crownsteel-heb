@@ -12,7 +12,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { SlidersHorizontal } from 'lucide-react';
-import { useLanguage } from '@/contexts/language-context';
+import { t } from '@/lib/translations';
 import { PriceRangeInput } from './price-range-input';
 import {
   FILTER_CONSTANTS,
@@ -36,7 +36,6 @@ export function ProductFilters({
   currentFilters,
   productCount,
 }: ProductFiltersProps) {
-  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [localFilters, setLocalFilters] = useState<FilterState>(currentFilters);
 
@@ -126,7 +125,7 @@ export function ProductFilters({
       >
         <SheetHeader className="px-6 pb-6 border-b-2">
           <SheetTitle className="text-2xl font-light tracking-wide">
-            {t('shop.filterProducts') || 'Filter Products'}
+            {t('shop.filterProducts') || 'סנן מוצרים'}
           </SheetTitle>
         </SheetHeader>
 
@@ -135,7 +134,7 @@ export function ProductFilters({
             {/* Metal Type */}
             <div className="space-y-4">
               <Label className="text-sm font-light uppercase tracking-wider text-foreground">
-                {t('shop.metalType') || 'Metal Type'}
+                {t('shop.metalType') || 'סוג מתכת'}
               </Label>
               <RadioGroup
                 value={localFilters.metal}
@@ -167,7 +166,7 @@ export function ProductFilters({
               <PriceRangeInput
                 value={localFilters.priceRange}
                 onChange={handlePriceChange}
-                label={t('shop.priceRange') || 'Price Range'}
+                label={t('shop.priceRange') || 'טווח מחירים'}
               />
             </div>
 
@@ -191,8 +190,8 @@ export function ProductFilters({
                         <span className="font-medium">{productCount}</span>{' '}
                         <span className="text-muted-foreground">
                           {productCount === 1
-                            ? t('shop.productFound') || 'product found'
-                            : t('shop.productsFound') || 'products found'}
+                            ? t('shop.productFound') || 'מוצר נמצא'
+                            : t('shop.productsFound') || 'מוצרים נמצאו'}
                         </span>
                       </>
                     )}
@@ -207,7 +206,7 @@ export function ProductFilters({
                 onClick={applyFilters}
                 className="w-full h-11 font-light text-sm tracking-wide uppercase bg-foreground hover:bg-foreground/90"
               >
-                {t('shop.applyFilters') || 'Apply Filters'}
+                {t('shop.applyFilters') || 'החל מסננים'}
                 {activeFilterCount > 0 && (
                   <span className="ml-2 px-2 py-0.5 bg-background text-foreground rounded-full text-xs">
                     {activeFilterCount}
@@ -220,7 +219,7 @@ export function ProductFilters({
                 className="w-full h-11 font-light text-sm tracking-wide uppercase border-2 hover:bg-accent"
                 disabled={!hasActiveFilters}
               >
-                {t('shop.resetFilters') || 'Reset Filters'}
+                {t('shop.resetFilters') || 'אפס מסננים'}
               </Button>
             </div>
           </div>

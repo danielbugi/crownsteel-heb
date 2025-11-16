@@ -77,7 +77,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
       product.variants.length > 0 &&
       !selectedVariant
     ) {
-      toast.error('Please select a variant before adding to cart');
+      toast.error('אנא בחר גרסה לפני הוספה לעגלה');
       return;
     }
 
@@ -87,12 +87,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
         : product.inventory;
 
     if (!product.inStock || availableInventory === 0) {
-      toast.error('This item is currently out of stock');
+      toast.error('פריט זה אינו זמין כרגע');
       return;
     }
 
     if (quantity > availableInventory) {
-      toast.error(`Only ${availableInventory} available`);
+      toast.error(`רק ${availableInventory} זמינים`);
       return;
     }
 
@@ -131,12 +131,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
         : product.inventory;
 
     if (!product.inStock || availableInventory === 0) {
-      toast.error('This item is currently out of stock');
+      toast.error('פריט זה אינו זמין כרגע');
       return;
     }
 
     if (quantity > availableInventory) {
-      toast.error(`Only ${availableInventory} available`);
+      toast.error(`רק ${availableInventory} זמינים`);
       return;
     }
 
@@ -350,8 +350,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 }
               >
                 {selectedVariant.inventory > 0
-                  ? `${selectedVariant.inventory} in stock`
-                  : 'Out of stock'}
+                  ? `${selectedVariant.inventory} במלאי`
+                  : 'אזל מהמלאי'}
               </Badge>
             ) : (
               !product.hasVariants && (
@@ -359,8 +359,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   variant={product.inventory > 0 ? 'default' : 'destructive'}
                 >
                   {product.inventory > 0
-                    ? `${product.inventory} in stock`
-                    : 'Out of stock'}
+                    ? `${product.inventory} במלאי`
+                    : 'אזל מהמלאי'}
                 </Badge>
               )
             )}
@@ -380,9 +380,9 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 product.variants &&
                 product.variants.length > 0 &&
                 !selectedVariant
-                ? `Choose ${product.variantLabel || 'Variant'} First`
-                : 'Out of Stock'
-              : 'Add to Cart'}
+                ? `בחר ${product.variantLabelHe || product.variantLabel || 'גרסה'} תחילה`
+                : 'אזל מהמלאי'
+              : 'הוסף לעגלה'}
           </Button>
 
           {/* Buy Now Button - Instant Checkout */}
@@ -393,7 +393,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
             onClick={handleBuyNow}
             disabled={isAddToCartDisabled()}
           >
-            Buy Now
+            קנה עכשיו
           </Button>
 
           <Separator className="my-2" />
@@ -410,13 +410,13 @@ export function ProductDetail({ product }: ProductDetailProps) {
               className="border-0 bg-gray-200 overflow-hidden "
             >
               <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40 ">
-                <span className="font-light text-left">Product Details</span>
+                <span className="font-light text-left">פרטי המוצר</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
                 <div className="bg-background p-4 space-y-4">
                   <div className="space-y-2 text-sm">
                     <p className="flex justify-between">
-                      <span className="text-muted-foreground">Category:</span>
+                      <span className="text-muted-foreground">קטגוריה:</span>
                       <span className="font-medium">
                         {product.category.name}
                       </span>
@@ -428,9 +428,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                       </p>
                     )}
                     <p className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        Availability:
-                      </span>
+                      <span className="text-muted-foreground">זמינות:</span>
                       <span
                         className={
                           product.inStock
@@ -439,14 +437,14 @@ export function ProductDetail({ product }: ProductDetailProps) {
                         }
                       >
                         {product.inStock
-                          ? `In Stock (${product.inventory})`
-                          : 'Out of Stock'}
+                          ? `במלאי (${product.inventory})`
+                          : 'אזל מהמלאי'}
                       </span>
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="font-light mb-2 text-sm">Features</h4>
+                    <h4 className="font-light mb-2 text-sm">תכונות</h4>
                     <ul className="space-y-1.5 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">✓</span>
@@ -463,7 +461,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                       {product.freeShipping && (
                         <li className="flex items-start gap-2">
                           <span className="text-primary mt-0.5">✓</span>
-                          Free shipping included
+                          משלוח חינם כלול
                         </li>
                       )}
                     </ul>
@@ -498,26 +496,26 @@ export function ProductDetail({ product }: ProductDetailProps) {
               className="border-0 bg-gray-200 overflow-hidden"
             >
               <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40">
-                <span className="font-light text-left">Shipping Policy</span>
+                <span className="font-light text-left">מדיניות משלוחים</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
                 <div className="bg-background p-4 space-y-3 text-sm">
                   <div>
-                    <h4 className="font-light mb-1.5">Domestic Shipping</h4>
+                    <h4 className="font-light mb-1.5">משלוחים בארץ</h4>
                     <ul className="space-y-1 text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span>•</span>
-                        <span>Standard: 3-5 business days (₪20)</span>
+                        <span>רגיל: 3-5 ימי עסקים (₪20)</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span>•</span>
-                        <span>Express: 1-2 business days (₪40)</span>
+                        <span>מהיר: 1-2 ימי עסקים (₪40)</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span>•</span>
                         <span>
-                          Free shipping on orders over ₪300
-                          {product.freeShipping && ' - Qualifies!'}
+                          משלוח חינם להזמנות מעל ₪300
+                          {product.freeShipping && ' - זכאי!'}
                         </span>
                       </li>
                     </ul>
@@ -525,8 +523,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
                   <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md p-3">
                     <p className="text-xs">
-                      <strong>Note:</strong> Orders processed within 1-2
-                      business days. Tracking number provided upon shipment.
+                      <strong>הערה:</strong> הזמנות מעובדות תוך 1-2 ימי עסקים.
+                      מספר מעקב מסופק עם המשלוח.
                     </p>
                   </div>
                 </div>
@@ -539,18 +537,18 @@ export function ProductDetail({ product }: ProductDetailProps) {
               className="border-0 bg-gray-200 overflow-hidden"
             >
               <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40">
-                <span className="font-light text-left">Payment Options</span>
+                <span className="font-light text-left">אפשרויות תשלום</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
                 <div className="bg-background p-4 space-y-3 text-sm">
                   <p className="text-muted-foreground">
-                    We accept the following payment methods:
+                    אנו מקבלים את אמצעי התשלום הבאים:
                   </p>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="border rounded-md p-3">
                       <h4 className="font-light mb-1.5 text-xs">
-                        Credit Cards
+                        כרטיסי אשראי
                       </h4>
                       <ul className="space-y-0.5 text-xs text-muted-foreground">
                         <li>• Visa</li>
@@ -561,7 +559,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
                     <div className="border rounded-md p-3">
                       <h4 className="font-light mb-1.5 text-xs">
-                        Digital Wallets
+                        ארנקים דיגיטליים
                       </h4>
                       <ul className="space-y-0.5 text-xs text-muted-foreground">
                         <li>• PayPal</li>
@@ -575,8 +573,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
                     <div className="flex items-start gap-2">
                       <Shield className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
                       <p className="text-xs">
-                        <strong>Secure Payment:</strong> All transactions
-                        encrypted with SSL technology.
+                        <strong>תשלום מאובטח:</strong> כל העסקאות מוצפנות
+                        בטכנולוגיית SSL.
                       </p>
                     </div>
                   </div>
@@ -590,34 +588,31 @@ export function ProductDetail({ product }: ProductDetailProps) {
               className="border-0 bg-gray-200 overflow-hidden"
             >
               <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40">
-                <span className="font-light text-left">Quality Guarantee</span>
+                <span className="font-light text-left">אחריות איכות</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
                 <div className="bg-background p-4 space-y-3 text-sm">
                   <div>
                     <h4 className="font-light mb-1.5">
-                      30-Day Money Back Guarantee
+                      אחריות החזר כספי ל30 יום
                     </h4>
                     <p className="text-muted-foreground text-xs">
-                      Not satisfied? Return within 30 days for a full refund -
-                      no questions asked.
+                      לא מרוצה? החזר תוך 30 יום להחזר כספי מלא - ללא שאלות.
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="font-light mb-1.5">Lifetime Warranty</h4>
+                    <h4 className="font-light mb-1.5">אחריות לכל החיים</h4>
                     <p className="text-muted-foreground text-xs">
-                      We cover manufacturing defects for life. If it breaks due
-                      to defective craftsmanship, we&apos;ll repair or replace
-                      it free.
+                      אנו מכסים ליקויי ייצור לכל החיים. אם המוצר נשבר עקב עבודת
+                      יד פגומה, נתקן או נחליף אותו בחינם.
                     </p>
                   </div>
 
                   <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md p-3">
                     <p className="text-xs">
-                      <strong>How to Claim:</strong> Contact us with your order
-                      number and photos. We&apos;ll provide a prepaid shipping
-                      label.
+                      <strong>איך לתבוע:</strong> צור קשר עם מספר ההזמנה
+                      ותמונות. נספק תווית משלוח מראש.
                     </p>
                   </div>
                 </div>
@@ -630,12 +625,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
             {product.freeShipping && (
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <Truck className="h-5 w-5 text-accent" />
-                <span>Free shipping on this item</span>
+                <span>משלוח חינם על פריט זה</span>
               </div>
             )}
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <Shield className="h-5 w-5 text-accent" />
-              <span>Secure checkout</span>
+              <span>תשלום מאובטח</span>
             </div>
           </div>
         </div>

@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
     const sortOrder = searchParams.get('sortOrder') || 'desc';
     const inStock = searchParams.get('inStock');
     const featured = searchParams.get('featured');
-    const lang = searchParams.get('lang') || 'en';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     const skip = (page - 1) * limit;
@@ -27,11 +26,7 @@ export async function GET(request: NextRequest) {
     if (query) {
       where.OR = [
         { name: { contains: query, mode: 'insensitive' } },
-        { nameEn: { contains: query, mode: 'insensitive' } },
-        { nameHe: { contains: query, mode: 'insensitive' } },
         { description: { contains: query, mode: 'insensitive' } },
-        { descriptionEn: { contains: query, mode: 'insensitive' } },
-        { descriptionHe: { contains: query, mode: 'insensitive' } },
       ];
     }
 
@@ -77,26 +72,17 @@ export async function GET(request: NextRequest) {
       prisma.product.count({ where }),
     ]);
 
-    // Localize and serialize
+    // Serialize
     const localizedProducts = products.map((product) => ({
       ...product,
       price: product.price.toNumber(),
       comparePrice: product.comparePrice?.toNumber() || null,
       averageRating: product.averageRating?.toNumber() || null,
-      name:
-        lang === 'he' && product.nameHe
-          ? product.nameHe
-          : product.nameEn || product.name,
-      description:
-        lang === 'he' && product.descriptionHe
-          ? product.descriptionHe
-          : product.descriptionEn || product.description,
+      name: product.name,
+      description: product.description,
       category: {
         ...product.category,
-        name:
-          lang === 'he' && product.category.nameHe
-            ? product.category.nameHe
-            : product.category.nameEn || product.category.name,
+        name: product.category.name,
       },
     }));
 

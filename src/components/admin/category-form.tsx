@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUploader } from '@/components/admin/image-uploader';
 import toast from 'react-hot-toast';
 
@@ -16,8 +15,6 @@ interface CategoryFormProps {
   initialData?: {
     id: string;
     name: string;
-    nameEn?: string | null;
-    nameHe?: string | null;
     slug: string;
     description?: string | null;
     image?: string | null;
@@ -29,32 +26,26 @@ export function CategoryForm({ initialData, categoryId }: CategoryFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // English fields
-  const [nameEn, setNameEn] = useState(
-    initialData?.nameEn || initialData?.name || ''
-  );
+  // Fields
+  const [name, setName] = useState(initialData?.name || '');
   const [slug, setSlug] = useState(initialData?.slug || '');
-  const [descriptionEn, setDescriptionEn] = useState(
+  const [description, setDescription] = useState(
     initialData?.description || ''
   );
-
-  // Hebrew fields
-  const [nameHe, setNameHe] = useState(initialData?.nameHe || '');
-  const [descriptionHe, setDescriptionHe] = useState('');
 
   // Image
   const [image, setImage] = useState<string>(initialData?.image || '');
 
-  // Auto-generate slug from English name
+  // Auto-generate slug from name
   const generateSlug = (name: string) => {
     return name
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/[^a-z0-9\u0590-\u05FF]+/g, '-')
       .replace(/(^-|-$)/g, '');
   };
 
-  const handleNameEnChange = (value: string) => {
-    setNameEn(value);
+  const handleNameChange = (value: string) => {
+    setName(value);
     if (!categoryId) {
       setSlug(generateSlug(value));
     }
@@ -63,13 +54,13 @@ export function CategoryForm({ initialData, categoryId }: CategoryFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nameEn || !nameHe) {
-      toast.error('Please provide both English and Hebrew names');
+    if (!name) {
+      toast.error('שם הקטגוריה הוא שדה חובה');
       return;
     }
 
     if (!slug) {
-      toast.error('Slug is required');
+      toast.error('Slug הוא שדה חובה');
       return;
     }
 
@@ -81,11 +72,9 @@ export function CategoryForm({ initialData, categoryId }: CategoryFormProps) {
         : '/api/admin/categories';
 
       const payload = {
-        name: nameEn,
-        nameEn,
-        nameHe,
+        name,
         slug,
-        description: descriptionEn,
+        description,
         image: image || null,
       };
 
@@ -101,14 +90,12 @@ export function CategoryForm({ initialData, categoryId }: CategoryFormProps) {
       }
 
       toast.success(
-        categoryId
-          ? 'Category updated successfully'
-          : 'Category created successfully'
+        categoryId ? 'הקטגוריה עודכנה בהצלחה' : 'הקטגוריה נוצרה בהצלחה'
       );
       router.push('/admin/categories');
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || 'Something went wrong');
+    } catch (error: unknown) {
+      toast.error((error as Error).message || 'משהו השתבש');
     } finally {
       setIsLoading(false);
     }
@@ -120,74 +107,36 @@ export function CategoryForm({ initialData, categoryId }: CategoryFormProps) {
         {/* Basic Information Card */}
         <Card>
           <CardHeader>
-            <CardTitle>
-              {categoryId ? 'Edit Category' : 'Create Category'}
-            </CardTitle>
+            <CardTitle>{categoryId ? 'ערוך קטגוריה' : 'צור קטגוריה'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <Tabs defaultValue="en" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="en">English</TabsTrigger>
-                <TabsTrigger value="he">עברית</TabsTrigger>
-              </TabsList>
+            <div className="space-y-4" dir="rtl">
+              <div className="space-y-2">
+                <Label htmlFor="name">
+                  שם הקטגוריה <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  placeholder="טבעות"
+                  required
+                  dir="rtl"
+                />
+              </div>
 
-              {/* English Tab */}
-              <TabsContent value="en" className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="nameEn">
-                    Category Name (English){' '}
-                    <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="nameEn"
-                    value={nameEn}
-                    onChange={(e) => handleNameEnChange(e.target.value)}
-                    placeholder="Rings"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="descriptionEn">Description (English)</Label>
-                  <Textarea
-                    id="descriptionEn"
-                    value={descriptionEn}
-                    onChange={(e) => setDescriptionEn(e.target.value)}
-                    placeholder="Premium handcrafted rings for every occasion"
-                    rows={3}
-                  />
-                </div>
-              </TabsContent>
-
-              {/* Hebrew Tab */}
-              <TabsContent value="he" className="space-y-4" dir="rtl">
-                <div className="space-y-2">
-                  <Label htmlFor="nameHe">
-                    שם הקטגוריה (עברית) <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="nameHe"
-                    value={nameHe}
-                    onChange={(e) => setNameHe(e.target.value)}
-                    placeholder="טבעות"
-                    required
-                    dir="rtl"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="descriptionHe">תיאור (עברית)</Label>
-                  <Textarea
-                    id="descriptionHe"
-                    value={descriptionHe}
-                    onChange={(e) => setDescriptionHe(e.target.value)}
-                    placeholder="טבעות בעבודת יד איכותיות לכל אירוע"
-                    rows={3}
-                    dir="rtl"
-                  />
-                </div>
-              </TabsContent>
-            </Tabs>
+              <div className="space-y-2">
+                <Label htmlFor="description">תיאור</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="טבעות בעבודת יד איכותיות לכל אירוע"
+                  rows={3}
+                  dir="rtl"
+                />
+              </div>
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="slug">
@@ -235,8 +184,8 @@ export function CategoryForm({ initialData, categoryId }: CategoryFormProps) {
             {isLoading
               ? 'Saving...'
               : categoryId
-              ? 'Update Category'
-              : 'Create Category'}
+                ? 'Update Category'
+                : 'Create Category'}
           </Button>
           <Button
             type="button"

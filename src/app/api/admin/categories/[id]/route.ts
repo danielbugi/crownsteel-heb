@@ -56,7 +56,7 @@ export async function PUT(
 
   try {
     const body = await request.json();
-    const { name, nameEn, nameHe, slug, description, image } = body;
+    const { name, slug, description, image } = body;
 
     // Check if category exists
     const existingCategory = await prisma.category.findUnique({
@@ -87,9 +87,7 @@ export async function PUT(
     const category = await prisma.category.update({
       where: { id },
       data: {
-        name: name || nameEn,
-        nameEn,
-        nameHe,
+        name,
         slug,
         description,
         image,

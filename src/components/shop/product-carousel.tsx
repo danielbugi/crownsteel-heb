@@ -112,11 +112,17 @@ export function ProductCarousel({
       if (!container) return;
 
       // Calculate scroll amount based on single card width + gap
-      // Card widths: 280px (mobile), 320px (md), 280px (lg)
-      // Gap: 24px (gap-6)
+      // Boutique style - larger cards: 320px (mobile), 400px (md), 420px (lg), 450px (xl)
+      // Gap: 32px (gap-8) for luxury spacing
       const cardWidth =
-        window.innerWidth >= 768 && window.innerWidth < 1024 ? 320 : 280;
-      const gap = 24; // gap-6 in Tailwind
+        window.innerWidth >= 1280
+          ? 450 // xl
+          : window.innerWidth >= 1024
+            ? 420 // lg
+            : window.innerWidth >= 768
+              ? 400 // md
+              : 320; // mobile
+      const gap = 32; // gap-8 in Tailwind
       const scrollAmount = cardWidth + gap;
       let increment: number;
 
@@ -525,24 +531,20 @@ export function ProductCarousel({
   }
 
   return (
-    <section className="py-12 md:py-16 overflow-hidden">
+    <section className="py-16 md:py-20 overflow-hidden bg-black-soft">
       <div className="px-4 mx-auto">
         {/* Grid Layout: Title Section (1/6) + Carousel (5/6) */}
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 items-center">
           {/* Title Section - Left Side */}
           <div className="lg:col-span-1 space-y-4">
             <div>
-              <h2 className="text-2xl lg:text-3xl font-light mb-6">{title}</h2>
-              {/* {subtitle && (
+              <h2 className="text-3xl lg:text-4xl font-cinzel font-light mb-6 text-white-pure tracking-wider uppercase">
+                {title}
+              </h2>
+              {subtitle && (
                 <p className="text-muted-foreground text-lg mb-6">{subtitle}</p>
-              )} */}
+              )}
             </div>
-            <Link href="/shop">
-              <Button className="w-full lg:w-full group block">
-                Shop Now
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
           </div>
 
           {/* Carousel Section - Right Side */}
@@ -553,20 +555,6 @@ export function ProductCarousel({
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeaveCarousel}
             >
-              {/* Gradient Overlays */}
-              {/* <div
-                className={cn(
-                  'absolute left-0 top-0 bottom-0 w-8 md:w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none transition-opacity duration-300',
-                  canScrollLeft ? 'opacity-100' : 'opacity-0'
-                )}
-              />
-              <div
-                className={cn(
-                  'absolute right-0 top-0 bottom-0 w-8 md:w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none transition-opacity duration-300',
-                  canScrollRight ? 'opacity-100' : 'opacity-0'
-                )}
-              /> */}
-
               {/* Scrollable Products with Navigation */}
               <div className="relative">
                 {/* Navigation Arrows - Positioned relative to products container */}
@@ -611,7 +599,7 @@ export function ProductCarousel({
                 <div
                   ref={scrollContainerRef}
                   className={cn(
-                    'flex gap-6 overflow-x-auto scrollbar-hide px-4 md:px-0',
+                    'flex gap-8 overflow-x-auto scrollbar-hide px-4 md:px-0',
                     isDragging ? 'cursor-grabbing' : 'cursor-grab',
                     'select-none' // Prevent text selection during drag
                   )}
@@ -633,7 +621,7 @@ export function ProductCarousel({
                   {products.map((product, index) => (
                     <div
                       key={product.id}
-                      className="flex-none w-[280px] md:w-[320px] lg:w-[280px] transition-transform duration-200"
+                      className="flex-none w-[320px] md:w-[400px] lg:w-[420px] xl:w-[450px] transition-transform duration-200"
                       style={{
                         pointerEvents: hasDraggedRef.current ? 'none' : 'auto',
                         animationDelay: `${index * 100}ms`,
@@ -707,6 +695,17 @@ export function ProductCarousel({
               </div>
             </div>
           </div>
+        </div>
+        <div className="mt-10 flex justify-center">
+          <Link href="/shop">
+            <Button
+              size="xlg"
+              variant="outline"
+              className="uppercase w-full lg:w-fit group block text-xs tracking-widest"
+            >
+              Upgrade Your Look
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

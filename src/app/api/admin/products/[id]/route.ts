@@ -68,12 +68,8 @@ export async function PUT(
     const body = await request.json();
     const {
       name,
-      nameEn,
-      nameHe,
       slug,
       description,
-      descriptionEn,
-      descriptionHe,
       price,
       comparePrice,
       image,
@@ -90,7 +86,6 @@ export async function PUT(
       hasVariants,
       variantType,
       variantLabel,
-      variantLabelHe,
       variants,
     } = body;
 
@@ -123,13 +118,9 @@ export async function PUT(
       const updatedProduct = await tx.product.update({
         where: { id },
         data: {
-          name: name || nameEn,
-          nameEn,
-          nameHe,
+          name,
           slug,
-          description: description || descriptionEn,
-          descriptionEn,
-          descriptionHe,
+          description: description || null,
           price,
           comparePrice: comparePrice || null,
           image,
@@ -144,11 +135,10 @@ export async function PUT(
           reorderPoint: reorderPoint ?? existingProduct.reorderPoint,
           reorderQuantity: reorderQuantity ?? existingProduct.reorderQuantity,
           sku: sku ?? existingProduct.sku,
-          // NEW: Variant fields
+          // Variant fields
           hasVariants: hasVariants ?? false,
           variantType,
           variantLabel,
-          variantLabelHe,
         },
       });
 
@@ -162,21 +152,35 @@ export async function PUT(
         // Create new variants
         if (variants.length > 0) {
           await tx.productVariant.createMany({
-            data: variants.map((variant: any, index: number) => ({
-              productId: id,
-              name: variant.name,
-              nameEn: variant.nameEn || variant.name,
-              nameHe: variant.nameHe,
-              sku: variant.sku,
-              price: variant.price || null,
-              priceAdjustment: variant.priceAdjustment || null,
-              inventory: variant.inventory || 0,
-              inStock: variant.inStock ?? true,
-              lowStockThreshold: variant.lowStockThreshold || 10,
-              image: variant.image || null,
-              sortOrder: variant.sortOrder ?? index,
-              isDefault: variant.isDefault ?? index === 0,
-            })),
+            data: variants.map(
+              (
+                variant: {
+                  name: string;
+                  sku: string;
+                  price?: number;
+                  priceAdjustment?: number;
+                  inventory?: number;
+                  inStock?: boolean;
+                  lowStockThreshold?: number;
+                  image?: string;
+                  sortOrder?: number;
+                  isDefault?: boolean;
+                },
+                index: number
+              ) => ({
+                productId: id,
+                name: variant.name,
+                sku: variant.sku,
+                price: variant.price || null,
+                priceAdjustment: variant.priceAdjustment || null,
+                inventory: variant.inventory || 0,
+                inStock: variant.inStock ?? true,
+                lowStockThreshold: variant.lowStockThreshold || 10,
+                image: variant.image || null,
+                sortOrder: variant.sortOrder ?? index,
+                isDefault: variant.isDefault ?? index === 0,
+              })
+            ),
           });
         }
       } else {

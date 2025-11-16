@@ -134,7 +134,7 @@ export function SearchBar({
               placeholder={t('nav.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full bg-white/10 border-white/20 text-black placeholder:text-white/50 text-sm focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm ${
+              className={`w-full bg-muted/50 border-border text-foreground placeholder:text-muted-foreground text-sm focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm ${
                 isMobile ? 'h-8 pr-6' : 'h-9 pr-8'
               }`}
               autoFocus={showSearch}
@@ -144,7 +144,7 @@ export function SearchBar({
               <button
                 type="button"
                 onClick={clearSearch}
-                className={`absolute top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white transition-colors duration-200 ${
+                className={`absolute top-1/2 transform -translate-y-1/2 text-black/50 hover:text-black transition-colors duration-200 ${
                   isMobile ? 'left-1' : 'left-2'
                 }`}
               >
@@ -157,21 +157,21 @@ export function SearchBar({
 
       {/* Search Results Overlay */}
       {showSearch && (
-        <div className="absolute top-full left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-white/10 shadow-lg animate-in slide-in-from-top-2 duration-300">
+        <div className="absolute top-full left-0 right-0 z-50 bg-transparent backdrop-blur-xl border-b border-white/10 shadow-lg animate-in slide-in-from-top-2 duration-300">
           <div className="container px-4 py-4">
             <div className="max-w-2xl mx-auto space-y-6">
               {/* Search Results Section */}
               <div>
                 {searchQuery.length === 0 ? (
                   <div className="text-center py-8 animate-in fade-in duration-500">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 flex items-center justify-center">
+                    {/* <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 flex items-center justify-center">
                       <Search className="w-8 h-8 text-gold-400" />
-                    </div>
-                    <p className="text-white/70 text-lg font-medium">
+                    </div> */}
+                    <p className="text-white text-lg font-medium">
                       תוצאות החיפוש ריקות
                     </p>
-                    <p className="text-white/50 text-sm mt-2">
-                      התחל להקליד כדי לחפש מוצרים
+                    <p className="text-white text-sm mt-2">
+                      הקלד כדי לחפש מוצרים
                     </p>
                   </div>
                 ) : searchQuery.length > 1 ? (
@@ -179,14 +179,14 @@ export function SearchBar({
                     {searchLoading ? (
                       <div className="flex items-center justify-center py-8 animate-in fade-in duration-300">
                         <div className="animate-spin rounded-full h-6 w-6 border-2 border-gold-500 border-t-transparent mr-3"></div>
-                        <span className="text-white/70 text-base font-medium">
+                        <span className="text-white text-base font-medium">
                           מחפש מוצרים...
                         </span>
                       </div>
                     ) : searchResults.length > 0 ? (
                       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-                          <Search className="w-5 h-5 text-gold-400" />
+                          <Search className="w-5 h-5 text-white" />
                           תוצאות חיפוש ({searchResults.length})
                         </h3>
                         <div className="grid gap-2">
@@ -195,10 +195,10 @@ export function SearchBar({
                               key={product.id}
                               href={`/shop/${product.slug}`}
                               onClick={handleClose}
-                              className="w-full flex items-center gap-4 p-3 hover:bg-white/10 hover:scale-[1.02] transition-all duration-200 text-left group animate-in fade-in slide-in-from-right-4"
+                              className="w-full flex items-center gap-4 p-3 hover:bg-muted hover:scale-[1.02] transition-all duration-200 text-left group animate-in fade-in slide-in-from-right-4"
                               style={{ animationDelay: `${index * 50}ms` }}
                             >
-                              <div className="w-12 h-12 overflow-hidden bg-gray-200 flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow duration-200">
+                              <div className="w-12 h-12 overflow-hidden bg-muted flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow duration-200">
                                 <Image
                                   src={product.image}
                                   alt={product.name}
@@ -211,11 +211,8 @@ export function SearchBar({
                                 <div className="font-medium text-white text-base truncate group-hover:text-gold-200 transition-colors duration-200">
                                   {product.name}
                                 </div>
-                                <div className="text-sm text-white/60 group-hover:text-white/80 transition-colors duration-200">
-                                  {product.category.name}
-                                </div>
                               </div>
-                              <div className="text-base font-semibold text-gold-400 group-hover:text-gold-300 transition-colors duration-200">
+                              <div className="text-base font-semibold text-white group-hover:text-gold-300 transition-colors duration-200">
                                 ₪{product.price}
                               </div>
                             </Link>
@@ -224,9 +221,6 @@ export function SearchBar({
                       </div>
                     ) : (
                       <div className="text-center py-8 animate-in fade-in duration-500">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
-                          <Search className="w-8 h-8 text-red-400" />
-                        </div>
                         <p className="text-white/70 text-lg font-medium">
                           לא נמצאו מוצרים
                         </p>
@@ -249,9 +243,6 @@ export function SearchBar({
               {suggestedProducts.length > 0 && (
                 <div className="border-t border-white/10 pt-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                   <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
-                      <span className="text-black text-xs font-bold">★</span>
-                    </div>
                     מוצרים מומלצים
                   </h3>
                   <div className="grid grid-cols-3 gap-3 sm:gap-4">
@@ -260,10 +251,10 @@ export function SearchBar({
                         key={product.id}
                         href={`/shop/${product.slug}`}
                         onClick={handleClose}
-                        className="flex flex-col items-center gap-2 sm:gap-3 p-2 sm:p-3 hover:bg-white/10 hover:scale-105 transition-all duration-300 text-center group animate-in fade-in slide-in-from-bottom-4"
+                        className="flex flex-col items-center gap-2 sm:gap-3 p-2 sm:p-3 hover:bg-muted hover:scale-105 transition-all duration-300 text-center group animate-in fade-in slide-in-from-bottom-4"
                         style={{ animationDelay: `${(index + 3) * 100}ms` }}
                       >
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 overflow-hidden bg-gray-200 flex-shrink-0 shadow-sm group-hover:shadow-lg transition-all duration-300 relative">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 overflow-hidden bg-muted flex-shrink-0 shadow-sm group-hover:shadow-lg transition-all duration-300 relative">
                           <Image
                             src={product.image}
                             alt={product.name}
@@ -277,7 +268,7 @@ export function SearchBar({
                           <div className="font-medium text-white text-xs sm:text-sm truncate group-hover:text-gold-200 transition-colors duration-200">
                             {product.name}
                           </div>
-                          <div className="text-xs sm:text-base font-semibold text-gold-400 mt-1 group-hover:text-gold-300 transition-colors duration-200">
+                          <div className="text-xs sm:text-base font-semibold text-white mt-1 group-hover:text-gold-300 transition-colors duration-200">
                             ₪{product.price}
                           </div>
                         </div>

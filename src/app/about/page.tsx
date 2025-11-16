@@ -137,19 +137,19 @@ export default function AboutPage() {
       {/* CTA Section */}
       <section className="py-16 bg-gradient-steel text-white">
         <div className="container px-4 mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">
+          <h2 className="text-3xl font-light mb-4 text-white">
             {language === 'he'
               ? 'מוכנים למצוא את התכשיט המושלם?'
               : 'Ready to Find Your Perfect Piece?'}
           </h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             {language === 'he'
               ? 'חקור את הקולקציה שלנו ומצא תכשיטים שמספרים את הסיפור שלך'
               : 'Explore our collection and discover jewelry that tells your story'}
           </p>
           <a
             href="/shop"
-            className="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="inline-block bg-white text-black px-8 py-3  font-semibold hover:bg-gray-100 transition-colors"
           >
             {language === 'he' ? 'עבור לחנות' : 'Shop Now'}
           </a>

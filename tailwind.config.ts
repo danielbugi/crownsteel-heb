@@ -126,9 +126,11 @@ const config: Config = {
         sans: ['var(--font-rubik)', 'var(--font-heebo)', 'sans-serif'],
         hebrew: ['var(--font-heebo)', 'sans-serif'],
         english: ['var(--font-rubik)', 'sans-serif'],
+        cinzel: ['var(--font-cinzel)', 'serif'],
+        playfair: ['var(--font-playfair)', 'serif'],
       },
       colors: {
-        // Your existing colors
+        // Masculine Energy Color Palette
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -169,13 +171,19 @@ const config: Config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        // Masculine Energy Colors
+        'black-pure': '#000000',
+        'black-soft': '#111111',
+        'black-rich': '#1A1A1A',
+        'gold-elegant': '#C5A253',
+        'white-pure': '#FFFFFF',
         gold: {
           50: '#fdfcf7',
           100: '#faf8ed',
           200: '#f5f0d9',
           300: '#ede4b8',
           400: '#e4d495',
-          500: '#d4a574',
+          500: '#C5A253', // Elegant gold
           600: '#c48e5c',
           700: '#a8754a',
           800: '#8a5f3e',

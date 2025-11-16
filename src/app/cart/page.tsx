@@ -21,12 +21,12 @@ export default function CartPage() {
         <div className="container px-4 py-20 mx-auto">
           <div className="max-w-md mx-auto text-center">
             <ShoppingBag className="h-24 w-24 mx-auto mb-6 text-muted-foreground" />
-            <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
+            <h1 className="text-3xl font-bold mb-4">העגלה שלך ריקה</h1>
             <p className="text-muted-foreground mb-8">
-              Looks like you haven't added any items to your cart yet.
+              נראה שעדיין לא הוספת פריטים לעגלה שלך.
             </p>
             <Button size="lg" asChild>
-              <Link href="/shop">Continue Shopping</Link>
+              <Link href="/shop">המשך קניות</Link>
             </Button>
           </div>
         </div>
@@ -36,15 +36,15 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <HeroSection title="Shopping Cart" size="md">
+      <HeroSection title="עגלת קניות" size="md">
         <Link
           href="/shop"
           className="inline-flex items-center text-sm text-white/80 hover:text-white"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Continue Shopping
+          המשך קניות
         </Link>
-        <p className="text-white/80 mt-1">{totalItems} items in your cart</p>
+        <p className="text-white/80 mt-1">{totalItems} פריטים בעגלה שלך</p>
       </HeroSection>
 
       {/* Cart Content */}

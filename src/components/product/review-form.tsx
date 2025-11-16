@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Star } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useLanguage } from '@/contexts/language-context';
 
 interface ReviewFormProps {
   productId: string;
@@ -18,7 +17,6 @@ interface ReviewFormProps {
 
 export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
   const { data: session } = useSession();
-  const { t } = useLanguage();
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [title, setTitle] = useState('');
@@ -29,12 +27,12 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
     e.preventDefault();
 
     if (!session) {
-      toast.error('Please sign in to leave a review');
+      toast.error('אנא התחבר כדי להשאיר ביקורת');
       return;
     }
 
     if (rating === 0) {
-      toast.error('Please select a rating');
+      toast.error('אנא בחר דירוג');
       return;
     }
 
@@ -58,13 +56,13 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
         throw new Error(data.error || 'Failed to submit review');
       }
 
-      toast.success(data.message || 'Review submitted successfully!');
+      toast.success(data.message || 'ביקורת נשלחה בהצלחה!');
       setRating(0);
       setTitle('');
       setComment('');
       onSuccess?.();
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to submit review');
+    } catch (error: unknown) {
+      toast.error((error as Error).message || 'נכשל לשלוח ביקורת');
     } finally {
       setIsSubmitting(false);
     }
@@ -73,9 +71,7 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
   if (!session) {
     return (
       <div className="bg-secondary/30 p-6 rounded-lg text-center">
-        <p className="text-muted-foreground">
-          Please sign in to leave a review
-        </p>
+        <p className="text-muted-foreground">אנא התחבר כדי להשאיר ביקורת</p>
       </div>
     );
   }
@@ -83,9 +79,7 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <Label className="text-base font-semibold mb-3 block">
-          Your Rating
-        </Label>
+        <Label className="text-base font-semibold mb-3 block">הדירוג שלך</Label>
         <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -109,33 +103,33 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="title">Review Title (Optional)</Label>
+        <Label htmlFor="title">כותרת הביקורת (אופציונלי)</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Summarize your experience..."
+          placeholder="סכם את החוויה שלך..."
           maxLength={100}
         />
       </div>
 
       <div>
-        <Label htmlFor="comment">Your Review (Optional)</Label>
+        <Label htmlFor="comment">הביקורת שלך (אופציונלי)</Label>
         <Textarea
           id="comment"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="Share your thoughts about this product..."
+          placeholder="שתף את המחשבות שלך על המוצר הזה..."
           rows={5}
           maxLength={1000}
         />
         <p className="text-xs text-muted-foreground mt-1">
-          {comment.length}/1000 characters
+          {comment.length}/1000 תווים
         </p>
       </div>
 
       <Button type="submit" disabled={isSubmitting || rating === 0} size="lg">
-        {isSubmitting ? 'Submitting...' : 'Submit Review'}
+        {isSubmitting ? 'שולח...' : 'שלח ביקורת'}
       </Button>
     </form>
   );

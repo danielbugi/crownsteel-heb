@@ -73,10 +73,10 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
             r.id === reviewId ? { ...r, helpful: review.helpful } : r
           )
         );
-        toast.success('Thank you for your feedback!');
+        toast.success('תודה על המשוב שלך!');
       }
     } catch (error) {
-      toast.error('Failed to mark as helpful');
+      toast.error('נכשל לסמן כמועיל');
     }
   };
 
@@ -109,9 +109,9 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
     return (
       <div className="text-center py-12">
         <Star className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-        <h3 className="text-lg font-semibold mb-2">No reviews yet</h3>
+        <h3 className="text-lg font-semibold mb-2">אין ביקורות עדיין</h3>
         <p className="text-muted-foreground">
-          Be the first to review this product!
+          היה הראשון לתת ביקורת על המוצר הזה!
         </p>
       </div>
     );
@@ -140,7 +140,7 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
                         className="text-xs bg-green-50 text-green-700 border-green-200"
                       >
                         <CheckCircle className="w-3 h-3 mr-1" />
-                        Verified Purchase
+                        רכישה מאומתת
                       </Badge>
                     )}
                   </div>
@@ -184,7 +184,7 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
                 className="text-muted-foreground hover:text-primary"
               >
                 <ThumbsUp className="w-4 h-4 mr-2" />
-                Helpful ({review.helpful})
+                מועיל ({review.helpful})
               </Button>
             </div>
           </CardContent>
@@ -199,17 +199,17 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
-            Previous
+            הקודם
           </Button>
           <span className="flex items-center px-4">
-            Page {page} of {totalPages}
+            עמוד {page} מתוך {totalPages}
           </span>
           <Button
             variant="outline"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >
-            Next
+            הבא
           </Button>
         </div>
       )}

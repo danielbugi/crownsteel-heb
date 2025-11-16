@@ -51,7 +51,7 @@ export function HeroSection({
             <h1
               className={cn(
                 titleSizeClasses[size],
-                'font-bold leading-tight mb-4'
+                'font-light leading-tight mb-4 text-white'
               )}
             >
               {title}

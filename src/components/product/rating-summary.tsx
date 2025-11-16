@@ -71,7 +71,7 @@ export function RatingSummary({
               ))}
             </div>
             <p className="text-sm text-muted-foreground">
-              Based on {reviewCount} {reviewCount === 1 ? 'review' : 'reviews'}
+              מבוסס על {reviewCount} {reviewCount === 1 ? 'ביקורת' : 'ביקורות'}
             </p>
           </div>
 

@@ -13,8 +13,6 @@ import { Badge } from '@/components/ui/badge';
 interface Variant {
   id?: string;
   name: string;
-  nameEn?: string;
-  nameHe?: string;
   sku: string;
   price?: number;
   priceAdjustment?: number;
@@ -39,13 +37,10 @@ export function ProductVariantManager({
 }: ProductVariantManagerProps) {
   const [variantType, setVariantType] = useState('');
   const [variantLabel, setVariantLabel] = useState('');
-  const [variantLabelHe, setVariantLabelHe] = useState('');
 
   const addVariant = () => {
     const newVariant: Variant = {
       name: '',
-      nameEn: '',
-      nameHe: '',
       sku: `${productSku}-VAR-${variants.length + 1}`,
       inventory: 0,
       inStock: true,
@@ -83,36 +78,28 @@ export function ProductVariantManager({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Product Variants</CardTitle>
+        <CardTitle>גרסאות מוצר</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6" dir="rtl">
         {/* Variant Configuration */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <Label>Variant Type</Label>
+            <Label>סוג גרסה</Label>
             <Input
-              placeholder="e.g., Size, Length, Width"
+              placeholder="לדוגמה: גודל, אורך, רוחב"
               value={variantType}
               onChange={(e) => setVariantType(e.target.value)}
             />
             <p className="text-xs text-muted-foreground mt-1">
-              What varies? (Size, Length, etc.)
+              מה משתנה? (גודל, אורך וכו')
             </p>
           </div>
-          <div>
-            <Label>Display Label (English)</Label>
+          <div className="md:col-span-2">
+            <Label>תווית תצוגה</Label>
             <Input
-              placeholder="e.g., Ring Size, Chain Length"
+              placeholder="לדוגמה: מידת טבעת, אורך שרשרת"
               value={variantLabel}
               onChange={(e) => setVariantLabel(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Display Label (Hebrew)</Label>
-            <Input
-              placeholder="e.g., מידת טבעת, אורך שרשרת"
-              value={variantLabelHe}
-              onChange={(e) => setVariantLabelHe(e.target.value)}
             />
           </div>
         </div>
@@ -130,9 +117,9 @@ export function ProductVariantManager({
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {/* Variant Name */}
                     <div>
-                      <Label>Variant Name *</Label>
+                      <Label>שם גרסה *</Label>
                       <Input
-                        placeholder="e.g., 50cm, Size 9"
+                        placeholder="לדוגמה: 50ס״מ, מידה 9"
                         value={variant.name}
                         onChange={(e) =>
                           updateVariant(index, 'name', e.target.value)
@@ -154,7 +141,7 @@ export function ProductVariantManager({
 
                     {/* Price Adjustment */}
                     <div>
-                      <Label>Price Adjustment (₪)</Label>
+                      <Label>התאמת מחיר (₪)</Label>
                       <Input
                         type="number"
                         placeholder="0"
@@ -170,13 +157,13 @@ export function ProductVariantManager({
                         }
                       />
                       <p className="text-xs text-muted-foreground mt-1">
-                        Final: ₪{calculatePrice(variant)}
+                        סופי: ₪{calculatePrice(variant)}
                       </p>
                     </div>
 
                     {/* Inventory */}
                     <div>
-                      <Label>Inventory *</Label>
+                      <Label>מלאי *</Label>
                       <Input
                         type="number"
                         placeholder="0"
@@ -201,7 +188,7 @@ export function ProductVariantManager({
                           updateVariant(index, 'inStock', checked)
                         }
                       />
-                      <Label className="text-xs">In Stock</Label>
+                      <Label className="text-xs">במלאי</Label>
                     </div>
 
                     <div className="flex items-center space-x-2">
@@ -209,7 +196,7 @@ export function ProductVariantManager({
                         checked={variant.isDefault}
                         onCheckedChange={() => setAsDefault(index)}
                       />
-                      <Label className="text-xs">Default</Label>
+                      <Label className="text-xs">ברירת מחדל</Label>
                     </div>
 
                     <Button
@@ -227,9 +214,9 @@ export function ProductVariantManager({
                 {/* Preview Badge */}
                 <div className="mt-4">
                   <Badge variant="outline">
-                    {variant.name} - ₪{calculatePrice(variant)} - Stock:{' '}
+                    {variant.name} - ₪{calculatePrice(variant)} - מלאי:{' '}
                     {variant.inventory}
-                    {variant.isDefault && ' (Default)'}
+                    {variant.isDefault && ' (ברירת מחדל)'}
                   </Badge>
                 </div>
               </CardContent>
@@ -245,17 +232,17 @@ export function ProductVariantManager({
           className="w-full"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add Variant
+          הוסף גרסה
         </Button>
 
         {/* Quick Add Helper */}
         {variants.length === 0 && (
           <div className="bg-muted p-4 rounded-lg">
-            <p className="text-sm font-medium mb-2">💡 Quick Examples:</p>
+            <p className="text-sm font-medium mb-2">💡 דוגמאות מהירות:</p>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Ring Sizes: 8, 9, 10, 11, 12</li>
-              <li>• Chain Lengths: 45cm, 50cm, 55cm, 60cm</li>
-              <li>• Bracelet Sizes: Small, Medium, Large</li>
+              <li>• מידות טבעות: 8, 9, 10, 11, 12</li>
+              <li>• אורכי שרשרת: 45ס״מ, 50ס״מ, 55ס״מ, 60ס״מ</li>
+              <li>• גדלי צמידים: קטן, בינוני, גדול</li>
             </ul>
           </div>
         )}

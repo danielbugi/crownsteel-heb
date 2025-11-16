@@ -1,0 +1,55 @@
+.container {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  position: absolute;
+  z-index: 2;
+}
+
+.circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  animation: rotate 12s linear infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle span {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  transform: rotate(0deg);
+  letter-spacing: 3px;
+  animation: textRotate 12s linear infinite reverse;
+}
+
+/* אנימציה לסיבוב הטבעת */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* סיבוב הפוך לטקסט עצמו */
+@keyframes textRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}

@@ -29,8 +29,6 @@ export async function GET(request: NextRequest) {
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
-        { nameEn: { contains: search, mode: 'insensitive' } },
-        { nameHe: { contains: search, mode: 'insensitive' } },
         { sku: { contains: search, mode: 'insensitive' } },
       ];
     }
@@ -56,12 +54,8 @@ export async function GET(request: NextRequest) {
         select: {
           id: true,
           name: true,
-          nameEn: true,
-          nameHe: true,
           slug: true,
           description: true,
-          descriptionEn: true,
-          descriptionHe: true,
           price: true,
           comparePrice: true,
           image: true,
@@ -82,13 +76,10 @@ export async function GET(request: NextRequest) {
           hasVariants: true,
           variantType: true,
           variantLabel: true,
-          variantLabelHe: true,
           category: {
             select: {
               id: true,
               name: true,
-              nameEn: true,
-              nameHe: true,
               slug: true,
             },
           },
@@ -143,12 +134,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       name,
-      nameEn,
-      nameHe,
       slug,
       description,
-      descriptionEn,
-      descriptionHe,
       price,
       comparePrice,
       image,
@@ -165,14 +152,12 @@ export async function POST(request: NextRequest) {
       hasVariants,
       variantType,
       variantLabel,
-      variantLabelHe,
       variants,
     } = body;
 
     // Validate required fields
     const missingFields = [];
-    if (!nameEn) missingFields.push('nameEn');
-    if (!nameHe) missingFields.push('nameHe');
+    if (!name) missingFields.push('name');
     if (!slug) missingFields.push('slug');
     if (!price) missingFields.push('price');
     if (!categoryId) missingFields.push('categoryId');
@@ -201,13 +186,9 @@ export async function POST(request: NextRequest) {
     const product = await prisma.$transaction(async (tx) => {
       const newProduct = await tx.product.create({
         data: {
-          name: name || nameEn,
-          nameEn,
-          nameHe,
+          name,
           slug,
-          description: description || descriptionEn,
-          descriptionEn,
-          descriptionHe,
+          description: description || null,
           price,
           comparePrice: comparePrice || null,
           image,
@@ -224,27 +205,40 @@ export async function POST(request: NextRequest) {
           hasVariants: hasVariants ?? false,
           variantType: variantType || null,
           variantLabel: variantLabel || null,
-          variantLabelHe: variantLabelHe || null,
         },
       });
 
       if (hasVariants && Array.isArray(variants) && variants.length > 0) {
         await tx.productVariant.createMany({
-          data: variants.map((variant: any, index: number) => ({
-            productId: newProduct.id,
-            name: variant.name,
-            nameEn: variant.nameEn || variant.name,
-            nameHe: variant.nameHe || null,
-            sku: variant.sku,
-            price: variant.price || null,
-            priceAdjustment: variant.priceAdjustment || null,
-            inventory: variant.inventory ?? 0,
-            inStock: variant.inStock ?? true,
-            lowStockThreshold: variant.lowStockThreshold || null,
-            image: variant.image || null,
-            sortOrder: variant.sortOrder ?? index,
-            isDefault: variant.isDefault ?? index === 0,
-          })),
+          data: variants.map(
+            (
+              variant: {
+                name: string;
+                sku: string;
+                price?: number;
+                priceAdjustment?: number;
+                inventory?: number;
+                inStock?: boolean;
+                lowStockThreshold?: number;
+                image?: string;
+                sortOrder?: number;
+                isDefault?: boolean;
+              },
+              index: number
+            ) => ({
+              productId: newProduct.id,
+              name: variant.name,
+              sku: variant.sku,
+              price: variant.price || null,
+              priceAdjustment: variant.priceAdjustment || null,
+              inventory: variant.inventory ?? 0,
+              inStock: variant.inStock ?? true,
+              lowStockThreshold: variant.lowStockThreshold || null,
+              image: variant.image || null,
+              sortOrder: variant.sortOrder ?? index,
+              isDefault: variant.isDefault ?? index === 0,
+            })
+          ),
         });
       }
 

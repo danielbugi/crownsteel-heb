@@ -23,12 +23,8 @@ export async function POST(request: NextRequest) {
       select: {
         id: true,
         name: true,
-        nameEn: true,
-        nameHe: true,
         slug: true,
         description: true,
-        descriptionEn: true,
-        descriptionHe: true,
         price: true,
         comparePrice: true,
         image: true,
@@ -44,8 +40,6 @@ export async function POST(request: NextRequest) {
           select: {
             id: true,
             name: true,
-            nameEn: true,
-            nameHe: true,
             slug: true,
           },
         },
@@ -54,8 +48,6 @@ export async function POST(request: NextRequest) {
           select: {
             id: true,
             name: true,
-            nameEn: true,
-            nameHe: true,
             sku: true,
             price: true,
             priceAdjustment: true,
@@ -176,11 +168,7 @@ export async function GET(request: NextRequest) {
     if (metal) {
       where.OR = [
         { name: { contains: metal, mode: 'insensitive' } },
-        { nameEn: { contains: metal, mode: 'insensitive' } },
-        { nameHe: { contains: metal, mode: 'insensitive' } },
         { description: { contains: metal, mode: 'insensitive' } },
-        { descriptionEn: { contains: metal, mode: 'insensitive' } },
-        { descriptionHe: { contains: metal, mode: 'insensitive' } },
       ];
     }
 
@@ -235,12 +223,8 @@ export async function GET(request: NextRequest) {
         select: {
           id: true,
           name: true,
-          nameEn: true,
-          nameHe: true,
           slug: true,
           description: true,
-          descriptionEn: true,
-          descriptionHe: true,
           price: true,
           comparePrice: true,
           image: true,
@@ -256,8 +240,6 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               name: true,
-              nameEn: true,
-              nameHe: true,
               slug: true,
             },
           },
@@ -267,8 +249,6 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               name: true,
-              nameEn: true,
-              nameHe: true,
               sku: true,
               price: true,
               priceAdjustment: true,

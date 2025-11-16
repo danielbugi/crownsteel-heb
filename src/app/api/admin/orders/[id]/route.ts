@@ -23,8 +23,6 @@ export async function GET(
             product: {
               select: {
                 name: true,
-                nameEn: true,
-                nameHe: true,
                 image: true,
               },
             },
@@ -123,17 +121,12 @@ export async function PATCH(
                 product: {
                   select: {
                     name: true,
-                    nameEn: true,
-                    nameHe: true,
                     image: true,
                   },
                 },
                 variant: {
-                  // ADD THIS
                   select: {
                     name: true,
-                    nameEn: true,
-                    nameHe: true,
                   },
                 },
               },
@@ -157,7 +150,6 @@ export async function PATCH(
               select: {
                 id: true,
                 name: true,
-                nameEn: true,
                 inventory: true,
                 productId: true,
               },
@@ -198,7 +190,7 @@ export async function PATCH(
             });
 
             console.log(
-              `Restored ${item.quantity} units to variant ${variant.nameEn || variant.name}`
+              `Restored ${item.quantity} units to variant ${variant.name}`
             );
           } else {
             // Restore product inventory (existing code)
@@ -207,7 +199,6 @@ export async function PATCH(
               select: {
                 id: true,
                 name: true,
-                nameEn: true,
                 inventory: true,
               },
             });
@@ -245,9 +236,7 @@ export async function PATCH(
               },
             });
 
-            console.log(
-              `Restored ${item.quantity} units to ${product.nameEn || product.name}`
-            );
+            console.log(`Restored ${item.quantity} units to ${product.name}`);
           }
         }
 
@@ -266,17 +255,12 @@ export async function PATCH(
               product: {
                 select: {
                   name: true,
-                  nameEn: true,
-                  nameHe: true,
                   image: true,
                 },
               },
               variant: {
-                // ADD THIS
                 select: {
                   name: true,
-                  nameEn: true,
-                  nameHe: true,
                 },
               },
             },

@@ -32,13 +32,13 @@ export function ActiveFilterChips({
 
   // Check boolean filters
   if (filters.inStockOnly) {
-    activeFilters.push({ key: 'inStockOnly', label: 'In Stock' });
+    activeFilters.push({ key: 'inStockOnly', label: 'במלאי' });
   }
   if (filters.freeShippingOnly) {
-    activeFilters.push({ key: 'freeShippingOnly', label: 'Free Shipping' });
+    activeFilters.push({ key: 'freeShippingOnly', label: 'משלוח חינם' });
   }
   if (filters.onSaleOnly) {
-    activeFilters.push({ key: 'onSaleOnly', label: 'On Sale' });
+    activeFilters.push({ key: 'onSaleOnly', label: 'במבצע' });
   }
 
   if (activeFilters.length === 0) return null;

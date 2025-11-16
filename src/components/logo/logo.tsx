@@ -15,11 +15,11 @@ function Logo() {
                 {settings?.siteName || 'FORGE & STEEL'}
               </h1> */}
       <Image
-        src={'/images/logo/logo-black.png'}
+        src={'/images/logo/crownsteel-white.png'}
         alt={'CrownSteel'}
-        width={100}
-        height={100}
-        className="object-contain w-16 h-full sm:w-[70px] sm:h-full"
+        width={150}
+        height={150}
+        className="object-contain w-16 h-full sm:w-[180px] sm:h-full"
       />
     </Link>
   );

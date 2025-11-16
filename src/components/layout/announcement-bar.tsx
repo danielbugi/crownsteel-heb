@@ -7,22 +7,22 @@ import { Truck, Tag, Shield, Sparkles } from 'lucide-react';
 const announcements = [
   {
     en: 'Free Shipping on Orders Over ₪350',
-    he: 'משלוח חינם בהזמנות מעל 350 ש״ח',
+    he: 'Free Shipping on Orders Over ₪350',
     icon: Truck,
   },
   {
     en: '25% Off All Collections',
-    he: '25% הנחה על כל הקולקציות',
+    he: '25% Off All Collections',
     icon: Tag,
   },
   {
     en: 'Lifetime Warranty on All Jewelry',
-    he: 'אחריות לכל החיים על כל התכשיטים',
+    he: 'Lifetime Warranty on All Jewelry',
     icon: Shield,
   },
   {
     en: 'New Collection Just Arrived',
-    he: 'קולקציה חדשה הגיעה זה עתה',
+    he: 'New Collection Just Arrived',
     icon: Sparkles,
   },
 ];

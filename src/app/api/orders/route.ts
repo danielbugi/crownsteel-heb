@@ -61,7 +61,6 @@ export async function POST(request: NextRequest) {
           select: {
             id: true,
             name: true,
-            nameEn: true,
             inventory: true,
             inStock: true,
           },
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
               error: 'Insufficient inventory',
               product: {
                 id: product.id,
-                name: product.nameEn || product.name,
+                name: product.name,
                 available: product.inventory,
                 requested: item.quantity,
               },
@@ -211,7 +210,6 @@ export async function POST(request: NextRequest) {
             select: {
               id: true,
               name: true,
-              nameEn: true,
               inventory: true,
               lowStockThreshold: true,
             },
@@ -262,7 +260,7 @@ export async function POST(request: NextRequest) {
                   productId: item.productId,
                   type: 'LOW_STOCK',
                   threshold: product.lowStockThreshold,
-                  message: `${product.nameEn || product.name} is running low (${newQty} units remaining)`,
+                  message: `${product.name} is running low (${newQty} units remaining)`,
                 },
               });
             }
@@ -280,7 +278,7 @@ export async function POST(request: NextRequest) {
                 data: {
                   productId: item.productId,
                   type: 'OUT_OF_STOCK',
-                  message: `${product.nameEn || product.name} is out of stock`,
+                  message: `${product.name} is out of stock`,
                 },
               });
             }

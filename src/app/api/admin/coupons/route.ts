@@ -10,7 +10,6 @@ const createCouponSchema = z.object({
     .max(20)
     .regex(/^[A-Z0-9_-]+$/),
   description: z.string().optional(),
-  descriptionHe: z.string().optional(),
   discountType: z.enum(['PERCENTAGE', 'FIXED']),
   discountValue: z.number().min(0.01),
   minPurchase: z.number().min(0).optional(),

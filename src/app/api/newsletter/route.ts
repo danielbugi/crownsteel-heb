@@ -228,7 +228,6 @@ async function createWelcomeCoupon(newsletterId: string, email: string) {
     data: {
       code,
       description: '10% off your first order - Welcome discount',
-      descriptionHe: '10% הנחה על ההזמנה הראשונה - הנחת קבלת פנים',
       discountType: 'PERCENTAGE',
       discountValue: 10, // 10%
       minPurchase: 0, // No minimum

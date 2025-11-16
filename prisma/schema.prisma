@@ -26,6 +26,7 @@ model User {
   cartItems CartItem[]
   reviews   Review[]
   wishlist  Wishlist[]
+  blogPosts BlogPost[] @relation("BlogAuthor")
   @@map("users")
 }
 
@@ -70,9 +71,7 @@ model VerificationToken {
 
 model Category {
   id          String    @id @default(cuid())
-  name        String    // Keep for backward compatibility
-  nameEn      String?   // English name
-  nameHe      String?   // Hebrew name
+  name        String
   slug        String    @unique
   description String?
   image       String?
@@ -87,12 +86,8 @@ model Category {
 model Product {
   id                String   @id @default(cuid())
   name              String
-  nameEn            String?
-  nameHe            String?
   slug              String   @unique
   description       String?  @db.Text
-  descriptionEn     String?
-  descriptionHe     String?
   price             Decimal  @db.Decimal(10, 2)
   comparePrice      Decimal? @db.Decimal(10, 2)
   image             String
@@ -115,7 +110,6 @@ model Product {
   hasVariants       Boolean @default(false)     // Does this product have variants?
   variantType       String?                     // "Size", "Length", "Width", etc (what to call it)
   variantLabel      String?                     // Display label (e.g., "Ring Size", "Chain Length")
-  variantLabelHe    String?                     // Hebrew label
 
   category          Category     @relation(fields: [categoryId], references: [id])
   cartItems         CartItem[]
@@ -145,8 +139,6 @@ model ProductVariant {
   
   // Simple variant data
   name        String   // "50cm", "9", "Medium", etc
-  nameEn      String?  // English name
-  nameHe      String?  // Hebrew name
   sku         String   @unique
   
   // Pricing (optional, falls back to product price if not set)
@@ -461,7 +453,6 @@ model Coupon {
   id              String       @id @default(cuid())
   code            String       @unique
   description     String?
-  descriptionHe   String?
   
   // Discount settings
   discountType    DiscountType
@@ -499,4 +490,107 @@ model Coupon {
   @@index([validFrom, validTo])
   @@index([campaignType])
   @@map("coupons")
+}
+
+// Blog System Models
+model BlogCategory {
+  id          String   @id @default(cuid())
+  name        String   // Hebrew name
+  nameEn      String?  // English name (optional)
+  slug        String   @unique
+  description String?  @db.Text
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  posts       BlogPost[]
+  
+  @@index([slug])
+  @@map("blog_categories")
+}
+
+model BlogPost {
+  id              String     @id @default(cuid())
+  title           String     // Hebrew title
+  titleEn         String?    // English title (optional)
+  slug            String     @unique
+  excerpt         String?    @db.Text
+  content         String     @db.Text
+  
+  // SEO fields
+  metaTitle       String?
+  metaDescription String?    @db.Text
+  keywords        String[]   // Array of keywords
+  
+  // Media
+  featuredImage   String?
+  images          String[]
+  
+  // Publishing
+  status          BlogStatus @default(DRAFT)
+  publishedAt     DateTime?
+  
+  // Organization
+  categoryId      String
+  featured        Boolean    @default(false)
+  
+  // Author
+  authorId        String
+  authorName      String?    // Cached author name
+  
+  // Engagement
+  views           Int        @default(0)
+  readTime        Int?       // Estimated read time in minutes
+  
+  // Timestamps
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  
+  // Relations
+  category        BlogCategory @relation(fields: [categoryId], references: [id])
+  author          User         @relation("BlogAuthor", fields: [authorId], references: [id])
+  tags            BlogPostTag[]
+  
+  @@index([slug])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([featured])
+  @@index([status, publishedAt])
+  @@map("blog_posts")
+}
+
+model BlogTag {
+  id        String   @id @default(cuid())
+  name      String   @unique // Hebrew name
+  nameEn    String?  // English name (optional)
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  
+  posts     BlogPostTag[]
+  
+  @@index([slug])
+  @@map("blog_tags")
+}
+
+model BlogPostTag {
+  id        String   @id @default(cuid())
+  postId    String
+  tagId     String
+  createdAt DateTime @default(now())
+  
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag       BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@unique([postId, tagId])
+  @@index([postId])
+  @@index([tagId])
+  @@map("blog_post_tags")
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }

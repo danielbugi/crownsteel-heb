@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "dotenv -e .env.local -- tsx prisma/seed.ts",
+    "seed-blog": "dotenv -e .env.local -- tsx scripts/seed-blog.ts",
     "create-admin": "dotenv -e .env.local -- tsx scripts/create-admin.ts"
   },
   "dependencies": {

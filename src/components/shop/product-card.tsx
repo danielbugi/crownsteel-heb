@@ -321,7 +321,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Eye, Heart } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
 import { useWishlistStore } from '@/store/wishlist-store';
@@ -331,6 +330,7 @@ import toast from 'react-hot-toast';
 import { QuickViewModal } from '@/components/shop/quick-view-modal';
 // ✅ UPDATED: Only importing StockAlertBadgeCompact for bottom section
 import { StockAlertBadgeCompact } from '@/components/ui/stock-alert-badge';
+import { ProductBadge } from '@/components/product/product-badge';
 
 interface Product {
   id: string;
@@ -485,22 +485,17 @@ export function ProductCard({
       )
     : 0;
 
-  const isNew = product.createdAt
-    ? new Date(product.createdAt) >
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-    : false;
-
   // Determine image container class based on viewMode
   const imageContainerClass =
     viewMode === 'grid-4' || viewMode === 'carousel'
-      ? 'relative overflow-hidden bg-secondary h-[380px]' // Fixed height for carousel and grid-4
+      ? 'relative overflow-hidden bg-secondary h-[480px] md:h-[560px] lg:h-[620px]' // Boutique luxury heights
       : 'relative aspect-square overflow-hidden bg-secondary'; // 1:1 ratio for grid-2 and grid-3
 
   return (
     <>
       <Link href={`/shop/${product.slug}`}>
         <Card
-          className="group border-border bg-card transition-all duration-500 overflow-hidden"
+          className="group border-border bg-transparent transition-all duration-500 overflow-hidden"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -512,7 +507,7 @@ export function ProductCard({
               fill
               className={`object-cover transition-all duration-700 ${
                 imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-              } ${isHovered ? 'scale-110 opacity-0' : 'scale-100 opacity-100'}`}
+              } ${isHovered ? 'scale-105 opacity-0' : 'scale-100 opacity-100'}`}
               onLoad={() => setImageLoaded(true)}
             />
 
@@ -523,46 +518,26 @@ export function ProductCard({
                 alt={`${product.name} - alternate view`}
                 fill
                 className={`object-cover transition-all duration-300 ${
-                  isHovered ? 'scale-110 opacity-100' : 'scale-100 opacity-0'
+                  isHovered ? 'scale-105 opacity-100' : 'scale-100 opacity-0'
                 }`}
               />
             )}
 
-            {/* Badges - Only New and Percentage Off */}
+            {/* Badges - Only Discount Percentage */}
             <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
-              {/* Discount Badge */}
+              {/* Discount Badge - Gold color for luxury look */}
               {discountPercentage > 0 && (
-                <Badge
-                  variant="outline"
-                  className="bg-white text-black border-gray-300 shadow-lg rounded-none"
-                >
+                <ProductBadge variant="gold">
                   {discountPercentage}% OFF
-                </Badge>
-              )}
-
-              {/* New Badge */}
-              {isNew && (
-                <Badge
-                  variant="outline"
-                  className="bg-white text-black border-gray-300 shadow-lg rounded-none"
-                >
-                  New
-                </Badge>
+                </ProductBadge>
               )}
             </div>
 
-            {/* Action Buttons */}
+            {/* Action Buttons - Wishlist and View Product stacked */}
             <div
-              className={`absolute right-3 flex flex-col gap-2 z-10 transition-all duration-300 ${
+              className={`absolute right-3 top-3 z-10 flex flex-col gap-2 transition-all duration-300 ${
                 isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
-              style={{
-                top:
-                  !product.inStock ||
-                  (product.inventory && product.inventory <= 3)
-                    ? '3.5rem'
-                    : '0.75rem',
-              }}
             >
               {/* Wishlist Button */}
               <Button
@@ -571,7 +546,7 @@ export function ProductCard({
                 className={`rounded-full shadow-lg backdrop-blur-sm h-9 w-9 transition-colors ${
                   mounted && inWishlist
                     ? 'bg-red-500 hover:bg-red-600 text-white'
-                    : 'bg-white/95 hover:bg-white'
+                    : 'bg-card/95 hover:bg-card border border-border text-foreground'
                 }`}
                 onClick={handleWishlistToggle}
               >
@@ -582,11 +557,11 @@ export function ProductCard({
                 />
               </Button>
 
-              {/* Quick View Button */}
+              {/* View Product Button */}
               <Button
                 size="icon"
                 variant="secondary"
-                className="bg-white/95 hover:bg-white shadow-lg backdrop-blur-sm h-9 w-9"
+                className="rounded-full bg-card/95 hover:bg-card border border-border text-foreground shadow-lg backdrop-blur-sm h-9 w-9"
                 onClick={handleQuickView}
               >
                 <Eye className="h-4 w-4" />
@@ -594,19 +569,24 @@ export function ProductCard({
             </div>
           </div>
 
-          <CardContent>
-            <h3 className="text-xs md:text-s line-clamp-2 leading-tight">
-              {product.name}
-            </h3>
+          <CardContent className="py-4 px-3">
+            {/* Header with Product Name only - Minimal & Centered */}
+            <div className="mb-3 text-center">
+              <h3 className="text-xs md:text-sm font-light tracking-widest uppercase line-clamp-2 leading-relaxed text-white-pure">
+                {product.name}
+              </h3>
+            </div>
 
-            {/* Price Section */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-s md:text-s text-foreground">
+            {/* Price Section - Centered */}
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                {/* Current Price - Subtle gray */}
+                <p className="text-base md:text-lg font-semibold text-[#999]">
                   {formatPrice(product.price)}
                 </p>
+                {/* Original Price - Strikethrough */}
                 {product.comparePrice && (
-                  <p className="text-base md:text-s text-muted-foreground line-through">
+                  <p className="text-xs md:text-sm text-gray-500 line-through">
                     {formatPrice(product.comparePrice)}
                   </p>
                 )}
@@ -614,10 +594,7 @@ export function ProductCard({
 
               {/* ✅ NEW: Compact Stock Alert below price */}
               {product.inventory !== undefined && (
-                <StockAlertBadgeCompact
-                  inventory={product.inventory}
-                  lowStockThreshold={product.lowStockThreshold || 10}
-                />
+                <StockAlertBadgeCompact inventory={product.inventory} />
               )}
             </div>
           </CardContent>

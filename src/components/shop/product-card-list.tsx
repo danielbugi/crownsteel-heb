@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { ProductBadge } from '@/components/product/product-badge';
 import { Eye, Star, StarHalf } from 'lucide-react';
 import { useState } from 'react';
 import { QuickViewModal } from '@/components/shop/quick-view-modal';
@@ -170,28 +170,19 @@ export function ProductCardList({
                   {/* Badges */}
                   <div className="flex items-center gap-2">
                     {discountPercentage > 0 && (
-                      <Badge
-                        variant="outline"
-                        className="bg-white text-black border-gray-300 rounded-none text-xs"
-                      >
+                      <ProductBadge className="text-xs">
                         {discountPercentage}% OFF
-                      </Badge>
+                      </ProductBadge>
                     )}
                     {!product.inStock && (
-                      <Badge
-                        variant="outline"
-                        className="bg-white text-black border-gray-300 rounded-none text-xs"
-                      >
+                      <ProductBadge className="text-xs">
                         Out of Stock
-                      </Badge>
+                      </ProductBadge>
                     )}
                     {product.freeShipping && (
-                      <Badge
-                        variant="outline"
-                        className="bg-white text-black border-gray-300 rounded-none text-xs"
-                      >
+                      <ProductBadge className="text-xs">
                         Free Shipping
-                      </Badge>
+                      </ProductBadge>
                     )}
                   </div>
                 </div>

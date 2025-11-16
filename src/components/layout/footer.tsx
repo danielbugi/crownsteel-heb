@@ -1,191 +1,131 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Facebook,
-  Instagram,
-  Twitter,
-  Mail,
-  Phone,
-  MapPin,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { Facebook, Instagram, Twitter } from 'lucide-react';
 import { useSettings } from '@/contexts/settings-context';
-import { useLanguage } from '@/contexts/language-context';
-// ✅ NEW: Import newsletter component
 import { NewsletterSignup } from '@/components/footer/newsletter-signup';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
   const { settings } = useSettings();
-  const { t, language } = useLanguage();
 
   return (
-    <footer className="bg-zinc-900">
-      <div className="container px-4 sm:px-6 py-10 sm:py-12 md:py-16 mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12">
-          {/* Company Info */}
-          <div className="space-y-4 sm:space-y-5">
-            <h3 className="text-gray-200 text-lg sm:text-xl font-light">
-              {t('footer.findUs')}
-            </h3>
-            <div className="space-y-3 sm:space-y-4 text-gray-400">
-              <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                {settings?.siteDescription || t('footer.description')}
-              </p>
+    <footer className="bg-black-soft border-t border-black-rich shadow-cinematic-lg">
+      <div className="container px-8 sm:px-12 lg:px-16 py-16 sm:py-20 lg:py-24 mx-auto">
+        {/* Logo Section - Centered & Large */}
+        <div className="flex justify-center mb-16">
+          <Link href="/" className="block">
+            <Image
+              src="/images/logo/logo-2-white.png"
+              alt={settings?.siteName || 'CrownSteel'}
+              width={200}
+              height={200}
+              className="object-contain w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 opacity-80 hover:opacity-100 transition-opacity shadow-cinematic"
+            />
+          </Link>
+        </div>
 
-              {/* Contact Info - Mobile Optimized */}
-              <div className="space-y-3">
-                {settings?.contactEmail && (
-                  <div className="flex items-center gap-3 text-gray-400 text-sm sm:text-base">
-                    <Mail className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0 text-gray-300" />
-                    <a
-                      href={`mailto:${settings.contactEmail}`}
-                      className="text-gray-200 hover:text-gold-300 transition-colors min-h-[44px] flex items-center"
-                    >
-                      {settings.contactEmail}
-                    </a>
-                  </div>
-                )}
-                {settings?.contactPhone && (
-                  <div className="flex items-center gap-3 text-gray-400 text-sm sm:text-base">
-                    <Phone className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0 text-gray-300" />
-                    <a
-                      href={`tel:${settings.contactPhone}`}
-                      className="text-gray-200 hover:text-gold-300 transition-colors min-h-[44px] flex items-center"
-                    >
-                      {settings.contactPhone}
-                    </a>
-                  </div>
-                )}
-                {settings?.address && (
-                  <div className="flex items-start gap-3 text-gray-400 text-sm sm:text-base">
-                    <MapPin className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0 text-gray-300 mt-0.5" />
-                    <span className="leading-relaxed">{settings.address}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Social Media - Touch Friendly */}
-              <div className="flex items-center gap-2 sm:gap-3 pt-2">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="text-gray-400 hover:text-white hover:bg-gray-800 min-h-[44px] min-w-[44px] h-11 w-11 sm:h-10 sm:w-10"
-                >
-                  <Facebook className="h-5 w-5 sm:h-4 sm:w-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="text-gray-400 hover:text-white hover:bg-gray-800 min-h-[44px] min-w-[44px] h-11 w-11 sm:h-10 sm:w-10"
-                >
-                  <Instagram className="h-5 w-5 sm:h-4 sm:w-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="text-gray-400 hover:text-white hover:bg-gray-800 min-h-[44px] min-w-[44px] h-11 w-11 sm:h-10 sm:w-10"
-                >
-                  <Twitter className="h-5 w-5 sm:h-4 sm:w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Links - Mobile Optimized */}
-          <div className="space-y-4 sm:space-y-5">
-            <h3 className="text-gray-200 text-lg sm:text-xl font-light">
-              {t('footer.quickLinks')}
-            </h3>
-            <ul className="space-y-3">
+        {/* Main Content - Minimal Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-24 max-w-5xl mx-auto mb-16">
+          {/* Quick Links */}
+          <div className="text-center md:text-right">
+            <ul className="space-y-4">
               <li>
                 <Link
                   href="/shop"
-                  className="text-gray-200 hover:text-gold-300 transition-colors text-sm sm:text-base min-h-[44px] flex items-center"
+                  className="text-gray-400 hover:text-gold-elegant transition-colors text-base font-cinzel font-light tracking-widest uppercase"
                 >
-                  {t('footer.shopAll')}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/categories"
-                  className="text-gray-200 hover:text-gold-300 transition-colors text-sm sm:text-base min-h-[44px] flex items-center"
-                >
-                  {t('footer.categories')}
+                  Shop
                 </Link>
               </li>
               <li>
                 <Link
                   href="/about"
-                  className="text-gray-200 hover:text-gold-300 transition-colors text-sm sm:text-base min-h-[44px] flex items-center"
+                  className="text-gray-400 hover:text-gold-elegant transition-colors text-base font-cinzel font-light tracking-widest uppercase"
                 >
-                  {t('footer.aboutUs')}
+                  About
                 </Link>
               </li>
               <li>
                 <Link
                   href="/contact"
-                  className="text-gray-200 hover:text-gold-300 transition-colors text-sm sm:text-base min-h-[44px] flex items-center"
+                  className="text-gray-400 hover:text-gold-elegant transition-colors text-base font-cinzel font-light tracking-widest uppercase"
                 >
-                  {t('footer.contact')}
+                  Contact
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Customer Service - Mobile Optimized */}
-          <div className="space-y-4 sm:space-y-5">
-            <h3 className="text-gray-200 text-lg sm:text-xl font-light">
-              {t('footer.customerService')}
-            </h3>
-            <ul className="space-y-3">
+          {/* Newsletter - Center */}
+          <div className="text-center">
+            <NewsletterSignup />
+          </div>
+
+          {/* Customer Service */}
+          <div className="text-center md:text-left">
+            <ul className="space-y-4">
               <li>
                 <Link
                   href="/faq"
-                  className="text-gray-200 hover:text-gold-300 transition-colors text-sm sm:text-base min-h-[44px] flex items-center"
+                  className="text-gray-400 hover:text-gold-elegant transition-colors text-base font-cinzel font-light tracking-widest uppercase"
                 >
-                  {t('footer.faq')}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/shipping"
-                  className="text-gray-200 hover:text-gold-300 transition-colors text-sm sm:text-base min-h-[44px] flex items-center"
-                >
-                  {language === 'he' ? 'משלוחים והחזרות' : 'Shipping & Returns'}
+                  FAQ
                 </Link>
               </li>
               <li>
                 <Link
                   href="/privacy"
-                  className="text-gray-200 hover:text-gold-300 transition-colors text-sm sm:text-base min-h-[44px] flex items-center"
+                  className="text-gray-400 hover:text-gold-elegant transition-colors text-base font-cinzel font-light tracking-widest uppercase"
                 >
-                  {language === 'he' ? 'מדיניות פרטיות' : 'Privacy Policy'}
+                  Privacy
                 </Link>
               </li>
               <li>
                 <Link
                   href="/terms"
-                  className="text-gray-200 hover:text-gold-300 transition-colors text-sm sm:text-base min-h-[44px] flex items-center"
+                  className="text-gray-400 hover:text-gold-elegant transition-colors text-base font-cinzel font-light tracking-widest uppercase"
                 >
-                  {language === 'he' ? 'תנאי שימוש' : 'Terms of Service'}
+                  Terms
                 </Link>
               </li>
             </ul>
           </div>
-
-          {/* ✅ UPDATED: Newsletter Section - Now uses working component */}
-          <div className="space-y-4">
-            <NewsletterSignup />
-          </div>
         </div>
 
-        {/* Copyright Section - Mobile Optimized */}
-        <div className="border-t border-gray-700 mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8 text-center">
-          <p className="text-gray-400 text-sm sm:text-base">
-            &copy; {currentYear} {settings?.siteName || 'CrownSteel'}.{' '}
-            {t('footer.allRightsReserved')}.
+        {/* Social Media - Centered with Gold accents */}
+        <div className="flex justify-center items-center gap-6 mb-12">
+          <Link
+            href="#"
+            className="text-gray-500 hover:text-gold-elegant transition-colors"
+            aria-label="Facebook"
+          >
+            <Facebook className="h-5 w-5" />
+          </Link>
+          <Link
+            href="#"
+            className="text-gray-500 hover:text-gold-elegant transition-colors"
+            aria-label="Instagram"
+          >
+            <Instagram className="h-5 w-5" />
+          </Link>
+          <Link
+            href="#"
+            className="text-gray-500 hover:text-gold-elegant transition-colors"
+            aria-label="Twitter"
+          >
+            <Twitter className="h-5 w-5" />
+          </Link>
+        </div>
+        <p className="text-sm font-light text-gray-400 tracking-wide text-center mb-6">
+          CrownSteel. Designed to Make Men Feel Like Kings.
+        </p>
+
+        {/* Copyright - Minimal */}
+        <div className="text-center">
+          <p className="text-gray-600 text-sm font-cinzel font-light tracking-[0.2em] uppercase">
+            © {currentYear} {settings?.siteName || 'FORGE & STEEL'}
           </p>
         </div>
       </div>

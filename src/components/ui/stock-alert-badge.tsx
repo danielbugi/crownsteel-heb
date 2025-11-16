@@ -64,12 +64,11 @@ export function StockAlertBadge({
   return null;
 }
 
-// Compact version for product cards
+// Compact version for product cards - Minimalist red text
 export function StockAlertBadgeCompact({
   inventory,
-  lowStockThreshold = 10,
   className,
-}: StockAlertBadgeProps) {
+}: Omit<StockAlertBadgeProps, 'lowStockThreshold'>) {
   if (inventory === 0) {
     return (
       <span className={cn('text-xs font-semibold text-red-600', className)}>
@@ -78,26 +77,15 @@ export function StockAlertBadgeCompact({
     );
   }
 
+  // Show only for very low stock (3 or less) - Red, no emoji
   if (inventory <= 3) {
     return (
-      <span
-        className={cn(
-          'text-xs font-semibold text-red-600 animate-pulse',
-          className
-        )}
-      >
-        🔥 Only {inventory} left!
+      <span className={cn('text-xs font-medium text-red-600', className)}>
+        Only {inventory} left
       </span>
     );
   }
 
-  if (inventory <= lowStockThreshold) {
-    return (
-      <span className={cn('text-xs font-semibold text-orange-600', className)}>
-        ⚠️ {inventory} left
-      </span>
-    );
-  }
-
+  // Don't show anything for medium stock - keep it clean
   return null;
 }

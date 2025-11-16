@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { X, Globe } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/language-context';
+import { t, direction } from '@/lib/translations';
 import { cn } from '@/lib/utils';
 
 interface Category {
@@ -21,27 +21,25 @@ interface NavigationSidebarProps {
 }
 
 export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
-  const { t, language, direction, setLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState<'shop' | 'menu'>('menu');
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    fetch('/api/categories')
+    fetch('/api/categories?lang=he')
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error('Failed to fetch categories:', err));
   }, []);
 
   const getCategoryName = (category: Category) => {
-    if (language === 'he' && category.nameHe) {
-      return category.nameHe;
-    }
-    return category.nameEn || category.name;
+    // Prioritize Hebrew name, fallback to English name
+    return category.nameHe || category.nameEn || category.name;
   };
 
   const menuLinks = [
     { href: '/', label: t('nav.home') },
     { href: '/categories', label: t('nav.collections') },
+    { href: '/blog', label: 'בלוג' },
     { href: '/about', label: t('nav.about') },
     { href: '/contact', label: t('nav.contact') },
   ];
@@ -74,21 +72,8 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-black">
-            {t('nav.menu') || 'Menu'}
-          </h2>
+          <h2 className="text-xl font-bold text-black">{t('nav.menu')}</h2>
           <div className="flex items-center gap-2">
-            {/* Language Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
-              className="text-black hover:bg-gray-100"
-              aria-label={`Switch to ${language === 'en' ? 'Hebrew' : 'English'}`}
-            >
-              <Globe className="h-5 w-5" />
-            </Button>
-
             {/* Close Button */}
             <Button
               variant="ghost"

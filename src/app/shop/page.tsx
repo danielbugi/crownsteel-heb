@@ -20,8 +20,7 @@ import {
   Columns3,
   LayoutList,
 } from 'lucide-react';
-import { useLanguage } from '@/contexts/language-context';
-import { HeroSection } from '@/components/layout/hero-section';
+import { t } from '@/lib/translations';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,7 +77,6 @@ export default function ShopPage() {
 
 function ShopPageContent() {
   const searchParams = useSearchParams();
-  const { t, language } = useLanguage();
   const category = searchParams.get('category');
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -180,18 +178,27 @@ function ShopPageContent() {
   };
 
   const currentCategory = categories.find((c) => c.slug === category);
-  const pageTitle =
-    language === 'he'
-      ? currentCategory?.nameHe || 'כל המוצרים'
-      : currentCategory?.nameEn || 'All Products';
+  const pageTitle = currentCategory?.nameEn || 'All Products';
+  const pageDescription = 'Claim Your Style';
 
   return (
     <div className="min-h-screen bg-background">
-      <HeroSection
-        title={pageTitle}
-        description={t('shop.description')}
-        size="lg"
-      />
+      {/* Elegant Black Header with Cinzel */}
+      <div className="relative bg-black py-16 border-b border-gold-elegant/20">
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black to-black opacity-60"></div>
+
+        <div className="container px-4 mx-auto relative z-10">
+          <div className="text-start">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-cinzel font-semibold text-white mb-4 tracking-wider">
+              {pageTitle}
+            </h1>
+            <p className="text-lg md:text-xl text-gold-elegant/80 font-light max-w-2xl">
+              {pageDescription}
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
       <section className="container px-4 mx-auto py-12">
@@ -220,7 +227,7 @@ function ShopPageContent() {
                   size="icon"
                   className="h-8 w-8"
                   onClick={() => setViewMode('list')}
-                  title="List View"
+                  title="תצוגת רשימה"
                 >
                   <LayoutList className="h-4 w-4" />
                 </Button>
@@ -229,7 +236,7 @@ function ShopPageContent() {
                   size="icon"
                   className="h-8 w-8"
                   onClick={() => setViewMode('grid-2')}
-                  title="2 Columns"
+                  title="2 עמודות"
                 >
                   <Columns2 className="h-4 w-4" />
                 </Button>
@@ -238,7 +245,7 @@ function ShopPageContent() {
                   size="icon"
                   className="h-8 w-8"
                   onClick={() => setViewMode('grid-3')}
-                  title="3 Columns"
+                  title="3 עמודות"
                 >
                   <Columns3 className="h-4 w-4" />
                 </Button>
@@ -247,7 +254,7 @@ function ShopPageContent() {
                   size="icon"
                   className="h-8 w-8"
                   onClick={() => setViewMode('grid-4')}
-                  title="4 Columns"
+                  title="4 עמודות"
                 >
                   <LayoutGrid className="h-4 w-4" />
                 </Button>
@@ -264,7 +271,7 @@ function ShopPageContent() {
             {currentCategory && (
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-sm text-muted-foreground">
-                  {t('shop.viewing') || 'Viewing'}:
+                  {t('shop.viewing') || 'צופה ב'}:
                 </span>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/50 text-sm">
                   <span>{pageTitle}</span>
@@ -274,7 +281,7 @@ function ShopPageContent() {
                     className="h-4 w-4 p-0 hover:bg-transparent"
                     onClick={() => (window.location.href = '/shop')}
                   >
-                    <span className="sr-only">Clear filter</span>×
+                    <span className="sr-only">נקה סינון</span>×
                   </Button>
                 </div>
               </div>
@@ -289,17 +296,15 @@ function ShopPageContent() {
                     ...filters,
                     priceRange: FILTER_CONSTANTS.PRICE.DEFAULT,
                   });
-                } else {
-                  setFilters({ ...filters, [filterKey]: false });
+                } else if (filterKey === 'metal') {
+                  setFilters({ ...filters, metal: '' });
                 }
                 setPagination((prev) => ({ ...prev, page: 1 }));
               }}
               onClearAll={() => {
                 setFilters({
                   priceRange: FILTER_CONSTANTS.PRICE.DEFAULT,
-                  inStockOnly: false,
-                  freeShippingOnly: false,
-                  onSaleOnly: false,
+                  metal: '',
                 });
                 setPagination((prev) => ({ ...prev, page: 1 }));
               }}
