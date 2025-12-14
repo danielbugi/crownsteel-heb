@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 // Store Web Vitals metrics
 export async function POST(request: NextRequest) {
