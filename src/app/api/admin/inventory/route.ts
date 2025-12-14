@@ -18,20 +18,20 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause based on filter
-    let where: any = {};
+    const where: { inventory?: number | { gt: number } } = {};
 
     switch (filter) {
       case 'out':
-        where = { inventory: 0 };
+        where.inventory = 0;
         break;
       case 'in-stock':
-        where = { inventory: { gt: 0 } };
+        where.inventory = { gt: 0 };
         break;
       // For 'low' and 'all', we'll filter after fetching
     }
 
     // Fetch products with inventory data
-    let [allProducts, alerts] = await Promise.all([
+    const [allProductsData, alerts] = await Promise.all([
       prisma.product.findMany({
         where,
         include: {
@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Filter for low stock products (inventory <= lowStockThreshold)
+    let allProducts = allProductsData;
     if (filter === 'low') {
       allProducts = allProducts.filter(
         (product) =>

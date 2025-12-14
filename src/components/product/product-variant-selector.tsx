@@ -11,13 +11,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { useLanguage } from '@/contexts/language-context';
 
 interface Variant {
   id: string;
   name: string;
-  nameEn?: string;
-  nameHe?: string;
   sku: string;
   price?: number;
   priceAdjustment?: number;
@@ -31,7 +28,6 @@ interface ProductVariantSelectorProps {
   variants: Variant[];
   basePrice: number;
   variantLabel?: string;
-  variantLabelHe?: string;
   onVariantChange: (variant: Variant | null) => void;
 }
 
@@ -39,10 +35,8 @@ export function ProductVariantSelector({
   variants,
   basePrice,
   variantLabel = 'Select Size',
-  variantLabelHe = 'בחר מידה',
   onVariantChange,
 }: ProductVariantSelectorProps) {
-  const { language } = useLanguage();
   const [selectedVariantId, setSelectedVariantId] = useState<string>('');
 
   // Don't auto-select variant - force user to choose
@@ -65,10 +59,7 @@ export function ProductVariantSelector({
   };
 
   const getVariantName = (variant: Variant) => {
-    if (language === 'he' && variant.nameHe) {
-      return variant.nameHe;
-    }
-    return variant.nameEn || variant.name;
+    return variant.name;
   };
 
   const formatPrice = (price: number) => {
@@ -83,16 +74,13 @@ export function ProductVariantSelector({
     return null;
   }
 
-  const label = language === 'he' ? variantLabelHe : variantLabel;
-  // const selectedVariant = variants.find((v) => v.id === selectedVariantId);
-
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label className="text-base font-medium">{label}</Label>
+        <Label className="text-base font-medium">{variantLabel}</Label>
         <Select value={selectedVariantId} onValueChange={handleVariantChange}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder={`Choose ${label}...`} />
+            <SelectValue placeholder={`Choose ${variantLabel}...`} />
           </SelectTrigger>
           <SelectContent>
             {variants

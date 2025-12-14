@@ -55,7 +55,7 @@ export function PriceRangeInput({
   return (
     <div className="space-y-5">
       <div className="space-y-3">
-        <Label className="text-sm font-light uppercase tracking-wider text-foreground">
+        <Label className="text-sm font-semibold uppercase tracking-wider text-gray-900">
           {label}
         </Label>
 
@@ -81,7 +81,7 @@ export function PriceRangeInput({
                 min={FILTER_CONSTANTS.PRICE.MIN}
                 max={value[1]}
                 step={FILTER_CONSTANTS.PRICE.STEP}
-                className="pl-8 h-10 font-light"
+                className="pl-8 h-10 font-light text-gray-900"
                 aria-label={`Minimum price ${value[0]} ${currency}`}
               />
             </div>
@@ -107,7 +107,7 @@ export function PriceRangeInput({
                 min={value[0]}
                 max={FILTER_CONSTANTS.PRICE.MAX}
                 step={FILTER_CONSTANTS.PRICE.STEP}
-                className="pl-8 h-10 font-light"
+                className="pl-8 h-10 font-light text-gray-900"
                 aria-label={`Maximum price ${value[1]} ${currency}`}
               />
             </div>

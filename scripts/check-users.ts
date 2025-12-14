@@ -1,7 +1,14 @@
 // scripts/check-users.ts
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+
+interface UserData {
+  id: string;
+  email: string;
+  name: string | null;
+  createdAt: Date;
+}
 
 async function checkUsers() {
   try {
@@ -17,7 +24,7 @@ async function checkUsers() {
     });
 
     console.log(`📊 Found ${users.length} users in database:`);
-    users.forEach((user, index) => {
+    users.forEach((user: UserData, index: number) => {
       console.log(
         `${index + 1}. ID: ${user.id}, Email: ${user.email}, Name: ${user.name}`
       );

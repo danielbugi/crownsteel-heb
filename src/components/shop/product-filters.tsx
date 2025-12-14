@@ -105,15 +105,15 @@ export function ProductFilters({
         <Button
           variant="outline"
           size="sm"
-          className="h-9 relative border-2 hover:bg-accent font-light tracking-wide"
+          className="h-9 relative border-2 border-gray-300 hover:bg-gray-100 font-light tracking-wide text-gray-900"
           aria-label={`Filters ${hasActiveFilters ? `(${activeFilterCount} active)` : ''}`}
         >
-          <SlidersHorizontal className="h-4 w-4 mr-2" />
+          <SlidersHorizontal className="h-4 w-4 mr-2 text-gray-700" />
           <span className="uppercase text-xs">
             {t('shop.filters') || 'Filters'}
           </span>
           {hasActiveFilters && (
-            <span className="absolute -top-1.5 -right-1.5 h-5 w-5 bg-foreground text-background rounded-full text-[10px] font-medium flex items-center justify-center shadow-md">
+            <span className="absolute -top-1.5 -right-1.5 h-5 w-5 bg-gray-900 text-white rounded-full text-[10px] font-medium flex items-center justify-center shadow-md">
               {activeFilterCount}
             </span>
           )}
@@ -121,11 +121,11 @@ export function ProductFilters({
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-[320px] sm:w-[400px] px-0 flex flex-col"
+        className="w-[320px] sm:w-[400px] px-0 flex flex-col bg-white"
       >
-        <SheetHeader className="px-6 pb-6 border-b-2">
-          <SheetTitle className="text-2xl font-light tracking-wide">
-            {t('shop.filterProducts') || 'סנן מוצרים'}
+        <SheetHeader className="px-6 pb-6 border-b border-gray-200">
+          <SheetTitle className="text-2xl font-semibold tracking-wide text-gray-900">
+            {t('shop.filterProducts') || 'Filter Products'}
           </SheetTitle>
         </SheetHeader>
 
@@ -133,8 +133,8 @@ export function ProductFilters({
           <div className="space-y-8">
             {/* Metal Type */}
             <div className="space-y-4">
-              <Label className="text-sm font-light uppercase tracking-wider text-foreground">
-                {t('shop.metalType') || 'סוג מתכת'}
+              <Label className="text-sm font-semibold uppercase tracking-wider text-gray-900">
+                {t('shop.metalType') || 'Metal Type'}
               </Label>
               <RadioGroup
                 value={localFilters.metal}
@@ -146,11 +146,11 @@ export function ProductFilters({
                     <RadioGroupItem
                       value={option.value}
                       id={option.id}
-                      className="border-2"
+                      className="border-2 border-gray-300"
                     />
                     <Label
                       htmlFor={option.id}
-                      className="text-sm font-light cursor-pointer"
+                      className="text-sm font-normal cursor-pointer text-gray-700 hover:text-gray-900"
                     >
                       {t(`shop.metal.${option.id}`) || option.label}
                     </Label>
@@ -159,39 +159,41 @@ export function ProductFilters({
               </RadioGroup>
             </div>
 
-            <div className="h-px bg-border" />
+            <div className="h-px bg-gray-200" />
 
             {/* Price Range */}
             <div className="space-y-5">
               <PriceRangeInput
                 value={localFilters.priceRange}
                 onChange={handlePriceChange}
-                label={t('shop.priceRange') || 'טווח מחירים'}
+                label={t('shop.priceRange') || 'Price Range'}
               />
             </div>
 
             {/* Result Count */}
             {productCount !== undefined && (
               <>
-                <div className="h-px bg-border" />
+                <div className="h-px bg-gray-200" />
                 <div
-                  className="text-center py-3 px-4 bg-accent/30 rounded-md"
+                  className="text-center py-3 px-4 bg-gray-100 rounded-md"
                   role="status"
                   aria-live="polite"
                 >
-                  <p className="text-sm font-light">
+                  <p className="text-sm font-normal">
                     {productCount === 0 ? (
-                      <span className="text-muted-foreground">
+                      <span className="text-gray-600">
                         {t('shop.noProductsMatch') ||
                           'No products match these filters'}
                       </span>
                     ) : (
                       <>
-                        <span className="font-medium">{productCount}</span>{' '}
-                        <span className="text-muted-foreground">
+                        <span className="font-semibold text-gray-900">
+                          {productCount}
+                        </span>{' '}
+                        <span className="text-gray-600">
                           {productCount === 1
-                            ? t('shop.productFound') || 'מוצר נמצא'
-                            : t('shop.productsFound') || 'מוצרים נמצאו'}
+                            ? 'Product Found'
+                            : 'Products Found'}
                         </span>
                       </>
                     )}
@@ -201,14 +203,14 @@ export function ProductFilters({
             )}
 
             {/* Action Buttons */}
-            <div className="space-y-3 pt-6 border-t-2 border-border">
+            <div className="space-y-3 pt-6 border-t border-gray-200">
               <Button
                 onClick={applyFilters}
-                className="w-full h-11 font-light text-sm tracking-wide uppercase bg-foreground hover:bg-foreground/90"
+                className="w-full h-11 font-medium text-sm tracking-wide uppercase bg-black hover:bg-gray-900 text-white"
               >
-                {t('shop.applyFilters') || 'החל מסננים'}
+                {t('shop.applyFilters') || 'Apply Filters'}
                 {activeFilterCount > 0 && (
-                  <span className="ml-2 px-2 py-0.5 bg-background text-foreground rounded-full text-xs">
+                  <span className="ml-2 px-2 py-0.5 bg-white text-black rounded-full text-xs font-semibold">
                     {activeFilterCount}
                   </span>
                 )}
@@ -216,10 +218,10 @@ export function ProductFilters({
               <Button
                 onClick={resetFilters}
                 variant="outline"
-                className="w-full h-11 font-light text-sm tracking-wide uppercase border-2 hover:bg-accent"
+                className="w-full h-11 font-medium text-sm tracking-wide uppercase border-2 border-gray-300 hover:bg-gray-100 text-gray-900"
                 disabled={!hasActiveFilters}
               >
-                {t('shop.resetFilters') || 'אפס מסננים'}
+                {t('shop.resetFilters') || 'Reset Filters'}
               </Button>
             </div>
           </div>

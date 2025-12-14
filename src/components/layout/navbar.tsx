@@ -9,7 +9,6 @@ import { useCartStore } from '@/store/cart-store';
 import { NavigationSidebar } from './navigation-sidebar';
 import { UserMenuSidebar } from './user-menu-sidebar';
 import { AuthSidebar } from '@/components/auth/auth-sidebar';
-import { t, direction } from '@/lib/translations';
 import { useWishlistStore } from '@/store/wishlist-store';
 import { SearchBar } from '@/components/search/search-bar';
 import Logo from '../logo/logo';
@@ -83,13 +82,13 @@ export function Navbar() {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <header className="sticky top-0 py-2 z-40 w-full bg-black-soft text-white-pure border-b border-black-rich shadow-cinematic">
+      <header className="sticky top-0 z-40 w-full bg-black text-white-pure border-b border-black-rich shadow-cinematic">
         {/* Responsive Navbar Container */}
         <div className="container px-4 md:px-6">
           {/* Mobile Layout: Logo on top, icons below */}
-          <div className="sm:hidden flex flex-col space-y-2 py-2">
+          <div className="sm:hidden">
             {/* Logo centered on top */}
-            <div className="flex justify-center align-middle">
+            <div className="flex justify-center items-center">
               <Logo />
             </div>
 
@@ -112,7 +111,6 @@ export function Navbar() {
                 <SearchBar
                   showSearch={showSearch}
                   onClose={() => setShowSearch(false)}
-                  isMobile={true}
                 />
 
                 {/* Search Icon */}
@@ -133,7 +131,7 @@ export function Navbar() {
                     size="icon"
                     className="text-gold-elegant hover:bg-black-rich hover:text-gold-elegant"
                     onClick={toggleWishlist}
-                    aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
+                    aria-label={`Wishlist${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
                   >
                     <Heart className="size-4" />
                   </Button>
@@ -151,7 +149,7 @@ export function Navbar() {
                     size="icon"
                     className="text-gold-elegant hover:bg-black-rich hover:text-gold-elegant"
                     onClick={toggleCart}
-                    aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
+                    aria-label={`Cart${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
                   >
                     <ShoppingCart className="size-4" />
                   </Button>
@@ -198,9 +196,8 @@ export function Navbar() {
 
           {/* Desktop Layout: Grid layout */}
           <nav
-            className="hidden sm:grid h-20 items-center"
+            className="hidden sm:grid h-12 items-center"
             aria-label="Main navigation"
-            dir={direction}
             style={{
               gridTemplateColumns: '1fr auto 1fr',
               gap: '2rem',
@@ -215,7 +212,7 @@ export function Navbar() {
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open menu"
               >
-                <Menu className="size-4" />
+                <Menu className="size-5" />
               </Button>
 
               {/* Inline Search */}
@@ -224,7 +221,6 @@ export function Navbar() {
                 <SearchBar
                   showSearch={showSearch}
                   onClose={() => setShowSearch(false)}
-                  isMobile={false}
                 />
 
                 {/* Search Icon Button */}
@@ -235,7 +231,7 @@ export function Navbar() {
                   onClick={() => setShowSearch(!showSearch)}
                   aria-label="Search"
                 >
-                  <Search className="size-4" />
+                  <Search className="size-5" />
                 </Button>
               </div>
             </div>
@@ -253,9 +249,9 @@ export function Navbar() {
                   size="icon"
                   className="text-foreground hover:bg-gold-400 hover:text-black"
                   onClick={toggleWishlist}
-                  aria-label={`${t('nav.wishlist')}${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
+                  aria-label={`Wishlist${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
                 >
-                  <Heart className="size-4" />
+                  <Heart className="size-5" />
                 </Button>
                 {wishlistMounted && wishlistCount > 0 && (
                   <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-border">
@@ -270,9 +266,9 @@ export function Navbar() {
                   size="icon"
                   className="text-foreground hover:bg-gold-400 hover:text-black"
                   onClick={toggleCart}
-                  aria-label={`${t('nav.cart')}${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
+                  aria-label={`Cart${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
                 >
-                  <ShoppingCart className="size-4" />
+                  <ShoppingCart className="size-5" />
                 </Button>
                 {mounted && totalItems > 0 && (
                   <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-500 text-black text-[10px] flex items-center justify-center font-bold shadow-lg border border-border">
@@ -307,7 +303,7 @@ export function Navbar() {
                   onClick={() => setIsAuthModalOpen(true)}
                   aria-label="Sign in"
                 >
-                  <User className="size-4" />
+                  <User className="size-5" />
                 </Button>
               )}
             </div>

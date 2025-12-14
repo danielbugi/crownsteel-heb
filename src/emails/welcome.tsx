@@ -13,7 +13,7 @@ export function WelcomeEmail({ name }: WelcomeEmailProps) {
         <Text style={welcomeIcon}>👋</Text>
         <Text style={welcomeTitle}>Welcome to Forge & Steel!</Text>
         <Text style={welcomeSubtitle}>
-          Hi {name}, we're excited to have you
+          Hi {name}, we&apos;re excited to have you
         </Text>
       </Section>
 
@@ -21,8 +21,8 @@ export function WelcomeEmail({ name }: WelcomeEmailProps) {
       <Section style={section}>
         <Text style={paragraph}>
           Thank you for joining Forge & Steel, your destination for premium
-          men's jewelry. We craft every piece with precision and passion to help
-          you express your unique style.
+          men&apos;s jewelry. We craft every piece with precision and passion to
+          help you express your unique style.
         </Text>
       </Section>
 
@@ -74,7 +74,7 @@ export function WelcomeEmail({ name }: WelcomeEmailProps) {
       {/* Contact */}
       <Section style={section}>
         <Text style={contactText}>
-          Have questions? We're here to help!{' '}
+          Have questions? We&apos;re here to help!{' '}
           <Link
             href={`${process.env.NEXT_PUBLIC_URL}/contact`}
             style={linkStyle}

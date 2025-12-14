@@ -30,15 +30,19 @@ export function ActiveFilterChips({
     });
   }
 
-  // Check boolean filters
-  if (filters.inStockOnly) {
-    activeFilters.push({ key: 'inStockOnly', label: 'במלאי' });
-  }
-  if (filters.freeShippingOnly) {
-    activeFilters.push({ key: 'freeShippingOnly', label: 'משלוח חינם' });
-  }
-  if (filters.onSaleOnly) {
-    activeFilters.push({ key: 'onSaleOnly', label: 'במבצע' });
+  // Check metal filter
+  if (filters.metal !== '') {
+    const metalOption = [
+      { value: 'silver', label: 'Silver' },
+      { value: 'stainless', label: 'Stainless Steel' },
+    ].find((m) => m.value === filters.metal);
+
+    if (metalOption) {
+      activeFilters.push({
+        key: 'metal',
+        label: metalOption.label,
+      });
+    }
   }
 
   if (activeFilters.length === 0) return null;
@@ -49,29 +53,29 @@ export function ActiveFilterChips({
       role="region"
       aria-label="Active filters"
     >
-      <span className="text-xs text-muted-foreground font-light uppercase tracking-wide">
+      <span className="text-xs text-gray-600 font-light uppercase tracking-wide">
         Active:
       </span>
       {activeFilters.map(({ key, label }) => (
         <Badge
           key={key}
           variant="secondary"
-          className="pl-2.5 pr-1.5 py-1 gap-1 font-light border border-border hover:bg-accent transition-colors"
+          className="pl-2.5 pr-1.5 py-1 gap-1 font-light border border-gray-300 bg-gray-100 hover:bg-gray-200 transition-colors text-gray-900"
         >
           <span className="text-xs">{label}</span>
           <button
             onClick={() => onRemoveFilter(key)}
-            className="ml-1 hover:bg-background/50 rounded-full p-0.5 transition-colors"
+            className="ml-1 hover:bg-gray-300 rounded-full p-0.5 transition-colors"
             aria-label={`Remove ${label} filter`}
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3 text-gray-700" />
           </button>
         </Badge>
       ))}
       {activeFilters.length > 1 && (
         <button
           onClick={onClearAll}
-          className="text-xs text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors font-light"
+          className="text-xs text-gray-600 hover:text-gray-900 underline-offset-4 hover:underline transition-colors font-light"
           aria-label="Clear all filters"
         >
           Clear all

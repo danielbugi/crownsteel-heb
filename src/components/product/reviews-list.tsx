@@ -1,7 +1,7 @@
 // src/components/product/reviews-list.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Star, ThumbsUp, CheckCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import toast from 'react-hot-toast';
+import { logger } from '@/lib/logger';
 
 interface Review {
   id: string;
@@ -29,13 +30,16 @@ interface ReviewsListProps {
   refreshKey?: number;
 }
 
-export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
+export const ReviewsList = React.memo<ReviewsListProps>(function ReviewsList({
+  productId,
+  refreshKey,
+}) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -48,17 +52,17 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
         setTotalPages(data.pagination.pages);
       }
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      logger.error('Error fetching reviews:', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [productId, page]);
 
   useEffect(() => {
     fetchReviews();
-  }, [productId, page, refreshKey]);
+  }, [fetchReviews, refreshKey]);
 
-  const handleHelpful = async (reviewId: string) => {
+  const handleHelpful = useCallback(async (reviewId: string) => {
     try {
       const response = await fetch(`/api/reviews/${reviewId}`, {
         method: 'PATCH',
@@ -73,12 +77,12 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
             r.id === reviewId ? { ...r, helpful: review.helpful } : r
           )
         );
-        toast.success('תודה על המשוב שלך!');
+        toast.success('Thanks for your feedback!');
       }
     } catch (error) {
-      toast.error('נכשל לסמן כמועיל');
+      toast.error('Failed to mark as helpful');
     }
-  };
+  }, []);
 
   if (isLoading) {
     return (
@@ -109,9 +113,9 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
     return (
       <div className="text-center py-12">
         <Star className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-        <h3 className="text-lg font-semibold mb-2">אין ביקורות עדיין</h3>
+        <h3 className="text-lg font-semibold mb-2">No Reviews Yet</h3>
         <p className="text-muted-foreground">
-          היה הראשון לתת ביקורת על המוצר הזה!
+          Be the first to review this product!
         </p>
       </div>
     );
@@ -140,7 +144,7 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
                         className="text-xs bg-green-50 text-green-700 border-green-200"
                       >
                         <CheckCircle className="w-3 h-3 mr-1" />
-                        רכישה מאומתת
+                        Verified Purchase
                       </Badge>
                     )}
                   </div>
@@ -184,7 +188,7 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
                 className="text-muted-foreground hover:text-primary"
               >
                 <ThumbsUp className="w-4 h-4 mr-2" />
-                מועיל ({review.helpful})
+                Helpful ({review.helpful})
               </Button>
             </div>
           </CardContent>
@@ -199,20 +203,20 @@ export function ReviewsList({ productId, refreshKey }: ReviewsListProps) {
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
-            הקודם
+            Previous
           </Button>
           <span className="flex items-center px-4">
-            עמוד {page} מתוך {totalPages}
+            Page {page} of {totalPages}
           </span>
           <Button
             variant="outline"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >
-            הבא
+            Next
           </Button>
         </div>
       )}
     </div>
   );
-}
+});

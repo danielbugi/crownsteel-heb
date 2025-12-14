@@ -20,7 +20,7 @@ import {
   Columns3,
   LayoutList,
 } from 'lucide-react';
-import { t } from '@/lib/translations';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,8 +49,6 @@ interface Product {
 interface Category {
   id: string;
   name: string;
-  nameEn?: string | null;
-  nameHe?: string | null;
   slug: string;
 }
 
@@ -121,7 +119,7 @@ function ShopPageContent() {
       const data = await response.json();
       setCategories(data || []);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      logger.error('Error fetching categories:', error);
     }
   };
 
@@ -178,22 +176,19 @@ function ShopPageContent() {
   };
 
   const currentCategory = categories.find((c) => c.slug === category);
-  const pageTitle = currentCategory?.nameEn || 'All Products';
+  const pageTitle = currentCategory?.name || 'All Products';
   const pageDescription = 'Claim Your Style';
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Elegant Black Header with Cinzel */}
-      <div className="relative bg-black py-16 border-b border-gold-elegant/20">
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black to-black opacity-60"></div>
-
+    <div className="min-h-screen bg-white">
+      {/* Elegant Header */}
+      <div className="relative bg-white py-16 border-b-2 border-gray-200">
         <div className="container px-4 mx-auto relative z-10">
           <div className="text-start">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-cinzel font-semibold text-white mb-4 tracking-wider">
+            <h1 className="text-3xl md:text-3xl lg:text-4xl font-figtree font-semibold text-gray-900 mb-4 tracking-wider">
               {pageTitle}
             </h1>
-            <p className="text-lg md:text-xl text-gold-elegant/80 font-light max-w-2xl">
+            <p className="text-md md:text-md text-gray-700 font-light max-w-2xl uppercase tracking-wide">
               {pageDescription}
             </p>
           </div>
@@ -221,7 +216,7 @@ function ShopPageContent() {
               </div>
 
               {/* Center: View Toggle */}
-              <div className="flex items-center gap-1 p-1">
+              <div className="flex items-center gap-1 p-1 bg-gray-50 rounded-md">
                 <Button
                   variant={viewMode === 'list' ? 'secondary' : 'ghost'}
                   size="icon"
@@ -229,7 +224,7 @@ function ShopPageContent() {
                   onClick={() => setViewMode('list')}
                   title="תצוגת רשימה"
                 >
-                  <LayoutList className="h-4 w-4" />
+                  <LayoutList className="h-4 w-4 text-gray-700" />
                 </Button>
                 <Button
                   variant={viewMode === 'grid-2' ? 'secondary' : 'ghost'}
@@ -238,7 +233,7 @@ function ShopPageContent() {
                   onClick={() => setViewMode('grid-2')}
                   title="2 עמודות"
                 >
-                  <Columns2 className="h-4 w-4" />
+                  <Columns2 className="h-4 w-4 text-gray-700" />
                 </Button>
                 <Button
                   variant={viewMode === 'grid-3' ? 'secondary' : 'ghost'}
@@ -247,7 +242,7 @@ function ShopPageContent() {
                   onClick={() => setViewMode('grid-3')}
                   title="3 עמודות"
                 >
-                  <Columns3 className="h-4 w-4" />
+                  <Columns3 className="h-4 w-4 text-gray-700" />
                 </Button>
                 <Button
                   variant={viewMode === 'grid-4' ? 'secondary' : 'ghost'}
@@ -256,7 +251,7 @@ function ShopPageContent() {
                   onClick={() => setViewMode('grid-4')}
                   title="4 עמודות"
                 >
-                  <LayoutGrid className="h-4 w-4" />
+                  <LayoutGrid className="h-4 w-4 text-gray-700" />
                 </Button>
               </div>
 
@@ -270,18 +265,18 @@ function ShopPageContent() {
             {/* Active Category Tag (if filtered) */}
             {currentCategory && (
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm text-muted-foreground">
-                  {t('shop.viewing') || 'צופה ב'}:
+                <span className="text-sm text-gray-600 font-medium">
+                  Viewing:
                 </span>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/50 text-sm">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-sm text-gray-900">
                   <span>{pageTitle}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-4 w-4 p-0 hover:bg-transparent"
+                    className="h-4 w-4 p-0 hover:bg-gray-200 text-gray-600"
                     onClick={() => (window.location.href = '/shop')}
                   >
-                    <span className="sr-only">נקה סינון</span>×
+                    <span className="sr-only">Clear filter</span>×
                   </Button>
                 </div>
               </div>
@@ -315,16 +310,14 @@ function ShopPageContent() {
           {/* Products Grid/List */}
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-2xl font-semibold mb-2">
-                {t('shop.noProducts')}
+              <p className="text-2xl font-semibold mb-2 text-gray-900">
+                No products found
               </p>
-              <p className="text-muted-foreground">
-                {t('shop.noProductsDesc')}
-              </p>
+              <p className="text-gray-600">Try adjusting your filters</p>
             </div>
           ) : (
             <>
@@ -338,8 +331,9 @@ function ShopPageContent() {
                     size="icon"
                     onClick={() => goToPage(pagination.page - 1)}
                     disabled={pagination.page === 1}
+                    className="border-gray-300 hover:bg-gray-100"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4 text-gray-700" />
                   </Button>
 
                   {Array.from({ length: pagination.pages }, (_, i) => i + 1)
@@ -357,12 +351,19 @@ function ShopPageContent() {
 
                       return (
                         <div key={page} className="flex items-center gap-2">
-                          {showEllipsis && <span className="px-2">...</span>}
+                          {showEllipsis && (
+                            <span className="px-2 text-gray-600">...</span>
+                          )}
                           <Button
                             variant={
                               page === pagination.page ? 'default' : 'outline'
                             }
                             onClick={() => goToPage(page)}
+                            className={
+                              page === pagination.page
+                                ? 'bg-gray-900 hover:bg-gray-800'
+                                : 'border-gray-300 hover:bg-gray-100 text-gray-700'
+                            }
                           >
                             {page}
                           </Button>
@@ -375,8 +376,9 @@ function ShopPageContent() {
                     size="icon"
                     onClick={() => goToPage(pagination.page + 1)}
                     disabled={pagination.page === pagination.pages}
+                    className="border-gray-300 hover:bg-gray-100"
                   >
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4 text-gray-700" />
                   </Button>
                 </div>
               )}

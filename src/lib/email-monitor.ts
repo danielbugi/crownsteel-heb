@@ -72,15 +72,8 @@ class EmailMonitor {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - daysOld);
 
-    const beforeCount = this.logs.length;
+    // const beforeCount = this.logs.length;
     this.logs = this.logs.filter((l) => l.timestamp > cutoff);
-    const removed = beforeCount - this.logs.length;
-
-    if (removed > 0) {
-      console.log(
-        `[EmailMonitor] Cleared ${removed} logs older than ${daysOld} days`
-      );
-    }
   }
 
   // Get failed emails for alerting

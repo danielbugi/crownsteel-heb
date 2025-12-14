@@ -38,12 +38,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, nameEn, slug } = body;
+    const { name, slug } = body;
 
     const tag = await prisma.blogTag.create({
       data: {
         name,
-        nameEn,
         slug,
       },
     });

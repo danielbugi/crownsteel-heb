@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
 
 interface CategoryCardProps {
   href: string;
@@ -8,6 +7,7 @@ interface CategoryCardProps {
   title: string;
   description?: string;
   showCTA?: boolean;
+  priority?: boolean; // Add priority prop for above-the-fold images
 }
 
 export function CategoryCard({
@@ -16,18 +16,20 @@ export function CategoryCard({
   title,
   description,
   showCTA = false,
+  priority = false,
 }: CategoryCardProps) {
   return (
     <Link
       href={href}
-      className="group relative overflow-hidden h-[350px] sm:h-[400px] md:h-[500px] rounded-none hover-masculine"
+      className="group relative overflow-hidden h-[350px] sm:h-[400px] md:h-[680px] rounded-none"
       style={{ boxShadow: '0 8px 20px rgba(0,0,0,0.35)' }}
     >
       <Image
         src={imageSrc}
         alt={`${title} Collection`}
         fill
-        className="object-cover transition-transform duration-700 group-hover:scale-105"
+        priority={priority}
+        className="object-cover "
         sizes="(max-width: 768px) 100vw, 33vw"
         quality={95}
       />
@@ -38,21 +40,10 @@ export function CategoryCard({
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-cinematic-xl"></div>
 
       {/* Content - Minimal & Bold */}
-      <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 md:p-10">
-        <h3 className="text-white-pure text-3xl sm:text-4xl md:text-5xl uppercase font-cinzel font-bold mb-0 transform transition-all duration-500 group-hover:translate-y-[-8px] group-hover:text-gold-elegant drop-shadow-cinematic tracking-widest">
+      <div className="absolute inset-0 flex flex-col justify-center items-center p-6 sm:p-8 md:p-10">
+        <h3 className="text-white-pure text-2xl sm:text-2xl md:text-4xl font-figtree uppercase font-semibold mb-0 transform transition-all duration-500 drop-shadow-cinematic tracking-widest">
           {title}
         </h3>
-        {description && (
-          <p className="text-sm sm:text-base text-gray-300 mt-3 leading-relaxed font-light">
-            {description}
-          </p>
-        )}
-        {showCTA && (
-          <div className="flex items-center gap-2 text-gold-elegant font-semibold text-sm sm:text-base mt-4 uppercase tracking-wider">
-            <span>Explore</span>
-            <ArrowRight className="h-5 w-5 transform transition-transform group-hover:translate-x-2" />
-          </div>
-        )}
       </div>
     </Link>
   );

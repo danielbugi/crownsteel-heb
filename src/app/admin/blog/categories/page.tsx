@@ -34,7 +34,6 @@ import { Plus, Edit, Trash2 } from 'lucide-react';
 interface Category {
   id: string;
   name: string;
-  nameEn: string;
   slug: string;
   description: string;
   _count: {
@@ -49,7 +48,6 @@ export default function BlogCategoriesPage() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState({
     name: '',
-    nameEn: '',
     slug: '',
     description: '',
   });
@@ -100,7 +98,6 @@ export default function BlogCategoriesPage() {
     setEditingCategory(category);
     setFormData({
       name: category.name,
-      nameEn: category.nameEn || '',
       slug: category.slug,
       description: category.description || '',
     });
@@ -127,7 +124,7 @@ export default function BlogCategoriesPage() {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', nameEn: '', slug: '', description: '' });
+    setFormData({ name: '', slug: '', description: '' });
     setEditingCategory(null);
   };
 
@@ -183,17 +180,6 @@ export default function BlogCategoriesPage() {
                     }}
                     placeholder="למשל: טיפים לטיפוח תכשיטים"
                     required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="nameEn">Category Name (English)</Label>
-                  <Input
-                    id="nameEn"
-                    value={formData.nameEn}
-                    onChange={(e) =>
-                      setFormData({ ...formData, nameEn: e.target.value })
-                    }
-                    placeholder="e.g., Jewelry Care Tips"
                   />
                 </div>
                 <div className="space-y-2">
@@ -254,8 +240,7 @@ export default function BlogCategoriesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name (Hebrew)</TableHead>
-                  <TableHead>Name (English)</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Slug</TableHead>
                   <TableHead>Posts</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -264,13 +249,13 @@ export default function BlogCategoriesPage() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">
+                    <TableCell colSpan={4} className="text-center">
                       Loading...
                     </TableCell>
                   </TableRow>
                 ) : categories.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">
+                    <TableCell colSpan={4} className="text-center">
                       No categories found
                     </TableCell>
                   </TableRow>
@@ -280,7 +265,6 @@ export default function BlogCategoriesPage() {
                       <TableCell className="font-medium">
                         {category.name}
                       </TableCell>
-                      <TableCell>{category.nameEn || '-'}</TableCell>
                       <TableCell className="font-mono text-sm">
                         {category.slug}
                       </TableCell>

@@ -41,7 +41,6 @@ export default function NewBlogPostPage() {
 
   const [formData, setFormData] = useState({
     title: '',
-    titleEn: '',
     slug: '',
     excerpt: '',
     content: '',
@@ -154,18 +153,6 @@ export default function NewBlogPostPage() {
                 onChange={(e) => handleTitleChange(e.target.value)}
                 placeholder="כותרת הפוסט בעברית"
                 required
-              />
-            </div>
-
-            <div className="space-y-2" dir="ltr">
-              <Label htmlFor="titleEn">Title (English)</Label>
-              <Input
-                id="titleEn"
-                value={formData.titleEn}
-                onChange={(e) =>
-                  setFormData({ ...formData, titleEn: e.target.value })
-                }
-                placeholder="Post title in English (optional)"
               />
             </div>
 

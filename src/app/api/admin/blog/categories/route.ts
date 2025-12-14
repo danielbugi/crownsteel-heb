@@ -38,12 +38,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, nameEn, slug, description, image } = body;
+    const { name, slug, description, image } = body;
 
     const category = await prisma.blogCategory.create({
       data: {
         name,
-        nameEn,
         slug,
         description,
         image,

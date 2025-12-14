@@ -37,8 +37,6 @@ interface InventoryLog {
   product: {
     id: string;
     name: string;
-    nameEn: string;
-    nameHe: string;
     sku: string | null;
     image: string;
   };
@@ -230,7 +228,7 @@ export default function InventoryLogsPage() {
                             </div>
                             <div className="text-sm">
                               <div className="font-medium">
-                                {log.product.nameEn || log.product.name}
+                                {log.product.name}
                               </div>
                               <div className="text-xs text-muted-foreground">
                                 SKU: {log.product.sku || 'N/A'}

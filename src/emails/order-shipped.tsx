@@ -34,7 +34,7 @@ export function OrderShippedEmail({
         {trackingNumber && (
           <Section style={trackingBox}>
             <Text style={trackingLabel}>Tracking Number</Text>
-            <Text style={trackingNumber}>{trackingNumber}</Text>
+            <Text style={trackingNumberStyle}>{trackingNumber}</Text>
             <Text style={trackingHint}>
               Click the button below to track your package
             </Text>
@@ -78,13 +78,13 @@ export function OrderShippedEmail({
         </Section>
       )}
 
-      {/* What's Next */}
+      {/* What&apos;s Next */}
       <Section style={infoBox}>
         <Text style={infoTitle}>What to expect</Text>
         <Text style={infoText}>
           ✓ Your package is on its way
           <br />
-          ✓ We'll send you updates on delivery progress
+          ✓ We&apos;ll send you updates on delivery progress
           <br />
           ✓ Make sure someone is available to receive the package
           <br />✓ Contact us if you have any questions
@@ -163,7 +163,7 @@ const trackingLabel = {
   letterSpacing: '1px',
 };
 
-const trackingNumber = {
+const trackingNumberStyle = {
   fontSize: '24px',
   fontWeight: 'bold',
   color: '#000000',

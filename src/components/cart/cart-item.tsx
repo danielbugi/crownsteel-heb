@@ -1,12 +1,12 @@
 'use client';
 
+import React, { useState, useCallback } from 'react';
 import Image from 'next/image';
 import { Minus, Plus, X, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCartStore } from '@/store/cart-store';
 import { formatPrice } from '@/lib/utils';
-import { useState } from 'react';
 
 interface CartItemProps {
   item: {
@@ -22,7 +22,7 @@ interface CartItemProps {
   };
 }
 
-export function CartItem({ item }: CartItemProps) {
+export const CartItem = React.memo<CartItemProps>(function CartItem({ item }) {
   const { updateQuantity, removeItem } = useCartStore();
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -37,16 +37,23 @@ export function CartItem({ item }: CartItemProps) {
   const isOutOfStock = item.inStock === false;
   const isAtMaxQuantity = item.quantity >= maxQuantity;
 
-  const handleQuantityChange = async (newQuantity: number) => {
-    if (newQuantity < 1 || newQuantity > maxQuantity) return;
+  const handleQuantityChange = useCallback(
+    async (newQuantity: number) => {
+      if (newQuantity < 1 || newQuantity > maxQuantity) return;
 
-    setIsUpdating(true);
-    try {
-      updateQuantity(item.productId, newQuantity, item.variantId);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
+      setIsUpdating(true);
+      try {
+        updateQuantity(item.productId, newQuantity, item.variantId);
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    [item.productId, item.variantId, maxQuantity, updateQuantity]
+  );
+
+  const handleRemove = useCallback(() => {
+    removeItem(item.productId, item.variantId);
+  }, [item.productId, item.variantId, removeItem]);
 
   return (
     <div className="p-6 hover:bg-gray-50 transition-colors">
@@ -83,7 +90,7 @@ export function CartItem({ item }: CartItemProps) {
               variant="ghost"
               size="icon"
               className="h-8 w-8 text-gray-400 hover:text-black hover:bg-gray-100"
-              onClick={() => removeItem(item.productId, item.variantId)}
+              onClick={handleRemove}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -103,19 +110,19 @@ export function CartItem({ item }: CartItemProps) {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8"
+                className="h-8 w-8 border border-black text-black"
                 disabled={item.quantity <= 1 || isUpdating}
                 onClick={() => handleQuantityChange(item.quantity - 1)}
               >
                 <Minus className="h-3 w-3" />
               </Button>
-              <span className="w-12 text-center text-sm font-medium">
+              <span className="w-12 text-center text-sm font-medium text-black">
                 {item.quantity}
               </span>
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8"
+                className="h-8 w-8 border border-black text-black"
                 disabled={isAtMaxQuantity || isOutOfStock || isUpdating}
                 onClick={() => handleQuantityChange(item.quantity + 1)}
               >
@@ -138,4 +145,4 @@ export function CartItem({ item }: CartItemProps) {
       </div>
     </div>
   );
-}
+});

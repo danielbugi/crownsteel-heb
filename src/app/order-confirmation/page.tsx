@@ -40,7 +40,7 @@ export default async function OrderConfirmationPage({
                       <li className="flex items-start gap-3">
                         <span className="text-green-600 mt-1">✓</span>
                         <span className="text-right">
-                          תקבל/י אישור הזמנה בדוא"ל בקרוב
+                          תקבל/י אישור הזמנה בדוא&quot;ל בקרוב
                         </span>
                       </li>
                       <li className="flex items-start gap-3">

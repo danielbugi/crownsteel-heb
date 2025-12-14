@@ -4,14 +4,11 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { t, direction } from '@/lib/translations';
 import { cn } from '@/lib/utils';
 
 interface Category {
   id: string;
   name: string;
-  nameEn?: string;
-  nameHe?: string;
   slug: string;
 }
 
@@ -31,17 +28,12 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
       .catch((err) => console.error('Failed to fetch categories:', err));
   }, []);
 
-  const getCategoryName = (category: Category) => {
-    // Prioritize Hebrew name, fallback to English name
-    return category.nameHe || category.nameEn || category.name;
-  };
-
   const menuLinks = [
-    { href: '/', label: t('nav.home') },
-    { href: '/categories', label: t('nav.collections') },
-    { href: '/blog', label: 'בלוג' },
-    { href: '/about', label: t('nav.about') },
-    { href: '/contact', label: t('nav.contact') },
+    { href: '/', label: 'Home' },
+    { href: '/categories', label: 'Collections' },
+    { href: '/blog', label: 'Blog' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   return (
@@ -60,19 +52,15 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed top-0 h-full w-80 bg-white shadow-2xl transition-all duration-300 ease-in-out',
-          direction === 'rtl' ? 'right-0' : 'left-0',
+          'fixed top-0 h-full w-80 bg-white shadow-2xl transition-all duration-300 ease-in-out left-0',
           isOpen
             ? 'translate-x-0 z-50 visible'
-            : direction === 'rtl'
-              ? 'translate-x-full z-50 invisible'
-              : '-translate-x-full z-50 invisible'
+            : '-translate-x-full z-50 invisible'
         )}
-        dir={direction}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-black">{t('nav.menu')}</h2>
+          <h2 className="text-xl font-bold text-black">Menu</h2>
           <div className="flex items-center gap-2">
             {/* Close Button */}
             <Button
@@ -97,7 +85,7 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             )}
           >
-            {t('nav.menu') || 'Menu'}
+            Menu
           </button>
           <button
             onClick={() => setActiveTab('shop')}
@@ -108,7 +96,7 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             )}
           >
-            {t('nav.shop')}
+            Shop
           </button>
         </div>
 
@@ -139,7 +127,7 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
                 onClick={onClose}
                 className="block px-6 py-4 text-sm font-light uppercase tracking-wide text-black hover:bg-gray-50 transition-colors border-b border-gray-200"
               >
-                {t('shop.dropdown.viewAll')}
+                View All Products
               </Link>
 
               {categories.length > 0 && (
@@ -155,7 +143,7 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
                           'border-b border-gray-200'
                       )}
                     >
-                      {getCategoryName(category)}
+                      {category.name}
                     </Link>
                   ))}
                 </>

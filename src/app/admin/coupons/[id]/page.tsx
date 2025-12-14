@@ -38,7 +38,6 @@ export default async function EditCouponPage({
         id: coupon.id,
         code: coupon.code,
         description: coupon.description || '',
-        descriptionHe: coupon.descriptionHe || '',
         discountType: coupon.discountType,
         discountValue: Number(coupon.discountValue),
         minPurchase: coupon.minPurchase

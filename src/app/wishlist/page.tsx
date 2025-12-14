@@ -5,7 +5,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useWishlistStore } from '@/store/wishlist-store';
-import { useLanguage } from '@/contexts/language-context';
 import { ProductCard } from '@/components/shop/product-card';
 import { Button } from '@/components/ui/button';
 import { HeroSection } from '@/components/layout/hero-section';
@@ -37,7 +36,6 @@ interface Product {
 export default function WishlistPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { t } = useLanguage();
   const { items, getItemCount, syncWithServer } = useWishlistStore();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -48,15 +46,6 @@ export default function WishlistPage() {
   const [wishlistCount, setWishlistCount] = useState(0);
 
   const isAuthenticated = !!session?.user;
-
-  console.log('🔍 Component render:', {
-    isAuthenticated,
-    loading,
-    synced,
-    initialized,
-    itemsLength: items.length,
-    wishlistCount,
-  });
 
   // Update count after component mounts to prevent hydration mismatch
   useEffect(() => {
@@ -70,24 +59,14 @@ export default function WishlistPage() {
 
   // Load product details
   const loadProducts = useCallback(async () => {
-    console.log('🔄 Loading wishlist products...', {
-      isAuthenticated,
-      itemsLength: items.length,
-    });
     setLoading(true);
 
     try {
       if (isAuthenticated) {
-        console.log('👤 Authenticated user - fetching from server');
         // Fetch from server with full product details
         const response = await fetch('/api/wishlist');
         if (response.ok) {
           const { items: wishlistItems } = await response.json();
-          console.log(
-            '✅ Server response:',
-            wishlistItems?.length || 0,
-            'items'
-          );
           const productsList = wishlistItems.map(
             (item: {
               product: {
@@ -131,14 +110,11 @@ export default function WishlistPage() {
           );
           setProducts(productsList);
         } else {
-          console.log('❌ Server error:', response.status);
           setProducts([]);
         }
       } else {
-        console.log('👤 Guest user - items in localStorage:', items.length);
         // Guest user - fetch basic product info
         if (items.length > 0) {
-          console.log('📦 Fetching products for guest user...');
           const response = await fetch('/api/products', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -177,14 +153,11 @@ export default function WishlistPage() {
                 },
               })
             );
-            console.log('✅ Mapped products for guest:', mappedProducts.length);
             setProducts(mappedProducts);
           } else {
-            console.log('❌ API error for guest products:', response.status);
             setProducts([]);
           }
         } else {
-          console.log('📭 No items for guest user - setting empty array');
           setProducts([]);
         }
       }
@@ -192,17 +165,13 @@ export default function WishlistPage() {
       console.error('💥 Error loading wishlist products:', error);
       setProducts([]);
     } finally {
-      console.log('✅ loadProducts completed, setting loading=false');
       setLoading(false);
     }
   }, [isAuthenticated, items]);
 
   // Initialize on mount only
   useEffect(() => {
-    console.log('🚀 Initial mount useEffect');
-
     if (initialized) {
-      console.log('⚠️ Already initialized, skipping...');
       return;
     }
 
@@ -210,12 +179,10 @@ export default function WishlistPage() {
 
     const initialize = async () => {
       if (isAuthenticated && !synced) {
-        console.log('🔄 Syncing with server...');
         await syncWithServer();
         setSynced(true);
       }
 
-      console.log('📦 Initial load products...');
       loadProducts();
     };
 
@@ -225,10 +192,7 @@ export default function WishlistPage() {
 
   // Reload when items change
   useEffect(() => {
-    console.log('� Items changed useEffect:', { itemsLength: items.length });
-
     if (!loading) {
-      console.log('📦 Loading products due to items change...');
       loadProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -244,10 +208,10 @@ export default function WishlistPage() {
         title={
           <div className="flex items-center gap-3">
             <Heart className="h-8 w-8 fill-current" />
-            {t('wishlist.title')}
+            My Wishlist
           </div>
         }
-        description={`${wishlistCount} ${t('wishlist.itemsCount')}`}
+        description={`${wishlistCount} items in your wishlist`}
       >
         {isNearLimit && (
           <Badge variant="destructive" className="text-sm">
@@ -265,7 +229,7 @@ export default function WishlistPage() {
               <CardContent className="p-4 flex items-center justify-between flex-wrap gap-4">
                 <div>
                   <h3 className="font-bold text-lg mb-1">
-                    💡 {t('wishlist.signInPrompt')}
+                    💡 Sign in to save your favorites forever!
                   </h3>
                   <p className="text-white/90 text-sm">
                     Get personalized recommendations and never lose your
@@ -277,7 +241,7 @@ export default function WishlistPage() {
                   size="lg"
                   onClick={() => router.push('/auth/signin')}
                 >
-                  {t('wishlist.signInButton')}
+                  Sign In Now
                 </Button>
               </CardContent>
             </Card>
@@ -299,14 +263,16 @@ export default function WishlistPage() {
           {!loading && products.length === 0 && (
             <div className="text-center py-20">
               <Heart className="h-24 w-24 mx-auto mb-6 text-muted-foreground" />
-              <h2 className="text-3xl font-bold mb-4">{t('wishlist.empty')}</h2>
+              <h2 className="text-3xl font-bold mb-4">
+                Your wishlist is empty
+              </h2>
               <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                {t('wishlist.emptyDesc')}
+                Start adding products you love to your wishlist
               </p>
               <Button size="lg" asChild>
                 <Link href="/shop">
                   <ShoppingBag className="mr-2 h-5 w-5" />
-                  {t('wishlist.browsProducts')}
+                  Browse Products
                 </Link>
               </Button>
             </div>

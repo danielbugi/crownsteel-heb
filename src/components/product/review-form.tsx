@@ -27,12 +27,12 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
     e.preventDefault();
 
     if (!session) {
-      toast.error('אנא התחבר כדי להשאיר ביקורת');
+      toast.error('Please log in to leave a review');
       return;
     }
 
     if (rating === 0) {
-      toast.error('אנא בחר דירוג');
+      toast.error('Please select a rating');
       return;
     }
 
@@ -56,13 +56,13 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
         throw new Error(data.error || 'Failed to submit review');
       }
 
-      toast.success(data.message || 'ביקורת נשלחה בהצלחה!');
+      toast.success(data.message || 'Review submitted successfully!');
       setRating(0);
       setTitle('');
       setComment('');
       onSuccess?.();
     } catch (error: unknown) {
-      toast.error((error as Error).message || 'נכשל לשלוח ביקורת');
+      toast.error((error as Error).message || 'Failed to submit review');
     } finally {
       setIsSubmitting(false);
     }
@@ -71,7 +71,7 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
   if (!session) {
     return (
       <div className="bg-secondary/30 p-6 rounded-lg text-center">
-        <p className="text-muted-foreground">אנא התחבר כדי להשאיר ביקורת</p>
+        <p className="text-muted-foreground">Please log in to leave a review</p>
       </div>
     );
   }
@@ -79,7 +79,9 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <Label className="text-base font-semibold mb-3 block">הדירוג שלך</Label>
+        <Label className="text-base font-semibold mb-3 block">
+          Your Rating
+        </Label>
         <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -103,33 +105,33 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="title">כותרת הביקורת (אופציונלי)</Label>
+        <Label htmlFor="title">Review Title (Optional)</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="סכם את החוויה שלך..."
+          placeholder="Summarize your experience..."
           maxLength={100}
         />
       </div>
 
       <div>
-        <Label htmlFor="comment">הביקורת שלך (אופציונלי)</Label>
+        <Label htmlFor="comment">Your Review (Optional)</Label>
         <Textarea
           id="comment"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="שתף את המחשבות שלך על המוצר הזה..."
+          placeholder="Share your thoughts about this product..."
           rows={5}
           maxLength={1000}
         />
         <p className="text-xs text-muted-foreground mt-1">
-          {comment.length}/1000 תווים
+          {comment.length}/1000 characters
         </p>
       </div>
 
       <Button type="submit" disabled={isSubmitting || rating === 0} size="lg">
-        {isSubmitting ? 'שולח...' : 'שלח ביקורת'}
+        {isSubmitting ? 'Submitting...' : 'Submit Review'}
       </Button>
     </form>
   );

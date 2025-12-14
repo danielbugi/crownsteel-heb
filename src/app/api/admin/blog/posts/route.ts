@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
+import { BlogStatus } from '@prisma/client';
 
 // GET /api/admin/blog/posts - List all blog posts (admin)
 export async function GET(request: NextRequest) {
@@ -19,8 +20,15 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit;
 
-    const where: any = {};
-    if (status) where.status = status;
+    const where: {
+      status?: BlogStatus;
+      categoryId?: string;
+      OR?: Array<
+        | { title: { contains: string; mode: 'insensitive' } }
+        | { content: { contains: string; mode: 'insensitive' } }
+      >;
+    } = {};
+    if (status) where.status = status as BlogStatus;
     if (categoryId) where.categoryId = categoryId;
     if (search) {
       where.OR = [
@@ -83,7 +91,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       title,
-      titleEn,
       slug,
       excerpt,
       content,
@@ -104,7 +111,6 @@ export async function POST(request: NextRequest) {
     const post = await prisma.blogPost.create({
       data: {
         title,
-        titleEn,
         slug,
         excerpt,
         content,

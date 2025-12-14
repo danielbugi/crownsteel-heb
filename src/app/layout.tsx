@@ -3,7 +3,7 @@
 // Replace your existing layout.tsx with this version
 
 import type { Metadata, Viewport } from 'next';
-import { Playfair_Display, Rubik, Heebo, Cinzel } from 'next/font/google';
+import { Playfair_Display, Figtree, Cinzel } from 'next/font/google';
 import './globals.css';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { Navbar } from '@/components/layout/navbar';
@@ -11,13 +11,14 @@ import { Footer } from '@/components/layout/footer';
 import { CartSheet } from '@/components/cart/cart-sheet';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { SettingsProvider } from '@/contexts/settings-context';
-import { LanguageProvider } from '@/contexts/language-context';
+// import { LanguageProvider } from '@/contexts/language-context';
 import { Toaster } from 'react-hot-toast';
 import { WishlistSyncProvider } from '@/components/providers/wishlist-sync-provider';
 import { WishlistSheet } from '@/components/wishlist/wishlist-sheet';
 import { StructuredData } from '@/components/seo/structured-data';
 import { HreflangLinks } from '@/components/seo/hreflang-links';
 import { CookieAndSignupFlow } from '@/components/layout/cookie-and-signup-flow';
+import { WebVitalsProvider } from '@/components/providers/web-vitals-provider';
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -38,16 +39,11 @@ const cinzel = Cinzel({
   weight: ['400', '500', '600', '700', '800', '900'],
 });
 
-const rubik = Rubik({
-  subsets: ['latin', 'hebrew'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-rubik',
-});
-
-const heebo = Heebo({
-  subsets: ['hebrew'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-heebo',
+const figtree = Figtree({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-figtree',
+  display: 'swap',
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
@@ -57,7 +53,7 @@ const SITE_NAME = 'CrownSteel';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} - Feel Like a King`,
+    default: `${SITE_NAME} - Kings Choice`,
     template: `%s | ${SITE_NAME}`,
   },
   description:
@@ -176,7 +172,7 @@ export default function RootLayout({
     <html
       lang="en"
       dir="ltr"
-      className={`${rubik.variable} ${heebo.variable} ${cinzel.variable} ${playfair.variable}`}
+      className={`${figtree.variable} ${cinzel.variable} ${playfair.variable}`}
     >
       <head>
         <HreflangLinks />
@@ -191,12 +187,12 @@ export default function RootLayout({
       </head>
       <body
         className="font-sans"
-        style={{ fontFamily: "'Rubik', system-ui, sans-serif" }}
+        style={{ fontFamily: "'Figtree', system-ui, sans-serif" }}
       >
         <AuthProvider>
-          <LanguageProvider>
-            <SettingsProvider>
-              <WishlistSyncProvider>
+          <SettingsProvider>
+            <WishlistSyncProvider>
+              <WebVitalsProvider>
                 <div className="flex min-h-screen flex-col">
                   <AnnouncementBar />
                   <Navbar />
@@ -207,9 +203,9 @@ export default function RootLayout({
                 <WishlistSheet />
                 <CookieAndSignupFlow />
                 <Toaster position="bottom-right" />
-              </WishlistSyncProvider>
-            </SettingsProvider>
-          </LanguageProvider>
+              </WebVitalsProvider>
+            </WishlistSyncProvider>
+          </SettingsProvider>
         </AuthProvider>
       </body>
     </html>

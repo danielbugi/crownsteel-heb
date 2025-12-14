@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
+import { cache, withCache } from '@/lib/cache';
 
 // GET - Get user's wishlist with product details
 export async function GET() {
@@ -13,17 +14,23 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const wishlist = await prisma.wishlist.findMany({
-      where: { userId: session.user.id },
-      include: {
-        product: {
+    // Cache user's wishlist for 5 minutes
+    const wishlist = await withCache(
+      `wishlist:${session.user.id}`,
+      () =>
+        prisma.wishlist.findMany({
+          where: { userId: session.user.id },
           include: {
-            category: true,
+            product: {
+              include: {
+                category: true,
+              },
+            },
           },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+          orderBy: { createdAt: 'desc' },
+        }),
+      5 // 5 minutes TTL
+    );
 
     // Serialize the wishlist items manually to avoid serializeProduct issues
     const serializedWishlist = wishlist.map((item) => ({
@@ -52,26 +59,21 @@ export async function GET() {
 // POST - Add item to wishlist
 export async function POST(request: NextRequest) {
   try {
-    console.log('🔄 Wishlist POST request started');
-
     const session = await auth();
-    console.log('👤 Full session:', JSON.stringify(session, null, 2));
-    console.log('👤 User ID:', session?.user?.id);
 
     if (!session?.user?.id) {
-      console.log('❌ Unauthorized - no session');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Clear user's wishlist cache
+    cache.delete(`wishlist:${session.user.id}`);
 
     // בדוק אם המשתמש קיים בבסיס הנתונים
     const existingUser = await prisma.user.findUnique({
       where: { id: session.user.id },
     });
 
-    console.log('🔍 User exists in DB:', !!existingUser);
     if (!existingUser) {
-      console.log('❌ User not found in database with ID:', session.user.id);
-      console.log('🔄 This usually means stale session. User should re-login.');
       return NextResponse.json(
         {
           error: 'Session expired. Please sign in again.',
@@ -82,19 +84,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    console.log('📦 Request body:', body);
 
     const { productId } = body;
 
     if (!productId) {
-      console.log('❌ Missing productId');
       return NextResponse.json(
         { error: 'Product ID is required' },
         { status: 400 }
       );
     }
-
-    console.log('🔍 Checking if product exists:', productId);
 
     // Verify product exists
     const product = await prisma.product.findUnique({
@@ -102,11 +100,8 @@ export async function POST(request: NextRequest) {
     });
 
     if (!product) {
-      console.log('❌ Product not found:', productId);
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
-
-    console.log('✅ Product found:', product.name);
 
     // Check if already in wishlist
     const existing = await prisma.wishlist.findUnique({
@@ -119,14 +114,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (existing) {
-      console.log('⚠️ Already in wishlist');
       return NextResponse.json(
         { message: 'Already in wishlist' },
         { status: 200 }
       );
     }
-
-    console.log('➕ Adding to wishlist...');
 
     // Add to wishlist
     const wishlistItem = await prisma.wishlist.create({
@@ -142,8 +134,6 @@ export async function POST(request: NextRequest) {
         },
       },
     });
-
-    console.log('✅ Added to wishlist successfully');
 
     // Serialize the created item
     const serializedItem = {

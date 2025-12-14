@@ -36,7 +36,7 @@ interface Product {
   reservedQuantity: number;
   availableQuantity: number;
   category: { name: string };
-  inventoryAlerts: any[];
+  inventoryAlerts: Array<{ id: string; type: string; acknowledged: boolean }>;
 }
 
 interface InventoryStats {

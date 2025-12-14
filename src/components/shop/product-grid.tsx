@@ -14,6 +14,7 @@ interface Product {
   featured: boolean;
   freeShipping: boolean;
   category: {
+    id: string;
     name: string;
     slug: string;
   };
@@ -61,12 +62,12 @@ export function ProductGrid({
   // Grid view (default)
   return (
     <div className={`grid ${gridCols} gap-2`}>
-      {products.map((product) => (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {products.map((product, index) => (
         <ProductCard
           key={product.id}
-          product={product as any}
+          product={product}
           viewMode={viewMode}
+          priority={index < 4} // Prioritize first 4 images for LCP
         />
       ))}
     </div>

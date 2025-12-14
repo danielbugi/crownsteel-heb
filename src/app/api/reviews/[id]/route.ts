@@ -6,9 +6,10 @@ import { auth } from '@/lib/auth';
 // DELETE - Delete a review
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
 
     if (!session || !session.user) {
@@ -19,7 +20,7 @@ export async function DELETE(
     }
 
     const review = await prisma.review.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!review) {
@@ -27,13 +28,13 @@ export async function DELETE(
     }
 
     // Check if user owns the review or is admin
-    const userRole = (session.user as any).role;
+    const userRole = (session.user as { role?: string }).role;
     if (review.userId !== session.user.id && userRole !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     await prisma.review.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     // Update product rating stats
@@ -52,9 +53,10 @@ export async function DELETE(
 // PATCH - Update review (helpful count or admin approval)
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
 
     if (!session || !session.user) {
@@ -68,7 +70,7 @@ export async function PATCH(
     const { action, status } = body;
 
     const review = await prisma.review.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!review) {
@@ -78,7 +80,7 @@ export async function PATCH(
     // Handle helpful vote
     if (action === 'helpful') {
       const updatedReview = await prisma.review.update({
-        where: { id: params.id },
+        where: { id },
         data: {
           helpful: review.helpful + 1,
         },
@@ -89,13 +91,13 @@ export async function PATCH(
 
     // Handle admin approval/rejection
     if (status) {
-      const userRole = (session.user as any).role;
+      const userRole = (session.user as { role?: string }).role;
       if (userRole !== 'ADMIN') {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
       }
 
       const updatedReview = await prisma.review.update({
-        where: { id: params.id },
+        where: { id },
         data: { status },
       });
 

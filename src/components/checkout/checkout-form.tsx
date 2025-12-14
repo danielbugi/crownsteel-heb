@@ -26,13 +26,16 @@ import { formatShippingInfo } from '@/lib/shipping';
 
 // Removed idNumber from schema
 const checkoutSchema = z.object({
-  email: z.string().email('כתובת דוא"ל לא תקינה'),
-  firstName: z.string().min(2, 'שם פרטי נדרש'),
-  lastName: z.string().min(2, 'שם משפחה נדרש'),
-  phone: z.string().regex(/^05\d{8}$/, 'מספר טלפון לא תקין (05X-XXX-XXXX)'),
-  address: z.string().min(5, 'כתובת נדרשת'),
-  city: z.string().min(2, 'עיר נדרשת'),
-  postalCode: z.string().min(5, 'מיקוד נדרש').max(7, 'מיקוד לא תקין'),
+  email: z.string().email('Invalid email address'),
+  firstName: z.string().min(2, 'First name is required'),
+  lastName: z.string().min(2, 'Last name is required'),
+  phone: z.string().regex(/^05\d{8}$/, 'Invalid phone number (05X-XXX-XXXX)'),
+  address: z.string().min(5, 'Address is required'),
+  city: z.string().min(2, 'City is required'),
+  postalCode: z
+    .string()
+    .min(5, 'Postal code is required')
+    .max(7, 'Invalid postal code'),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
@@ -96,12 +99,12 @@ export function CheckoutForm({
     couponId: string
   ) => {
     setAppliedCoupon({ code, discount: discountAmt, id: couponId });
-    toast.success(`קופון הופעל! חסכת ₪${discountAmt.toFixed(2)}`);
+    toast.success(`Coupon applied! You saved ₪${discountAmt.toFixed(2)}`);
   };
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
-    toast.success('קופון הוסר');
+    toast.success('Coupon removed');
   };
 
   const onSubmit = async (data: CheckoutFormValues) => {
@@ -135,7 +138,7 @@ export function CheckoutForm({
         // Handle insufficient inventory error
         if (errorData.error === 'Insufficient inventory' && errorData.product) {
           toast.error(
-            `${errorData.product.name}: רק ${errorData.product.available} זמין, אך ביקשת ${errorData.product.requested}`,
+            `${errorData.product.name}: Only ${errorData.product.available} available, but you requested ${errorData.product.requested}`,
             { duration: 5000 }
           );
           setIsLoading(false);
@@ -144,13 +147,15 @@ export function CheckoutForm({
 
         // Handle product not found error
         if (errorData.error === 'Product not found') {
-          toast.error('אחד או יותר מהמוצרים בעגלה אינם זמינים יותר');
+          toast.error(
+            'One or more products in your cart are no longer available'
+          );
           setIsLoading(false);
           return;
         }
 
         // Generic error
-        toast.error(errorData.error || 'נכשל ביצירת ההזמנה');
+        toast.error(errorData.error || 'Failed to create order');
         setIsLoading(false);
         return;
       }
@@ -188,7 +193,7 @@ export function CheckoutForm({
       window.location.href = paymentUrl;
     } catch (error) {
       console.error('Checkout error:', error);
-      toast.error('שגיאה בביצוע ההזמנה. אנא נסה שנית.');
+      toast.error('Error processing order. Please try again.');
       setIsLoading(false);
     }
   };
@@ -199,7 +204,7 @@ export function CheckoutForm({
         {/* Contact Information */}
         <Card>
           <CardHeader>
-            <CardTitle>פרטי התקשרות</CardTitle>
+            <CardTitle>Contact Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
@@ -207,7 +212,7 @@ export function CheckoutForm({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>דוא"ל</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -224,7 +229,7 @@ export function CheckoutForm({
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>טלפון נייד</FormLabel>
+                  <FormLabel>Mobile Phone</FormLabel>
                   <FormControl>
                     <Input type="tel" placeholder="050-123-4567" {...field} />
                   </FormControl>
@@ -238,7 +243,7 @@ export function CheckoutForm({
         {/* Shipping Address */}
         <Card>
           <CardHeader>
-            <CardTitle>כתובת למשלוח</CardTitle>
+            <CardTitle>Shipping Address</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -247,9 +252,9 @@ export function CheckoutForm({
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>שם פרטי</FormLabel>
+                    <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="יוסי" {...field} />
+                      <Input placeholder="John" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -260,9 +265,9 @@ export function CheckoutForm({
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>שם משפחה</FormLabel>
+                    <FormLabel>Last Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="כהן" {...field} />
+                      <Input placeholder="Doe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -275,9 +280,9 @@ export function CheckoutForm({
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>כתובת</FormLabel>
+                  <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="רחוב הרצל 123" {...field} />
+                    <Input placeholder="123 Main Street" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -290,9 +295,9 @@ export function CheckoutForm({
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>עיר</FormLabel>
+                    <FormLabel>City</FormLabel>
                     <FormControl>
-                      <Input placeholder="תל אביב" {...field} />
+                      <Input placeholder="Tel Aviv" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -303,7 +308,7 @@ export function CheckoutForm({
                 name="postalCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>מיקוד</FormLabel>
+                    <FormLabel>Postal Code</FormLabel>
                     <FormControl>
                       <Input placeholder="6473921" {...field} />
                     </FormControl>
@@ -318,7 +323,7 @@ export function CheckoutForm({
         {/* Coupon Code */}
         <Card>
           <CardHeader>
-            <CardTitle>קוד קופון</CardTitle>
+            <CardTitle>Coupon Code</CardTitle>
           </CardHeader>
           <CardContent>
             <CouponInput
@@ -334,11 +339,11 @@ export function CheckoutForm({
         {/* Order Summary (Mobile Only) */}
         <Card className="lg:hidden">
           <CardHeader>
-            <CardTitle>סיכום הזמנה</CardTitle>
+            <CardTitle>Order Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">סכום ביניים</span>
+              <span className="text-muted-foreground">Subtotal</span>
               <span>
                 {settings?.currencySymbol}
                 {subtotal.toFixed(2)}
@@ -346,7 +351,7 @@ export function CheckoutForm({
             </div>
             {discountAmount > 0 && (
               <div className="flex justify-between text-green-600">
-                <span>הנחה ({appliedCoupon?.code})</span>
+                <span>Discount ({appliedCoupon?.code})</span>
                 <span>
                   -{settings?.currencySymbol}
                   {discountAmount.toFixed(2)}
@@ -354,22 +359,20 @@ export function CheckoutForm({
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-muted-foreground">משלוח</span>
+              <span className="text-muted-foreground">Shipping</span>
               <span className={shippingInfo.isFree ? 'text-green-600' : ''}>
                 {shippingInfo.displayText}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">
-                מע&quot;מ ({taxRate}%)
-              </span>
+              <span className="text-muted-foreground">VAT ({taxRate}%)</span>
               <span>
                 {settings?.currencySymbol}
                 {taxAmount.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between text-lg font-bold border-t pt-2">
-              <span>סה"כ</span>
+              <span>Total</span>
               <span>
                 {settings?.currencySymbol}
                 {finalTotal.toFixed(2)}
@@ -381,13 +384,14 @@ export function CheckoutForm({
         {/* Payment Info */}
         <Card>
           <CardHeader>
-            <CardTitle>תשלום</CardTitle>
+            <CardTitle>Payment</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="bg-muted p-4 rounded-lg space-y-2">
-              <p className="text-sm">תשלום מאובטח באמצעות Tranzila</p>
+              <p className="text-sm">Secure payment via Tranzila</p>
               <p className="text-xs text-muted-foreground">
-                לאחר לחיצה על "המשך לתשלום" תועבר/י לדף תשלום מאובטח
+                After clicking &quot;Continue to Payment&quot; you will be
+                redirected to a secure payment page
               </p>
             </div>
           </CardContent>
@@ -400,8 +404,8 @@ export function CheckoutForm({
           disabled={isLoading || items.length === 0}
         >
           {isLoading
-            ? 'מעבד...'
-            : `המשך לתשלום (${settings?.currencySymbol}${finalTotal.toFixed(2)})`}
+            ? 'Processing...'
+            : `Continue to Payment (${settings?.currencySymbol}${finalTotal.toFixed(2)})`}
         </Button>
       </form>
     </Form>

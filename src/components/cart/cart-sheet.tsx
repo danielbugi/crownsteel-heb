@@ -13,7 +13,6 @@ import { CartItem } from '@/components/cart/cart-item';
 import { formatPrice } from '@/lib/utils';
 import { calculateShipping, formatShippingInfo } from '@/lib/shipping';
 import { useSettings } from '@/contexts/settings-context';
-import { t } from '@/lib/translations';
 import Link from 'next/link';
 import { ShoppingBag, X, Truck, Gift } from 'lucide-react';
 
@@ -48,9 +47,14 @@ export function CartSheet() {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <SheetTitle className="text-xl font-bold text-black">
-            {t('cart.title')} ({totalItems})
+            Cart ({totalItems})
           </SheetTitle>
-          <Button onClick={toggleCart} variant="ghost" size="icon">
+          <Button
+            onClick={toggleCart}
+            variant="ghost"
+            size="icon"
+            className="text-black"
+          >
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -100,7 +104,7 @@ export function CartSheet() {
               {/* Subtotal */}
               <div className="flex justify-between text-sm">
                 <span className="font-light uppercase tracking-wide text-gray-600">
-                  {t('cart.subtotal')}
+                  Subtotal
                 </span>
                 <span className="font-medium text-black">
                   {formatPrice(subtotal)}
@@ -110,14 +114,12 @@ export function CartSheet() {
               {/* Shipping */}
               <div className="flex justify-between text-sm">
                 <span className="font-light uppercase tracking-wide text-gray-600">
-                  {t('cart.shipping')}
+                  Shipping
                 </span>
                 <span
                   className={`font-medium ${shippingCost === 0 ? 'text-green-600' : 'text-black'}`}
                 >
-                  {shippingCost === 0
-                    ? t('cart.free')
-                    : formatPrice(shippingCost)}
+                  {shippingCost === 0 ? 'FREE' : formatPrice(shippingCost)}
                 </span>
               </div>
 
@@ -127,7 +129,7 @@ export function CartSheet() {
               {/* Total */}
               <div className="flex justify-between">
                 <span className="font-light uppercase tracking-wide text-black text-base">
-                  {t('cart.total')}
+                  Total
                 </span>
                 <span className="font-bold text-black text-lg">
                   {formatPrice(totalWithShipping)}
@@ -135,9 +137,9 @@ export function CartSheet() {
               </div>
 
               {/* Checkout Buttons */}
-              <div className="space-y-2 pt-2">
+              <div className="space-y-2 pt-2 gap-2 flex flex-col">
                 <Button size="lg" asChild onClick={toggleCart}>
-                  <Link href="/checkout">{t('cart.checkout')}</Link>
+                  <Link href="/checkout">Checkout</Link>
                 </Button>
                 <Button size="lg" asChild onClick={toggleCart}>
                   <Link href="/cart">View Cart</Link>
@@ -157,7 +159,7 @@ export function CartSheet() {
               className="w-full hover:text-black"
               onClick={toggleCart}
             >
-              <Link href="/shop">{t('cart.continueShopping')}</Link>
+              <Link href="/shop">Continue Shopping</Link>
             </Button>
           </div>
         )}

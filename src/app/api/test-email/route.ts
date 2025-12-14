@@ -69,16 +69,19 @@ export async function GET(request: NextRequest) {
       sentFrom: checks.fromEmail,
       configuration: checks,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Failed to send test email');
-    console.error('Error:', error.message);
+    console.error(
+      'Error:',
+      error instanceof Error ? error.message : String(error)
+    );
     console.error('');
     console.error('========================================\n');
 
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         configuration: checks,
         troubleshooting: {
           missingApiKey: !checks.resendApiKey,

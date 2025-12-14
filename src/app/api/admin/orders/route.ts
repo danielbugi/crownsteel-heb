@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/api-auth';
+import { withCache, cache } from '@/lib/cache';
 
 export async function GET() {
   // Check admin authorization
@@ -11,30 +12,36 @@ export async function GET() {
   }
 
   try {
-    const orders = await prisma.order.findMany({
-      include: {
-        orderItems: {
+    // Cache admin orders for 2 minutes
+    const orders = await withCache(
+      'admin:orders:all',
+      () =>
+        prisma.order.findMany({
           include: {
-            product: {
+            orderItems: {
+              include: {
+                product: {
+                  select: {
+                    name: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+            user: {
               select: {
+                id: true,
                 name: true,
-                image: true,
+                email: true,
               },
             },
           },
-        },
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+          orderBy: {
+            createdAt: 'desc',
           },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+        }),
+      2 // 2 minutes TTL (admin data needs to be relatively fresh)
+    );
 
     return NextResponse.json({ orders });
   } catch (error) {

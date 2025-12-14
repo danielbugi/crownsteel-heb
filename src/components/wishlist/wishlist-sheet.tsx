@@ -2,23 +2,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+
 import { useWishlistStore } from '@/store/wishlist-store';
-import { useLanguage } from '@/contexts/language-context';
-import { t } from '@/lib/translations';
+
 import { Heart, X, ShoppingBag, ExternalLink, Loader2 } from 'lucide-react';
 import { WishlistSheetItem } from './wishlist-sheet-item';
+import { logger } from '@/lib/logger';
 
 interface Product {
   id: string;
@@ -33,7 +27,6 @@ interface Product {
 export function WishlistSheet() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { t } = useLanguage();
   const { items, isOpen, toggleWishlist, getItemCount, closeWishlist } =
     useWishlistStore();
 
@@ -137,7 +130,7 @@ export function WishlistSheet() {
           <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-500">
             <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3">
               <p className="text-sm font-semibold text-gray-900 mb-2">
-                💡 {t('wishlist.signInPrompt')}
+                💡 Sign in to save your favorites forever!
               </p>
               <Button
                 size="sm"
@@ -145,7 +138,7 @@ export function WishlistSheet() {
                 className="w-full"
                 onClick={handleSignIn}
               >
-                {t('wishlist.signInButton')}
+                Sign In Now
               </Button>
             </div>
           </div>
@@ -174,10 +167,10 @@ export function WishlistSheet() {
             <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
               <Heart className="h-16 w-16 text-gray-300 mb-4" />
               <h3 className="text-lg font-semibold text-black mb-2">
-                {t('wishlist.empty')}
+                Your wishlist is empty
               </h3>
               <p className="text-sm text-gray-600 mb-6">
-                {t('wishlist.emptyDesc')}
+                Start adding products you love to your wishlist
               </p>
               <Button
                 className="bg-black text-white hover:bg-gray-800"
@@ -187,7 +180,7 @@ export function WishlistSheet() {
                 }}
               >
                 <ShoppingBag className="mr-2 h-4 w-4" />
-                {t('wishlist.browsProducts')}
+                Browse Products
               </Button>
             </div>
           ) : (
@@ -226,7 +219,7 @@ export function WishlistSheet() {
               }}
             >
               <ShoppingBag className="mr-2 h-4 w-4" />
-              {t('cart.continueShopping')}
+              Continue Shopping
             </Button>
           </div>
         )}

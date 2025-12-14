@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { useLanguage } from '@/contexts/language-context';
 
 interface Product {
   id: string;
@@ -35,6 +34,7 @@ interface ProductCarouselProps {
   autoPlayInterval?: number;
   loading?: boolean;
   error?: string | null;
+  prioritizeFirstImages?: boolean; // Optimize LCP for first visible products
 }
 
 export function ProductCarousel({
@@ -45,10 +45,10 @@ export function ProductCarousel({
   autoPlayInterval = 4000,
   loading = false,
   error = null,
+  prioritizeFirstImages = false,
 }: ProductCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { direction } = useLanguage();
-  const isRTL = direction === 'rtl';
+  const isRTL = false;
   const [rtlScrollType, setRtlScrollType] = useState<
     'normal' | 'negative' | 'reverse'
   >('normal');
@@ -93,16 +93,6 @@ export function ProductCarousel({
 
       // Restore original position
       container.scrollLeft = originalScrollLeft;
-
-      console.log('RTL Scroll Type detected:', {
-        testScrollLeft,
-        type:
-          testScrollLeft < 0
-            ? 'negative'
-            : testScrollLeft === 1
-              ? 'normal'
-              : 'reverse',
-      });
     }, 10);
   }, [isRTL]);
 
@@ -271,14 +261,6 @@ export function ProductCarousel({
     // Round logic ensures tiny scroll jitter won't flip states incorrectly
     setCanScrollLeft(!atStart);
     setCanScrollRight(!atEnd);
-    console.log({
-      atStart,
-      atEnd,
-      scrollLeft,
-      maxScrollLeft,
-      isRTL,
-      rtlScrollType,
-    });
   }, [isRTL, rtlScrollType]);
 
   useEffect(() => {
@@ -531,12 +513,12 @@ export function ProductCarousel({
   }
 
   return (
-    <section className="py-16 md:py-20 overflow-hidden bg-black-soft">
+    <section className="py-16 md:py-20 overflow-hidden bg-white-pure">
       <div className="px-4 mx-auto">
         {/* Grid Layout: Title Section (1/6) + Carousel (5/6) */}
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 items-center">
-          {/* Title Section - Left Side */}
-          <div className="lg:col-span-1 space-y-4">
+        {/* <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 items-center"> */}
+        {/* Title Section - Left Side */}
+        {/* <div className="lg:col-span-1 space-y-4">
             <div>
               <h2 className="text-3xl lg:text-4xl font-cinzel font-light mb-6 text-white-pure tracking-wider uppercase">
                 {title}
@@ -545,157 +527,161 @@ export function ProductCarousel({
                 <p className="text-muted-foreground text-lg mb-6">{subtitle}</p>
               )}
             </div>
-          </div>
+          </div> */}
 
-          {/* Carousel Section - Right Side */}
-          <div className="lg:col-span-5">
-            {/* Carousel Container */}
-            <div
-              className=" relative -mx-4 md:mx-0"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeaveCarousel}
-            >
-              {/* Scrollable Products with Navigation */}
-              <div className="relative">
-                {/* Navigation Arrows - Positioned relative to products container */}
-                <div className="absolute left-2 top-1/2 -translate-y-1/2 z-30">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => scroll('left')}
-                    disabled={!canScrollLeft}
-                    className={cn(
-                      'transition-all duration-200 bg-background/60 backdrop-blur-sm shadow-lg',
-                      'hover:scale-105 hover:shadow-xl hover:bg-background h-16 w-12',
-                      canScrollLeft
-                        ? 'hover:bg-primary/50 hover:text-primary-foreground border-none opacity-100'
-                        : 'opacity-0 pointer-events-none',
-                      'hidden md:flex' // Only show on desktop
-                    )}
-                  >
-                    <ChevronLeft className="size-8" />
-                  </Button>
-                </div>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 z-30">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => scroll('right')}
-                    disabled={!canScrollRight}
-                    className={cn(
-                      'transition-all duration-200 bg-background/60 backdrop-blur-sm shadow-lg',
-                      'hover:scale-105 hover:shadow-xl hover:bg-background h-16 w-12',
-                      canScrollRight
-                        ? 'hover:bg-primary/50 hover:text-primary-foreground border-none opacity-100'
-                        : 'opacity-0 pointer-events-none',
-                      'hidden md:flex' // Only show on desktop
-                    )}
-                  >
-                    <ChevronRight className="size-8" />
-                  </Button>
-                </div>
-
-                {/* Scrollable Products */}
-                <div
-                  ref={scrollContainerRef}
+        {/* Carousel Section - Right Side */}
+        <div className="lg:col-span-5">
+          {/* Carousel Container */}
+          <div
+            className=" relative -mx-4 md:mx-0"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeaveCarousel}
+          >
+            {/* Scrollable Products with Navigation */}
+            <div className="relative">
+              {/* Navigation Arrows - Positioned relative to products container */}
+              {/* <div className="absolute left-2 top-1/2 -translate-y-1/2 z-30">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => scroll('left')}
+                  disabled={!canScrollLeft}
                   className={cn(
-                    'flex gap-8 overflow-x-auto scrollbar-hide px-4 md:px-0',
-                    isDragging ? 'cursor-grabbing' : 'cursor-grab',
-                    'select-none' // Prevent text selection during drag
+                    'transition-all duration-200 bg-background/60 backdrop-blur-sm shadow-lg',
+                    'hover:scale-105 hover:shadow-xl hover:bg-background h-16 w-12',
+                    canScrollLeft
+                      ? 'hover:bg-primary/50 hover:text-primary-foreground border-none opacity-100'
+                      : 'opacity-0 pointer-events-none',
+                    'hidden md:flex' // Only show on desktop
                   )}
-                  onMouseDown={handleMouseDown}
-                  onMouseMove={handleMouseMove}
-                  onMouseUp={handleMouseUp}
-                  onMouseLeave={handleMouseLeave}
-                  onTouchStart={handleTouchStart}
-                  onTouchMove={handleTouchMove}
-                  onTouchEnd={handleTouchEnd}
-                  onClick={handleClick}
-                  style={{
-                    scrollbarWidth: 'none',
-                    msOverflowStyle: 'none',
-                    WebkitOverflowScrolling: 'touch',
-                    scrollBehavior: 'smooth',
-                  }}
                 >
-                  {products.map((product, index) => (
-                    <div
-                      key={product.id}
-                      className="flex-none w-[320px] md:w-[400px] lg:w-[420px] xl:w-[450px] transition-transform duration-200"
-                      style={{
-                        pointerEvents: hasDraggedRef.current ? 'none' : 'auto',
-                        animationDelay: `${index * 100}ms`,
-                      }}
-                      // Add drag handlers to individual cards as backup
-                      onMouseDown={(e) => {
+                  <ChevronLeft className="size-8" />
+                </Button>
+              </div>
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 z-30">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => scroll('right')}
+                  disabled={!canScrollRight}
+                  className={cn(
+                    'transition-all duration-200 bg-background/60 backdrop-blur-sm shadow-lg',
+                    'hover:scale-105 hover:shadow-xl hover:bg-background h-16 w-12',
+                    canScrollRight
+                      ? 'hover:bg-primary/50 hover:text-primary-foreground border-none opacity-100'
+                      : 'opacity-0 pointer-events-none',
+                    'hidden md:flex' // Only show on desktop
+                  )}
+                >
+                  <ChevronRight className="size-8" />
+                </Button>
+              </div> */}
+
+              {/* Scrollable Products */}
+              <div
+                ref={scrollContainerRef}
+                className={cn(
+                  'flex gap-0 overflow-x-auto scrollbar-hide px-4 md:px-0 ',
+                  isDragging ? 'cursor-grabbing' : 'cursor-grab',
+                  'select-none' // Prevent text selection during drag
+                )}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseLeave}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onClick={handleClick}
+                style={{
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollBehavior: 'smooth',
+                }}
+              >
+                {products.map((product, index) => (
+                  <div
+                    key={product.id}
+                    className="flex-none w-[320px] md:w-[400px] lg:w-[420px] xl:w-[450px] transition-transform duration-200 border border-border "
+                    style={{
+                      pointerEvents: hasDraggedRef.current ? 'none' : 'auto',
+                      animationDelay: `${index * 100}ms`,
+                    }}
+                    // Add drag handlers to individual cards as backup
+                    onMouseDown={(e) => {
+                      const target = e.target as HTMLElement;
+                      const isClickableElement =
+                        target.tagName === 'BUTTON' ||
+                        target.tagName === 'INPUT' ||
+                        target.tagName === 'A' ||
+                        target.closest('button') ||
+                        target.closest('input') ||
+                        target.closest('a[href]');
+
+                      if (!isClickableElement) {
+                        e.preventDefault();
+                        handleDragStart(e.clientX);
+                      }
+                    }}
+                    onTouchStart={(e) => {
+                      if (e.touches.length === 1) {
                         const target = e.target as HTMLElement;
-                        const isClickableElement =
+                        const isFormElement =
                           target.tagName === 'BUTTON' ||
                           target.tagName === 'INPUT' ||
-                          target.tagName === 'A' ||
                           target.closest('button') ||
-                          target.closest('input') ||
-                          target.closest('a[href]');
+                          target.closest('input');
 
-                        if (!isClickableElement) {
-                          e.preventDefault();
-                          handleDragStart(e.clientX);
+                        if (!isFormElement) {
+                          handleDragStart(e.touches[0].clientX);
                         }
-                      }}
-                      onTouchStart={(e) => {
-                        if (e.touches.length === 1) {
-                          const target = e.target as HTMLElement;
-                          const isFormElement =
-                            target.tagName === 'BUTTON' ||
-                            target.tagName === 'INPUT' ||
-                            target.closest('button') ||
-                            target.closest('input');
-
-                          if (!isFormElement) {
-                            handleDragStart(e.touches[0].clientX);
-                          }
+                      }
+                    }}
+                  >
+                    <div
+                      onClick={(e) => {
+                        // Prevent navigation if we just dragged
+                        if (hasDraggedRef.current) {
+                          e.preventDefault();
+                          e.stopPropagation();
                         }
                       }}
                     >
-                      <div
-                        onClick={(e) => {
-                          // Prevent navigation if we just dragged
-                          if (hasDraggedRef.current) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }
-                        }}
-                      >
-                        <ProductCard product={product} viewMode="carousel" />
-                      </div>
+                      <ProductCard
+                        product={product}
+                        viewMode="carousel"
+                        priority={prioritizeFirstImages && index < 3}
+                      />
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Scroll Indicator */}
-            <div className="flex justify-center mt-6 md:hidden">
-              <div className="w-32 h-1 bg-muted rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all duration-300"
-                  style={{
-                    width: `${Math.min(
-                      100,
-                      ((scrollContainerRef.current?.scrollLeft || 0) /
-                        Math.max(
-                          1,
-                          (scrollContainerRef.current?.scrollWidth || 1) -
-                            (scrollContainerRef.current?.clientWidth || 0)
-                        )) *
-                        100
-                    )}%`,
-                  }}
-                />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
+
+          {/* Mobile Scroll Indicator */}
+          <div className="flex justify-center mt-6 md:hidden">
+            <div className="w-32 h-1 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-300"
+                style={{
+                  width: `${Math.min(
+                    100,
+                    ((scrollContainerRef.current?.scrollLeft || 0) /
+                      Math.max(
+                        1,
+                        (scrollContainerRef.current?.scrollWidth || 1) -
+                          (scrollContainerRef.current?.clientWidth || 0)
+                      )) *
+                      100
+                  )}%`,
+                }}
+              />
+            </div>
+          </div>
         </div>
+        {/* </div> */}
         <div className="mt-10 flex justify-center">
           <Link href="/shop">
             <Button

@@ -19,7 +19,7 @@ function Logo() {
         alt={'CrownSteel'}
         width={150}
         height={150}
-        className="object-contain w-16 h-full sm:w-[180px] sm:h-full"
+        className="object-contain w-28 h-full sm:w-[120px] sm:h-full"
       />
     </Link>
   );

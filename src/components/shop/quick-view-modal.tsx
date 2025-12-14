@@ -23,7 +23,7 @@ interface Product {
   comparePrice: number | null;
   image: string;
   images: string[];
-  description?: string;
+  description?: string | null;
   inStock: boolean;
   featured: boolean;
   inventory?: number;

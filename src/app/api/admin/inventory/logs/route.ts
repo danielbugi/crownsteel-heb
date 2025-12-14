@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/api-auth';
+import { InventoryChangeType } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
   const authCheck = await requireAdmin();
@@ -17,9 +18,9 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: { productId?: string; type?: InventoryChangeType } = {};
     if (productId) where.productId = productId;
-    if (type) where.type = type;
+    if (type) where.type = type as InventoryChangeType;
 
     const [logs, total] = await Promise.all([
       prisma.inventoryLog.findMany({

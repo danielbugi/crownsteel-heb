@@ -64,7 +64,7 @@ export function generateMetadata(options: PageMetadataOptions): Metadata {
       },
     },
     openGraph: {
-      type: type,
+      type: type === 'product' ? 'website' : type,
       locale: locale === 'en' ? 'en_US' : 'he_IL',
       alternateLocale: alternateLocale === 'en' ? 'en_US' : 'he_IL',
       url: url,
@@ -103,11 +103,10 @@ export function generateProductMetadata(
   });
 
   // Add product-specific OpenGraph data
-  if (options.price) {
+  if (options.price && baseMetadata.openGraph) {
     baseMetadata.openGraph = {
       ...baseMetadata.openGraph,
-      type: 'website',
-      // @ts-ignore - Next.js types don't include all OG properties yet
+      // @ts-expect-error - Next.js types don't fully support all product OG properties
       productPrice: {
         amount: options.price.toFixed(2),
         currency: options.currency || 'ILS',

@@ -130,7 +130,6 @@ export async function sendEmail({
 
     // Check if email notifications are enabled
     if (!emailSettings.notificationsEnabled) {
-      console.log('Email notifications are disabled in settings');
       return {
         success: false,
         error: 'Email notifications are disabled in settings',
@@ -178,13 +177,6 @@ export async function sendEmail({
       subject,
       react,
       ...(replyToEmail && { replyTo: replyToEmail }),
-    });
-
-    console.log('Email sent successfully:', {
-      to,
-      subject,
-      id: data.data?.id,
-      timestamp: new Date().toISOString(),
     });
 
     // Log success

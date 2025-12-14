@@ -1,7 +1,7 @@
 // src/components/wishlist/wishlist-item.tsx
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -28,151 +28,159 @@ interface WishlistItemProps {
   };
 }
 
-export function WishlistItem({ product }: WishlistItemProps) {
-  const { addItem: addToCart } = useCartStore();
-  const { removeItem: removeFromWishlist } = useWishlistStore();
-  const { data: session } = useSession();
-  const isAuthenticated = !!session?.user;
+export const WishlistItem = React.memo<WishlistItemProps>(
+  function WishlistItem({ product }) {
+    const { addItem: addToCart } = useCartStore();
+    const { removeItem: removeFromWishlist } = useWishlistStore();
+    const { data: session } = useSession();
+    const isAuthenticated = !!session?.user;
 
-  // State for hover effects and image loading
-  const [isHovered, setIsHovered] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+    // State for hover effects and image loading
+    const [isHovered, setIsHovered] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('he-IL', {
-      style: 'currency',
-      currency: 'ILS',
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
+    const formatPrice = (price: number) => {
+      return new Intl.NumberFormat('he-IL', {
+        style: 'currency',
+        currency: 'ILS',
+        minimumFractionDigits: 0,
+      }).format(price);
+    };
 
-  const handleMoveToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!product.inStock) {
-      toast.error('This item is currently out of stock');
-      return;
-    }
+    const handleMoveToCart = useCallback(
+      (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (!product.inStock) {
+          toast.error('This item is currently out of stock');
+          return;
+        }
 
-    // Add to cart
-    addToCart({
-      id: product.id,
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: 1,
-    });
+        // Add to cart
+        addToCart({
+          id: product.id,
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity: 1,
+        });
 
-    // Remove from wishlist
-    removeFromWishlist(product.id, isAuthenticated);
+        // Remove from wishlist
+        removeFromWishlist(product.id, isAuthenticated);
 
-    toast.success('Moved to cart!');
-  };
+        toast.success('Moved to cart!');
+      },
+      [product, addToCart, removeFromWishlist, isAuthenticated]
+    );
 
-  const handleRemove = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    removeFromWishlist(product.id, isAuthenticated);
-  };
+    const handleRemove = useCallback(
+      (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        removeFromWishlist(product.id, isAuthenticated);
+      },
+      [product.id, removeFromWishlist, isAuthenticated]
+    );
 
-  const discountPercentage = product.comparePrice
-    ? Math.round(
-        ((product.comparePrice - product.price) / product.comparePrice) * 100
-      )
-    : 0;
+    const discountPercentage = product.comparePrice
+      ? Math.round(
+          ((product.comparePrice - product.price) / product.comparePrice) * 100
+        )
+      : 0;
 
-  return (
-    <Link href={`/shop/${product.slug}`}>
-      <Card
-        className="group border-border bg-card hover:shadow-2xl transition-all duration-500 overflow-hidden"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <div className="relative aspect-square overflow-hidden bg-secondary/30">
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            className={`object-cover transition-all duration-700 ${
-              imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-            } ${isHovered ? 'scale-110' : 'scale-100'}`}
-            onLoad={() => setImageLoaded(true)}
-          />
+    return (
+      <Link href={`/shop/${product.slug}`}>
+        <Card
+          className="group border-border bg-card hover:shadow-2xl transition-all duration-500 overflow-hidden"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <div className="relative aspect-square overflow-hidden bg-secondary/30">
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              className={`object-cover transition-all duration-700 ${
+                imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+              } ${isHovered ? 'scale-110' : 'scale-100'}`}
+              onLoad={() => setImageLoaded(true)}
+            />
 
-          {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
-            {!product.inStock && (
-              <Badge variant="destructive" className="shadow-lg">
-                Out of Stock
-              </Badge>
-            )}
-            {discountPercentage > 0 && (
-              <Badge
-                variant="outline"
-                className="bg-green-50 text-green-700 border-green-200 shadow-lg"
+            {/* Badges */}
+            <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+              {!product.inStock && (
+                <Badge variant="destructive" className="shadow-lg">
+                  Out of Stock
+                </Badge>
+              )}
+              {discountPercentage > 0 && (
+                <Badge
+                  variant="outline"
+                  className="bg-green-50 text-green-700 border-green-200 shadow-lg"
+                >
+                  {discountPercentage}% OFF
+                </Badge>
+              )}
+            </div>
+
+            {/* Remove Button */}
+            <div
+              className={`absolute right-3 top-3 z-10 transition-all duration-300 ${
+                isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}
+            >
+              <Button
+                variant="secondary"
+                size="icon"
+                className="bg-card/95 hover:bg-card border border-border text-foreground shadow-lg backdrop-blur-sm h-9 w-9"
+                onClick={handleRemove}
               >
-                {discountPercentage}% OFF
-              </Badge>
-            )}
-          </div>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
 
-          {/* Remove Button */}
-          <div
-            className={`absolute right-3 top-3 z-10 transition-all duration-300 ${
-              isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-          >
-            <Button
-              variant="secondary"
-              size="icon"
-              className="bg-card/95 hover:bg-card border border-border text-foreground shadow-lg backdrop-blur-sm h-9 w-9"
-              onClick={handleRemove}
+            {/* Move to Cart Button on Hover */}
+            <div
+              className={`absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-all duration-300 ${
+                isHovered && product.inStock
+                  ? 'translate-y-0 opacity-100'
+                  : 'translate-y-full opacity-0'
+              }`}
             >
-              <X className="h-4 w-4" />
-            </Button>
+              <Button
+                className="w-full bg-gold-600 hover:bg-gold-700 text-white font-semibold shadow-xl"
+                onClick={handleMoveToCart}
+                disabled={!product.inStock}
+                size="sm"
+              >
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                Move to Cart
+              </Button>
+            </div>
           </div>
 
-          {/* Move to Cart Button on Hover */}
-          <div
-            className={`absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 via-black/70 to-transparent transition-all duration-300 ${
-              isHovered && product.inStock
-                ? 'translate-y-0 opacity-100'
-                : 'translate-y-full opacity-0'
-            }`}
-          >
-            <Button
-              className="w-full bg-gold-600 hover:bg-gold-700 text-white font-semibold shadow-xl"
-              onClick={handleMoveToCart}
-              disabled={!product.inStock}
-              size="sm"
-            >
-              <ShoppingCart className="mr-2 h-4 w-4" />
-              Move to Cart
-            </Button>
-          </div>
-        </div>
-
-        <CardContent className="p-4">
-          <p className="text-xs uppercase tracking-wider text-black font-semibold mb-2">
-            {product.category.name}
-          </p>
-
-          <h3 className="text-base md:text-m mb-3 line-clamp-2 leading-tight">
-            {product.name}
-          </h3>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-s md:text-s font-bold text-foreground">
-              {formatPrice(product.price)}
+          <CardContent className="p-4">
+            <p className="text-xs uppercase tracking-wider text-black font-semibold mb-2">
+              {product.category.name}
             </p>
-            {product.comparePrice && (
-              <p className="text-base md:text-s text-muted-foreground line-through">
-                {formatPrice(product.comparePrice)}
+
+            <h3 className="text-base md:text-m mb-3 line-clamp-2 leading-tight">
+              {product.name}
+            </h3>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-s md:text-s font-bold text-foreground">
+                {formatPrice(product.price)}
               </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-}
+              {product.comparePrice && (
+                <p className="text-base md:text-s text-muted-foreground line-through">
+                  {formatPrice(product.comparePrice)}
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
+    );
+  }
+);

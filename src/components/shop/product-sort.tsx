@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/select';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowUpDown } from 'lucide-react';
-import { useLanguage } from '@/contexts/language-context';
 
 export type SortOption =
   | 'featured'
@@ -25,20 +24,19 @@ export type SortOption =
 export function ProductSort() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t } = useLanguage();
   const currentSort = (searchParams.get('sort') as SortOption) || 'featured';
 
   const sortOptions: { value: SortOption; label: string }[] = [
-    { value: 'featured', label: t('search.featured') || 'Featured' },
-    { value: 'newest', label: t('search.newest') || 'Newest First' },
-    { value: 'oldest', label: t('search.oldest') || 'Oldest First' },
+    { value: 'featured', label: 'Featured' },
+    { value: 'newest', label: 'Newest First' },
+    { value: 'oldest', label: 'Oldest First' },
     {
       value: 'price-asc',
-      label: t('search.priceLowToHigh') || 'Price: Low to High',
+      label: 'Price: Low to High',
     },
     {
       value: 'price-desc',
-      label: t('search.priceHighToLow') || 'Price: High to Low',
+      label: 'Price: High to Low',
     },
     { value: 'name-asc', label: 'Name: A-Z' },
     { value: 'name-desc', label: 'Name: Z-A' },
@@ -54,8 +52,8 @@ export function ProductSort() {
   return (
     <div className="flex items-center gap-2">
       <Select value={currentSort} onValueChange={handleSortChange}>
-        <SelectTrigger className="w-[180px] h-9">
-          <ArrowUpDown className="h-4 w-4 mr-2 text-muted-foreground" />
+        <SelectTrigger className="w-[180px] h-9 border-gray-300">
+          <ArrowUpDown className="h-4 w-4 mr-2 text-gray-600" />
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>

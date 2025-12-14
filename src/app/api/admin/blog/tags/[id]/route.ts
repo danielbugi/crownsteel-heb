@@ -15,13 +15,12 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { name, nameEn, slug } = body;
+    const { name, slug } = body;
 
     const tag = await prisma.blogTag.update({
       where: { id: id },
       data: {
         name,
-        nameEn,
         slug,
       },
     });

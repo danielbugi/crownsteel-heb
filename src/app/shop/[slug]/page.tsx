@@ -49,12 +49,9 @@ async function getProduct(slug: string) {
     averageRating: product.averageRating?.toNumber() ?? 0,
     sku: product.sku ?? undefined,
     variantLabel: product.variantLabel ?? undefined,
-    variantLabelHe: product.variantLabelHe ?? undefined,
     variants: product.variants.map((v) => ({
       id: v.id,
       name: v.name,
-      nameEn: v.nameEn ?? undefined,
-      nameHe: v.nameHe ?? undefined,
       sku: v.sku,
       price: v.price?.toNumber() ?? undefined,
       priceAdjustment: v.priceAdjustment?.toNumber() ?? undefined,
@@ -109,18 +106,15 @@ export async function generateMetadata({
   const productUrl = `${SITE_URL}/shop/${product.slug}`;
 
   // Use bilingual names for better SEO
-  const title = product.nameEn || product.name;
+  const title = product.name;
   const description =
-    product.descriptionEn ||
     product.description ||
     `Shop ${title} at Forge & Steel. Premium handcrafted jewelry for the modern gentleman.`;
 
   // Generate keywords from product data
   const keywords = [
     product.name,
-    product.nameEn,
     product.category.name,
-    product.category.nameEn,
     "men's jewelry",
     'handcrafted',
     'premium',
@@ -157,8 +151,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   // Generate Product Schema
   const productSchema = generateProductSchema({
     name: product.name,
-    nameEn: product.nameEn || undefined,
-    nameHe: product.nameHe || undefined,
     description: product.description || '',
     image: product.image,
     images: product.images,
@@ -175,17 +167,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   // Generate Breadcrumb Schema
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: 'דף הבית', url: SITE_URL },
-    { name: 'חנות', url: `${SITE_URL}/shop` },
+    { name: 'Home', url: SITE_URL },
+    { name: 'Shop', url: `${SITE_URL}/shop` },
     {
-      name:
-        product.category.nameHe ||
-        product.category.nameEn ||
-        product.category.name,
+      name: product.category.name,
       url: `${SITE_URL}/categories/${product.category.slug}`,
     },
     {
-      name: product.nameHe || product.nameEn || product.name,
+      name: product.name,
       url: `${SITE_URL}/shop/${product.slug}`,
     },
   ]);
@@ -200,16 +189,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <section className="container mx-auto px-4 py-4 md:py-6">
           <Breadcrumb
             items={[
-              { label: 'חנות', href: '/shop' },
+              { label: 'Shop', href: '/shop' },
               {
-                label:
-                  product.category.nameHe ||
-                  product.category.nameEn ||
-                  product.category.name,
+                label: product.category.name,
                 href: `/shop?category=${product.category.slug}`,
               },
               {
-                label: product.nameHe || product.nameEn || product.name,
+                label: product.name,
               },
             ]}
           />
@@ -231,7 +217,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <section className="container mx-auto px-4 md:px-6 py-12 bg-muted/30">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-2xl md:text-2xl font-light mb-8 flex items-center gap-2">
-              ביקורות לקוחות
+              Customer Reviews
             </h2>
 
             <Tabs defaultValue="reviews" className="w-full">
@@ -241,11 +227,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   className="flex items-center gap-2"
                 >
                   <Star className="h-4 w-4" />
-                  ביקורות ({product.reviewCount || 0})
+                  Reviews ({product.reviewCount || 0})
                 </TabsTrigger>
                 <TabsTrigger value="write" className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
-                  כתיבת ביקורת
+                  Write a Review
                 </TabsTrigger>
               </TabsList>
 

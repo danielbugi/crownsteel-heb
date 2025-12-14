@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const results = {
       success: 0,
       failed: 0,
-      errors: [] as any[],
+      errors: [] as Array<{ productId: string; sku?: string; error: string }>,
     };
 
     // Process each update
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
               reason: reason || 'Bulk update',
               previousQty,
               newQty,
-              createdBy: authCheck.user?.id,
+              createdBy: authCheck.session?.user?.id,
             },
           }),
         ]);

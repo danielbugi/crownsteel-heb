@@ -3,12 +3,10 @@
 
 import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
-import { useLanguage } from '@/contexts/language-context';
 import { cn } from '@/lib/utils';
 
 interface BreadcrumbItem {
   label: string;
-  labelHe?: string;
   href?: string;
 }
 
@@ -18,7 +16,7 @@ interface BreadcrumbProps {
 }
 
 export function Breadcrumb({ items, className }: BreadcrumbProps) {
-  const { language, t } = useLanguage();
+  // const { t } = useLanguage();
 
   return (
     <nav
@@ -31,14 +29,12 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
         className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
       >
         <Home className="h-4 w-4" />
-        <span className="sr-only">{t('navigation.home') || 'Home'}</span>
+        <span className="sr-only">Home</span>
       </Link>
 
       {/* Breadcrumb Items */}
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
-        const label =
-          language === 'he' && item.labelHe ? item.labelHe : item.label;
 
         return (
           <div key={index} className="flex items-center space-x-1">
@@ -48,7 +44,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
                 href={item.href}
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
-                {label}
+                {item.label}
               </Link>
             ) : (
               <span
@@ -58,7 +54,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
                     : 'text-muted-foreground'
                 )}
               >
-                {label}
+                {item.label}
               </span>
             )}
           </div>

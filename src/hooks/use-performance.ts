@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface PerformanceMetrics {
   url: string;
@@ -34,13 +34,6 @@ export function usePerformance() {
       };
 
       setMetrics((prev) => [...prev.slice(-99), metric]); // Keep last 100
-
-      // Console log in development
-      if (process.env.NODE_ENV === 'development') {
-        console.log(
-          `[Performance] ${metric.method} ${url} - ${duration}ms (${response.status})`
-        );
-      }
 
       return { data, duration };
     } catch (error) {

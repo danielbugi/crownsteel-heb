@@ -15,7 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ImageUpload } from '@/components/admin/image-upload';
+
+import { ImageUploader } from '@/components/admin/image-uploader';
+import { MultipleImagesUploader } from '@/components/admin/multiple-images-uploader';
+
 import { ProductVariantManager } from '@/components/admin/product-variant-manager';
 import toast from 'react-hot-toast';
 
@@ -101,9 +104,12 @@ export function ProductForm({
   const [variants, setVariants] = useState<
     Array<{
       name: string;
-      sku?: string;
+      sku: string;
       price?: number;
-      inventory?: number;
+      inventory: number;
+      inStock: boolean;
+      isDefault: boolean;
+      sortOrder: number;
     }>
   >([]);
 
@@ -129,28 +135,28 @@ export function ProductForm({
 
     // Validation
     if (!name) {
-      toast.error('נא להזין שם מוצר');
+      toast.error('Please enter product name');
       return;
     }
 
     if (!slug) {
-      toast.error('נא להזין Slug');
+      toast.error('Please enter slug');
       return;
     }
 
     if (!price || !categoryId) {
-      toast.error('נא למלא את כל השדות הנדרשים');
+      toast.error('Please fill all required fields');
       return;
     }
 
     if (!mainImage) {
-      toast.error('נא להעלות לפחות תמונה אחת');
+      toast.error('Please upload at least one image');
       return;
     }
 
     // Validate comparePrice is higher than price if provided
     if (comparePrice && parseFloat(comparePrice) <= parseFloat(price)) {
-      toast.error('המחיר להשוואה חייב להיות גבוה מהמחיר הרגיל');
+      toast.error('Compare price must be higher than regular price');
       return;
     }
 
@@ -191,8 +197,6 @@ export function ProductForm({
         variants: hasVariants ? variants : [],
       };
 
-      console.log('Sending payload:', payload);
-
       const response = await fetch(url, {
         method: productId ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -204,7 +208,11 @@ export function ProductForm({
         throw new Error(error.error || 'Failed to save product');
       }
 
-      toast.success(productId ? 'המוצר עודכן בהצלחה' : 'המוצר נוצר בהצלחה');
+      toast.success(
+        productId
+          ? 'Product updated successfully'
+          : 'Product created successfully'
+      );
       router.push('/admin/products');
       router.refresh();
     } catch (error) {
@@ -333,13 +341,13 @@ export function ProductForm({
                     placeholder="PROD-001"
                   />
                   <p className="text-xs text-muted-foreground">
-                    מק"ט (אופציונלי)
+                    Stock Keeping Unit (optional)
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="inventory">
-                    מלאי נוכחי <span className="text-red-500">*</span>
+                    Current Inventory <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="inventory"
@@ -351,12 +359,12 @@ export function ProductForm({
                     required
                   />
                   <p className="text-xs text-muted-foreground">
-                    סך כל הפריטים הזמינים במלאי
+                    Total items available in stock
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="lowStockThreshold">התראת מלאי נמוך</Label>
+                  <Label htmlFor="lowStockThreshold">Low Stock Alert</Label>
                   <Input
                     id="lowStockThreshold"
                     type="number"
@@ -366,12 +374,12 @@ export function ProductForm({
                     placeholder="10"
                   />
                   <p className="text-xs text-muted-foreground">
-                    התראה כאשר המלאי יורד מתחת למספר זה
+                    Alert when stock falls below this number
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="reorderPoint">נקודת הזמנה מחדש</Label>
+                  <Label htmlFor="reorderPoint">Reorder Point</Label>
                   <Input
                     id="reorderPoint"
                     type="number"
@@ -381,12 +389,12 @@ export function ProductForm({
                     placeholder="20"
                   />
                   <p className="text-xs text-muted-foreground">
-                    רמת מלאי מומלצת להזמנה מחדש
+                    Recommended stock level to reorder
                   </p>
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="reorderQuantity">כמות הזמנה מחדש</Label>
+                  <Label htmlFor="reorderQuantity">Reorder Quantity</Label>
                   <Input
                     id="reorderQuantity"
                     type="number"
@@ -396,7 +404,7 @@ export function ProductForm({
                     placeholder="50"
                   />
                   <p className="text-xs text-muted-foreground">
-                    כמה יחידות להזמין בעת חידוש מלאי
+                    How many units to order when restocking
                   </p>
                 </div>
               </div>
@@ -408,10 +416,10 @@ export function ProductForm({
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="hasVariants" className="text-base">
-                  גרסאות מוצר
+                  Product Variants
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  האם למוצר זה יש גדלים, אורכים או אפשרויות שונות?
+                  Does this product have sizes, lengths, or different options?
                 </p>
               </div>
               <Switch
@@ -432,19 +440,39 @@ export function ProductForm({
           </div>
 
           {/* Image Upload Section */}
-          <div className="space-y-2">
-            <Label>
-              תמונות מוצר <span className="text-red-500">*</span>
-            </Label>
-            <p className="text-sm text-muted-foreground">
-              העלה תמונות מוצר. התמונה המסומנת כ-&quot;ראשית&quot; תוצג ראשונה.
-            </p>
-            <ImageUpload
-              images={images}
-              mainImage={mainImage}
-              onImagesChange={setImages}
-              onMainImageChange={setMainImage}
-            />
+          <div className="space-y-4">
+            {/* Main Product Image */}
+            <div className="space-y-2">
+              <Label>
+                Main Product Image <span className="text-red-500">*</span>
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Upload the main product image. This will be displayed as the
+                primary image.
+              </p>
+              <ImageUploader
+                value={mainImage}
+                onChange={setMainImage}
+                onRemove={() => setMainImage('')}
+                label="Upload Main Image"
+                folder="products"
+              />
+            </div>
+
+            {/* Additional Product Images */}
+            <div className="space-y-2">
+              <Label>Product Gallery (Optional)</Label>
+              <p className="text-sm text-muted-foreground">
+                Upload additional product images (up to 5). These will appear in
+                the product gallery.
+              </p>
+              <MultipleImagesUploader
+                value={images}
+                onChange={setImages}
+                maxImages={5}
+                folder="products"
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-8">
@@ -454,7 +482,7 @@ export function ProductForm({
                 checked={inStock}
                 onCheckedChange={setInStock}
               />
-              <Label htmlFor="inStock">במלאי</Label>
+              <Label htmlFor="inStock">In Stock</Label>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -463,7 +491,7 @@ export function ProductForm({
                 checked={featured}
                 onCheckedChange={setFeatured}
               />
-              <Label htmlFor="featured">מוצר מומלץ</Label>
+              <Label htmlFor="featured">Featured Product</Label>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -472,20 +500,24 @@ export function ProductForm({
                 checked={freeShipping}
                 onCheckedChange={setFreeShipping}
               />
-              <Label htmlFor="freeShipping">משלוח חינם</Label>
+              <Label htmlFor="freeShipping">Free Shipping</Label>
             </div>
           </div>
 
           <div className="flex gap-4">
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'שומר...' : productId ? 'עדכן מוצר' : 'צור מוצר'}
+              {isLoading
+                ? 'Saving...'
+                : productId
+                  ? 'Update Product'
+                  : 'Create Product'}
             </Button>
             <Button
               type="button"
               variant="outline"
               onClick={() => router.push('/admin/products')}
             >
-              ביטול
+              Cancel
             </Button>
           </div>
         </CardContent>

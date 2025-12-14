@@ -80,6 +80,21 @@ export const translations = {
   'shop.noProductsDesc': 'Try changing the filters',
   'shop.categories': 'Categories',
   'shop.allProducts': 'All Products',
+  'shop.filters': 'Filters',
+  'shop.filterProducts': 'Filter Products',
+  'shop.metalType': 'Metal Type',
+  'shop.metal.all': 'All Metals',
+  'shop.metal.gold': 'Gold',
+  'shop.metal.silver': 'Silver',
+  'shop.metal.platinum': 'Platinum',
+  'shop.metal.bronze': 'Bronze',
+  'shop.metal.stainless': 'Stainless Steel',
+  'shop.priceRange': 'Price Range',
+  'shop.noProductsMatch': 'No products match these filters',
+  'shop.productFound': 'product found',
+  'shop.productsFound': 'products found',
+  'shop.applyFilters': 'Apply Filters',
+  'shop.resetFilters': 'Reset Filters',
 
   // Shop Dropdown
   'shop.dropdown.title': 'Shop by Category',
@@ -204,6 +219,19 @@ export const translations = {
   'search.priceHighToLow': 'Price: High to Low',
   'search.nameAZ': 'Name: A-Z',
   'search.nameZA': 'Name: Z-A',
+
+  // 404 Page
+  '404.title': 'Page Not Found',
+  '404.description':
+    'The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.',
+  '404.backHome': 'Back to Home',
+  '404.browseProducts': 'Browse Products',
+  '404.quickLinks': 'Or try these links:',
+  '404.search': 'Search',
+  '404.about': 'About Us',
+  '404.contact': 'Contact',
+  '404.help': 'Help',
+  '404.goBack': 'Go back to previous page',
 } as const;
 
 export function t(key: string): string {

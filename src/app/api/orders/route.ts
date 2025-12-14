@@ -17,16 +17,52 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { customerInfo, items, subtotal, tax, total } = body;
 
-    console.log('Creating order with items:', items);
+    // STEP 1: Batch fetch all products and variants to avoid N+1 queries
+    const productIds = items
+      .filter((item: { variantId?: string }) => !item.variantId)
+      .map((item: { productId: string }) => item.productId);
 
-    // STEP 1: Validate inventory BEFORE creating order
+    const variantIds = items
+      .filter((item: { variantId?: string }) => item.variantId)
+      .map((item: { variantId: string }) => item.variantId);
+
+    // Fetch all products and variants in parallel
+    const [products, variants] = await Promise.all([
+      productIds.length > 0
+        ? prisma.product.findMany({
+            where: { id: { in: productIds } },
+            select: {
+              id: true,
+              name: true,
+              inventory: true,
+              inStock: true,
+              lowStockThreshold: true,
+            },
+          })
+        : [],
+      variantIds.length > 0
+        ? prisma.productVariant.findMany({
+            where: { id: { in: variantIds } },
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          })
+        : [],
+    ]);
+
+    // Create lookup maps for O(1) access
+    const productMap = new Map(products.map((p) => [p.id, p]));
+    const variantMap = new Map(variants.map((v) => [v.id, v]));
+
+    // Validate inventory for all items
     for (const item of items) {
       if (item.variantId) {
-        // Check variant inventory
-        const variant = await prisma.productVariant.findUnique({
-          where: { id: item.variantId },
-          include: { product: true },
-        });
+        const variant = variantMap.get(item.variantId);
 
         if (!variant) {
           trackEnd(404);
@@ -55,16 +91,7 @@ export async function POST(request: NextRequest) {
           );
         }
       } else {
-        // Check product inventory (no variant)
-        const product = await prisma.product.findUnique({
-          where: { id: item.productId },
-          select: {
-            id: true,
-            name: true,
-            inventory: true,
-            inStock: true,
-          },
-        });
+        const product = productMap.get(item.productId);
 
         if (!product) {
           trackEnd(404);
@@ -97,6 +124,27 @@ export async function POST(request: NextRequest) {
 
     // STEP 2: Create order with inventory deduction in a transaction
     const order = await prisma.$transaction(async (tx) => {
+      // Batch fetch existing alerts to avoid N+1 queries
+      const existingAlerts = await tx.inventoryAlert.findMany({
+        where: {
+          OR: [
+            ...productIds.map((id: string) => ({
+              productId: id,
+              variantId: null,
+            })),
+            ...variantIds.map((id: string) => ({ variantId: id })),
+          ],
+          acknowledged: false,
+        },
+      });
+
+      const alertsMap = new Map(
+        existingAlerts.map((alert) => [
+          alert.variantId || alert.productId,
+          alert,
+        ])
+      );
+
       // Create the order first
       const newOrder = await tx.order.create({
         data: {
@@ -114,19 +162,27 @@ export async function POST(request: NextRequest) {
             idNumber: customerInfo.idNumber,
           },
           orderItems: {
-            create: items.map((item: any) => ({
-              productId: item.productId,
-              variantId: item.variantId || null, // ADD THIS
-              quantity: item.quantity,
-              price: item.price,
-              variantSnapshot: item.variantId
-                ? {
-                    // ADD THIS: Store variant details
-                    variantId: item.variantId,
-                    name: item.name,
-                  }
-                : null,
-            })),
+            create: items.map(
+              (item: {
+                productId: string;
+                variantId?: string | null;
+                quantity: number;
+                price: number;
+                name: string;
+              }) => ({
+                productId: item.productId,
+                variantId: item.variantId || null, // ADD THIS
+                quantity: item.quantity,
+                price: item.price,
+                variantSnapshot: item.variantId
+                  ? {
+                      // ADD THIS: Store variant details
+                      variantId: item.variantId,
+                      name: item.name,
+                    }
+                  : null,
+              })
+            ),
           },
         },
         include: {
@@ -139,19 +195,11 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // STEP 3: Deduct inventory for each item
+      // STEP 3: Deduct inventory for each item (using pre-fetched maps)
       for (const item of items) {
         if (item.variantId) {
-          // Deduct from variant inventory
-          const variant = await tx.productVariant.findUnique({
-            where: { id: item.variantId },
-            select: {
-              id: true,
-              name: true,
-              inventory: true,
-              productId: true,
-            },
-          });
+          // Use pre-fetched variant from map instead of individual query
+          const variant = variantMap.get(item.variantId);
 
           if (!variant) {
             throw new Error(`Variant not found: ${item.variantId}`);
@@ -184,36 +232,38 @@ export async function POST(request: NextRequest) {
           });
 
           // Create alerts if needed for variant
-          if (newQty <= (variant as any).lowStockThreshold && newQty > 0) {
-            await tx.inventoryAlert.create({
-              data: {
-                productId: variant.productId,
-                variantId: item.variantId,
-                type: 'LOW_STOCK',
-                message: `Variant ${variant.name} is running low (${newQty} units)`,
-              },
-            });
+          if (
+            variant.lowStockThreshold &&
+            newQty <= variant.lowStockThreshold &&
+            newQty > 0
+          ) {
+            const existingAlert = alertsMap.get(item.variantId);
+            if (!existingAlert || existingAlert.type !== 'LOW_STOCK') {
+              await tx.inventoryAlert.create({
+                data: {
+                  productId: variant.productId,
+                  variantId: item.variantId,
+                  type: 'LOW_STOCK',
+                  message: `Variant ${variant.name} is running low (${newQty} units)`,
+                },
+              });
+            }
           } else if (newQty === 0) {
-            await tx.inventoryAlert.create({
-              data: {
-                productId: variant.productId,
-                variantId: item.variantId,
-                type: 'OUT_OF_STOCK',
-                message: `Variant ${variant.name} is out of stock`,
-              },
-            });
+            const existingAlert = alertsMap.get(item.variantId);
+            if (!existingAlert || existingAlert.type !== 'OUT_OF_STOCK') {
+              await tx.inventoryAlert.create({
+                data: {
+                  productId: variant.productId,
+                  variantId: item.variantId,
+                  type: 'OUT_OF_STOCK',
+                  message: `Variant ${variant.name} is out of stock`,
+                },
+              });
+            }
           }
         } else {
-          // Deduct from product inventory (existing code)
-          const product = await tx.product.findUnique({
-            where: { id: item.productId },
-            select: {
-              id: true,
-              name: true,
-              inventory: true,
-              lowStockThreshold: true,
-            },
-          });
+          // Use pre-fetched product from map instead of individual query
+          const product = productMap.get(item.productId);
 
           if (!product) {
             throw new Error(`Product not found: ${item.productId}`);
@@ -244,17 +294,10 @@ export async function POST(request: NextRequest) {
             },
           });
 
-          // Create alerts if needed
+          // Create alerts if needed (using pre-fetched alertsMap)
           if (newQty <= product.lowStockThreshold && newQty > 0) {
-            const existingAlert = await tx.inventoryAlert.findFirst({
-              where: {
-                productId: item.productId,
-                type: 'LOW_STOCK',
-                acknowledged: false,
-              },
-            });
-
-            if (!existingAlert) {
+            const existingAlert = alertsMap.get(item.productId);
+            if (!existingAlert || existingAlert.type !== 'LOW_STOCK') {
               await tx.inventoryAlert.create({
                 data: {
                   productId: item.productId,
@@ -265,15 +308,8 @@ export async function POST(request: NextRequest) {
               });
             }
           } else if (newQty === 0) {
-            const existingAlert = await tx.inventoryAlert.findFirst({
-              where: {
-                productId: item.productId,
-                type: 'OUT_OF_STOCK',
-                acknowledged: false,
-              },
-            });
-
-            if (!existingAlert) {
+            const existingAlert = alertsMap.get(item.productId);
+            if (!existingAlert || existingAlert.type !== 'OUT_OF_STOCK') {
               await tx.inventoryAlert.create({
                 data: {
                   productId: item.productId,
@@ -288,8 +324,6 @@ export async function POST(request: NextRequest) {
 
       return newOrder;
     });
-
-    console.log('Order created with inventory deduction:', order.id);
 
     // ... rest of email logic stays the same
     trackEnd(200);

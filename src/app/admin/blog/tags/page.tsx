@@ -33,7 +33,6 @@ import { Plus, Edit, Trash2, Tag } from 'lucide-react';
 interface BlogTag {
   id: string;
   name: string;
-  nameEn: string;
   slug: string;
   _count: {
     posts: number;
@@ -47,7 +46,6 @@ export default function BlogTagsPage() {
   const [editingTag, setEditingTag] = useState<BlogTag | null>(null);
   const [formData, setFormData] = useState({
     name: '',
-    nameEn: '',
     slug: '',
   });
 
@@ -97,7 +95,6 @@ export default function BlogTagsPage() {
     setEditingTag(tag);
     setFormData({
       name: tag.name,
-      nameEn: tag.nameEn || '',
       slug: tag.slug,
     });
     setDialogOpen(true);
@@ -120,7 +117,7 @@ export default function BlogTagsPage() {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', nameEn: '', slug: '' });
+    setFormData({ name: '', slug: '' });
     setEditingTag(null);
   };
 
@@ -177,17 +174,6 @@ export default function BlogTagsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="nameEn">Tag Name (English)</Label>
-                  <Input
-                    id="nameEn"
-                    value={formData.nameEn}
-                    onChange={(e) =>
-                      setFormData({ ...formData, nameEn: e.target.value })
-                    }
-                    placeholder="e.g., Silver Jewelry"
-                  />
-                </div>
-                <div className="space-y-2">
                   <Label htmlFor="slug">Slug *</Label>
                   <Input
                     id="slug"
@@ -231,8 +217,7 @@ export default function BlogTagsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name (Hebrew)</TableHead>
-                  <TableHead>Name (English)</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Slug</TableHead>
                   <TableHead>Posts</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -241,13 +226,13 @@ export default function BlogTagsPage() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">
+                    <TableCell colSpan={4} className="text-center">
                       Loading...
                     </TableCell>
                   </TableRow>
                 ) : tags.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">
+                    <TableCell colSpan={4} className="text-center">
                       No tags found. Create your first tag!
                     </TableCell>
                   </TableRow>
@@ -260,7 +245,6 @@ export default function BlogTagsPage() {
                           {tag.name}
                         </div>
                       </TableCell>
-                      <TableCell>{tag.nameEn || '-'}</TableCell>
                       <TableCell className="font-mono text-sm">
                         {tag.slug}
                       </TableCell>

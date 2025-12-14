@@ -129,6 +129,7 @@ model Product {
   @@index([categoryId, featured]) // Fast featured products in category
   @@index([categoryId, inStock])  // Fast in-stock products in category
   @@index([featured, inStock])    // Fast featured + in-stock queries
+  @@index([featured, inStock, categoryId]) // Optimal composite for shop page filters
   @@map("products")
 }
 
@@ -210,12 +211,13 @@ model Order {
   user       User?        @relation(fields: [userId], references: [id])
   orderItems OrderItem[]
 
-   coupon     Coupon?      @relation("CouponOrders", fields: [couponId], references: [id], onDelete: SetNull) // ✅ ADD THIS LINE
+   coupon     Coupon?      @relation("CouponOrders", fields: [couponId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([status])
   @@index([createdAt])
-  @@index([couponId]) // ✅ ADD THIS LINE
+  @@index([couponId])
+  @@index([userId, status, createdAt]) // Composite index for common admin queries
   @@map("orders")
 }
 
@@ -298,6 +300,7 @@ model Review {
   @@unique([userId, productId]) // One review per user per product
   @@index([productId])
   @@index([userId])
+  @@index([status, createdAt]) // For admin review management
   @@map("reviews")
 }
 
@@ -435,6 +438,21 @@ model PerformanceMetric {
   @@map("performance_metrics")
 }
 
+model WebVitalsMetric {
+  id              String   @id @default(cuid())
+  name            String   // CLS, FID, FCP, LCP, TTFB, INP
+  value           Float
+  rating          String   // good, needs-improvement, poor
+  metricId        String   // Unique ID from browser
+  navigationType  String
+  timestamp       DateTime @default(now())
+  
+  @@index([name])
+  @@index([timestamp])
+  @@index([rating])
+  @@map("web_vitals_metrics")
+}
+
 model Newsletter {
   id         String   @id @default(cuid())
   email      String   @unique
@@ -495,8 +513,7 @@ model Coupon {
 // Blog System Models
 model BlogCategory {
   id          String   @id @default(cuid())
-  name        String   // Hebrew name
-  nameEn      String?  // English name (optional)
+  name        String
   slug        String   @unique
   description String?  @db.Text
   image       String?
@@ -511,8 +528,7 @@ model BlogCategory {
 
 model BlogPost {
   id              String     @id @default(cuid())
-  title           String     // Hebrew title
-  titleEn         String?    // English title (optional)
+  title           String
   slug            String     @unique
   excerpt         String?    @db.Text
   content         String     @db.Text
@@ -563,8 +579,7 @@ model BlogPost {
 
 model BlogTag {
   id        String   @id @default(cuid())
-  name      String   @unique // Hebrew name
-  nameEn    String?  // English name (optional)
+  name      String   @unique
   slug      String   @unique
   createdAt DateTime @default(now())
   

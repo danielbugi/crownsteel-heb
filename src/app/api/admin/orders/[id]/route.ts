@@ -3,10 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/api-auth';
 import { sendShippingNotificationEmail } from '@/lib/email';
+import { cache } from '@/lib/cache';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Check admin authorization
   const authCheck = await requireAdmin();
@@ -14,9 +15,11 @@ export async function GET(
     return authCheck.response;
   }
 
+  const { id } = await params;
+
   try {
     const order = await prisma.order.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         orderItems: {
           include: {
@@ -101,6 +104,9 @@ export async function PATCH(
     if (!currentOrder) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
+
+    // Invalidate admin orders cache
+    cache.delete('admin:orders:all');
 
     // If changing to CANCELLED, restore inventory
     const shouldRestoreInventory =
@@ -277,7 +283,15 @@ export async function PATCH(
     }
 
     // Send email notification when order is shipped
-    const shippingAddress = order.shippingAddress as any;
+    const shippingAddress = order.shippingAddress as {
+      email?: string;
+      firstName: string;
+      lastName: string;
+      address: string;
+      city: string;
+      postalCode: string;
+      phone: string;
+    };
     const customerEmail = shippingAddress?.email || order.user?.email;
 
     if (status === 'SHIPPED' && customerEmail) {

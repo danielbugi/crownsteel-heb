@@ -3,8 +3,6 @@
 
 interface ProductSchemaData {
   name: string;
-  nameEn?: string;
-  nameHe?: string;
   description: string;
   image: string;
   images?: string[];
@@ -91,7 +89,7 @@ export function generateProductSchema(data: ProductSchemaData) {
  * Used for the main site/homepage
  */
 export function generateOrganizationSchema(data: OrganizationSchemaData) {
-  const schema: any = {
+  const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: data.name,

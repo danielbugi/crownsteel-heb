@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
+import { cache } from '@/lib/cache';
 
 // DELETE - Remove item from wishlist
 export async function DELETE(
@@ -16,6 +17,9 @@ export async function DELETE(
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Clear wishlist cache
+    cache.delete(`wishlist:${session.user.id}`);
 
     // Check if item exists in wishlist
     const wishlistItem = await prisma.wishlist.findUnique({

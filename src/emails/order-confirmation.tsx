@@ -135,11 +135,11 @@ export function OrderConfirmationEmail({
         </Text>
       </Section>
 
-      {/* What's Next */}
+      {/* What&apos;s Next */}
       <Section style={infoBox}>
         <Text style={infoTitle}>What happens next?</Text>
         <Text style={infoText}>
-          ✓ We'll send you a shipping confirmation email with tracking
+          ✓ We&apos;ll send you a shipping confirmation email with tracking
           information
           <br />
           ✓ Your order will be carefully packaged and shipped within 2-3

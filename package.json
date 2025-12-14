@@ -8,8 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "dotenv -e .env.local -- tsx prisma/seed.ts",
+    "seed-products": "dotenv -e .env.local -- tsx prisma/seed-products-from-images.ts",
     "seed-blog": "dotenv -e .env.local -- tsx scripts/seed-blog.ts",
-    "create-admin": "dotenv -e .env.local -- tsx scripts/create-admin.ts"
+    "create-admin": "dotenv -e .env.local -- tsx scripts/create-admin.ts",
+    "analyze-bundle": "npm run build && node scripts/analyze-bundle.mjs",
+    "postbuild": "node scripts/analyze-bundle.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",

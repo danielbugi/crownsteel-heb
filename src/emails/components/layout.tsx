@@ -44,7 +44,7 @@ export function EmailLayout({ children, preview }: EmailLayoutProps) {
             <Text style={footerText}>
               <strong>Forge & Steel</strong>
               <br />
-              Premium Men's Jewelry
+              Premium Men&apos;s Jewelry
               <br />
               123 Main Street, Tel Aviv, Israel
               <br />

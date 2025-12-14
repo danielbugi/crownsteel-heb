@@ -1,28 +1,23 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useLanguage } from '@/contexts/language-context';
 import { Truck, Tag, Shield, Sparkles } from 'lucide-react';
 
 const announcements = [
   {
     en: 'Free Shipping on Orders Over ₪350',
-    he: 'Free Shipping on Orders Over ₪350',
     icon: Truck,
   },
   {
     en: '25% Off All Collections',
-    he: '25% Off All Collections',
     icon: Tag,
   },
   {
     en: 'Lifetime Warranty on All Jewelry',
-    he: 'Lifetime Warranty on All Jewelry',
     icon: Shield,
   },
   {
     en: 'New Collection Just Arrived',
-    he: 'New Collection Just Arrived',
     icon: Sparkles,
   },
 ];
@@ -69,7 +64,7 @@ const AnnouncementItem = ({
       opacityClass = 'opacity-0';
     }
 
-    return `absolute top-0 left-0 w-full h-full flex items-center justify-center gap-2 text-sm font-medium transform ${translateClass} ${opacityClass} ${transitionClass}`;
+    return `absolute top-0 left-0 w-full h-full flex items-center justify-center gap-2 text-md tracking-widest uppercase transform ${translateClass} ${opacityClass} ${transitionClass}`;
   }, [isActive, isNext, isPrevious]);
 
   // Early return for invisible items to reduce render work
@@ -82,29 +77,21 @@ const AnnouncementItem = ({
         dir={language === 'he' ? 'rtl' : 'ltr'}
       >
         <Icon className="h-4 w-4 flex-shrink-0" />
-        <span className="whitespace-nowrap">
-          {language === 'he' ? announcement.he : announcement.en}
-        </span>
+        <span className="whitespace-nowrap">{announcement.en}</span>
       </div>
     );
   }
 
   return (
-    <div
-      key={index}
-      className={classes}
-      dir={language === 'he' ? 'rtl' : 'ltr'}
-    >
+    <div key={index} className={classes} dir={'ltr'}>
       <Icon className="h-4 w-4 flex-shrink-0" />
-      <span className="whitespace-nowrap">
-        {language === 'he' ? announcement.he : announcement.en}
-      </span>
+      <span className="whitespace-nowrap">{announcement.en}</span>
     </div>
   );
 };
 
 export function AnnouncementBar() {
-  const { language } = useLanguage();
+  // const { language } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Optimized interval with useCallback
@@ -118,7 +105,7 @@ export function AnnouncementBar() {
   }, [handleNext]);
 
   return (
-    <div className="bg-gold-400 text-black py-2 overflow-hidden relative w-full will-change-transform">
+    <div className="bg-black text-white py-2 overflow-hidden relative w-full will-change-transform">
       <div className="relative w-full h-6">
         {announcements.map((announcement, index) => (
           <AnnouncementItem
@@ -126,7 +113,7 @@ export function AnnouncementBar() {
             announcement={announcement}
             index={index}
             currentIndex={currentIndex}
-            language={language}
+            language="en"
           />
         ))}
       </div>

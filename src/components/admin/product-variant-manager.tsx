@@ -50,7 +50,11 @@ export function ProductVariantManager({
     onChange([...variants, newVariant]);
   };
 
-  const updateVariant = (index: number, field: keyof Variant, value: any) => {
+  const updateVariant = (
+    index: number,
+    field: keyof Variant,
+    value: string | number | boolean | undefined
+  ) => {
     const updated = [...variants];
     updated[index] = { ...updated[index], [field]: value };
     onChange(updated);
@@ -91,7 +95,7 @@ export function ProductVariantManager({
               onChange={(e) => setVariantType(e.target.value)}
             />
             <p className="text-xs text-muted-foreground mt-1">
-              מה משתנה? (גודל, אורך וכו')
+              מה משתנה? (גודל, אורך וכו&apos;)
             </p>
           </div>
           <div className="md:col-span-2">

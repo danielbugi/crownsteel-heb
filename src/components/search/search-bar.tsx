@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useLanguage } from '@/contexts/language-context';
+import { logger } from '@/lib/logger';
 
 interface SearchProduct {
   id: string;
@@ -22,15 +22,10 @@ interface SearchProduct {
 interface SearchBarProps {
   showSearch: boolean;
   onClose: () => void;
-  isMobile?: boolean;
 }
 
-export function SearchBar({
-  showSearch,
-  onClose,
-  isMobile = false,
-}: SearchBarProps) {
-  const { t } = useLanguage();
+export function SearchBar({ showSearch, onClose }: SearchBarProps) {
+  // const { t } = useLanguage();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchProduct[]>([]);
@@ -66,10 +61,8 @@ export function SearchBar({
             `/api/search?q=${encodeURIComponent(searchQuery)}&limit=3`
           );
           const data = await response.json();
-          console.log('Search results:', data.products);
           setSearchResults(data.products || []);
         } catch (error) {
-          console.error('Search error:', error);
           setSearchResults([]);
         } finally {
           setSearchLoading(false);
@@ -88,10 +81,9 @@ export function SearchBar({
     try {
       const response = await fetch('/api/products?featured=true&limit=3');
       const data = await response.json();
-      console.log('Suggested products:', data.products);
       setSuggestedProducts(data.products || []);
     } catch (error) {
-      console.error('Failed to fetch suggested products:', error);
+      logger.error('Failed to fetch suggested products:', error);
       setSuggestedProducts([]);
     }
   };
@@ -114,173 +106,189 @@ export function SearchBar({
     setSearchResults([]);
   };
 
+  // Quick links data
+  const quickLinks = [
+    { label: 'Shop All', href: '/shop' },
+    { label: 'New Arrivals', href: '/shop?sort=newest' },
+    { label: 'Best Sellers', href: '/shop?featured=true' },
+    { label: 'Sale', href: '/shop?sale=true' },
+  ];
+
+  if (!showSearch) return null;
+
   return (
     <>
-      {/* Search Input */}
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          showSearch
-            ? isMobile
-              ? 'w-40 opacity-100 mr-1'
-              : 'w-64 opacity-100 mr-2'
-            : 'w-0 opacity-0'
-        }`}
-      >
-        <form onSubmit={handleSearch}>
-          <div className="relative">
-            <Input
-              ref={searchInputRef}
-              type="text"
-              placeholder={t('nav.search')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full bg-muted/50 border-border text-foreground placeholder:text-muted-foreground text-sm focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm ${
-                isMobile ? 'h-8 pr-6' : 'h-9 pr-8'
-              }`}
-              autoFocus={showSearch}
-              dir="rtl"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={clearSearch}
-                className={`absolute top-1/2 transform -translate-y-1/2 text-black/50 hover:text-black transition-colors duration-200 ${
-                  isMobile ? 'left-1' : 'left-2'
-                }`}
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
+      {/* Backdrop Overlay */}
+      <div className="fixed inset-0 bg-black z-40 animate-in fade-in duration-300" />
 
-      {/* Search Results Overlay */}
-      {showSearch && (
-        <div className="absolute top-full left-0 right-0 z-50 bg-transparent backdrop-blur-xl border-b border-white/10 shadow-lg animate-in slide-in-from-top-2 duration-300">
-          <div className="container px-4 py-4">
-            <div className="max-w-2xl mx-auto space-y-6">
-              {/* Search Results Section */}
-              <div>
-                {searchQuery.length === 0 ? (
-                  <div className="text-center py-8 animate-in fade-in duration-500">
-                    {/* <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 flex items-center justify-center">
-                      <Search className="w-8 h-8 text-gold-400" />
-                    </div> */}
-                    <p className="text-white text-lg font-medium">
-                      תוצאות החיפוש ריקות
-                    </p>
-                    <p className="text-white text-sm mt-2">
-                      הקלד כדי לחפש מוצרים
-                    </p>
+      {/* Search Modal */}
+      <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 pointer-events-none">
+        <div className="w-full max-w-4xl bg-black backdrop-blur-xl rounded-lg shadow-2xl pointer-events-auto animate-in slide-in-from-top-4 duration-300">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4">
+            <h2 className="text-xl font-semibold text-white">Search</h2>
+            <button
+              onClick={handleClose}
+              className="text-gray-400 hover:text-white transition-colors duration-200 p-2 hover:bg-gray-800 rounded-lg"
+              aria-label="Close search"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Search Input Section */}
+          <div className="px-6 py-4">
+            <form onSubmit={handleSearch}>
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                <Input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Search for products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-12 pl-12 pr-12 bg-transparent border-0 border-b border-white text-white placeholder:text-gray-400 text-base focus:ring-0 focus:border-white focus:outline-none transition-all duration-300 rounded-none"
+                  autoFocus
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={clearSearch}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* Content Section */}
+          <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
+            {/* Search Results */}
+            {searchQuery.length > 1 && (
+              <div className="mb-8">
+                {searchLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-gold-500 border-t-transparent mr-3"></div>
+                    <span className="text-white text-base">Searching...</span>
                   </div>
-                ) : searchQuery.length > 1 ? (
-                  <>
-                    {searchLoading ? (
-                      <div className="flex items-center justify-center py-8 animate-in fade-in duration-300">
-                        <div className="animate-spin rounded-full h-6 w-6 border-2 border-gold-500 border-t-transparent mr-3"></div>
-                        <span className="text-white text-base font-medium">
-                          מחפש מוצרים...
-                        </span>
-                      </div>
-                    ) : searchResults.length > 0 ? (
-                      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-                          <Search className="w-5 h-5 text-white" />
-                          תוצאות חיפוש ({searchResults.length})
-                        </h3>
-                        <div className="grid gap-2">
-                          {searchResults.map((product, index) => (
-                            <Link
-                              key={product.id}
-                              href={`/shop/${product.slug}`}
-                              onClick={handleClose}
-                              className="w-full flex items-center gap-4 p-3 hover:bg-muted hover:scale-[1.02] transition-all duration-200 text-left group animate-in fade-in slide-in-from-right-4"
-                              style={{ animationDelay: `${index * 50}ms` }}
-                            >
-                              <div className="w-12 h-12 overflow-hidden bg-muted flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow duration-200">
-                                <Image
-                                  src={product.image}
-                                  alt={product.name}
-                                  width={48}
-                                  height={48}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium text-white text-base truncate group-hover:text-gold-200 transition-colors duration-200">
-                                  {product.name}
-                                </div>
-                              </div>
-                              <div className="text-base font-semibold text-white group-hover:text-gold-300 transition-colors duration-200">
-                                ₪{product.price}
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 animate-in fade-in duration-500">
-                        <p className="text-white/70 text-lg font-medium">
-                          לא נמצאו מוצרים
-                        </p>
-                        <p className="text-white/50 text-sm mt-2">
-                          נסה מילות חיפוש אחרות
-                        </p>
-                      </div>
-                    )}
-                  </>
+                ) : searchResults.length > 0 ? (
+                  <div>
+                    <h3 className="text-white font-semibold text-lg mb-4">
+                      Search Results ({searchResults.length})
+                    </h3>
+                    <div className="space-y-2">
+                      {searchResults.map((product) => (
+                        <Link
+                          key={product.id}
+                          href={`/shop/${product.slug}`}
+                          onClick={handleClose}
+                          className="flex items-center gap-4 p-4 hover:bg-gray-800/50 rounded-lg transition-all duration-200 group"
+                        >
+                          <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-800 flex-shrink-0">
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-white text-base truncate group-hover:text-gold-400 transition-colors">
+                              {product.name}
+                            </div>
+                            <div className="text-sm text-gray-400 mt-1">
+                              {product.category.name}
+                            </div>
+                          </div>
+                          <div className="text-lg font-semibold text-gold-400">
+                            ₪{product.price}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 ) : (
-                  <div className="text-center py-6 animate-in fade-in duration-300">
-                    <p className="text-white/60 text-sm">
-                      הקלד לפחות 2 תווים לחיפוש
+                  <div className="text-center py-12">
+                    <p className="text-gray-400 text-base">
+                      No products found for &quot;{searchQuery}&quot;
+                    </p>
+                    <p className="text-gray-500 text-sm mt-2">
+                      Try different keywords or check your spelling
                     </p>
                   </div>
                 )}
               </div>
+            )}
 
-              {/* Suggested Products Section */}
-              {suggestedProducts.length > 0 && (
-                <div className="border-t border-white/10 pt-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-                    מוצרים מומלצים
+            {/* Bottom Section: Quick Links & Most Wanted Products */}
+            {searchQuery.length <= 1 && (
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Quick Links */}
+                <div>
+                  <h3 className="text-white font-semibold text-lg mb-4">
+                    Quick Links
                   </h3>
-                  <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                    {suggestedProducts.map((product, index) => (
-                      <Link
-                        key={product.id}
-                        href={`/shop/${product.slug}`}
-                        onClick={handleClose}
-                        className="flex flex-col items-center gap-2 sm:gap-3 p-2 sm:p-3 hover:bg-muted hover:scale-105 transition-all duration-300 text-center group animate-in fade-in slide-in-from-bottom-4"
-                        style={{ animationDelay: `${(index + 3) * 100}ms` }}
-                      >
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 overflow-hidden bg-muted flex-shrink-0 shadow-sm group-hover:shadow-lg transition-all duration-300 relative">
-                          <Image
-                            src={product.image}
-                            alt={product.name}
-                            width={64}
-                            height={64}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </div>
-                        <div className="w-full">
-                          <div className="font-medium text-white text-xs sm:text-sm truncate group-hover:text-gold-200 transition-colors duration-200">
-                            {product.name}
-                          </div>
-                          <div className="text-xs sm:text-base font-semibold text-white mt-1 group-hover:text-gold-300 transition-colors duration-200">
-                            ₪{product.price}
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
+
+                  {quickLinks.map((link, index) => (
+                    <Link
+                      key={index}
+                      href={link.href}
+                      onClick={handleClose}
+                      className="block py-3 text-gray-300 hover:text-white transition-colors duration-200 hover:underline underline-offset-4"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
-              )}
-            </div>
+
+                {/* Most Wanted Products */}
+                <div>
+                  <h3 className="text-white font-semibold text-lg mb-4">
+                    Most Wanted
+                  </h3>
+                  {suggestedProducts.length > 0 ? (
+                    <div className="space-y-3">
+                      {suggestedProducts.map((product) => (
+                        <Link
+                          key={product.id}
+                          href={`/shop/${product.slug}`}
+                          onClick={handleClose}
+                          className="flex items-center gap-3 p-3 hover:bg-gray-800/50 rounded-lg transition-all duration-200 group"
+                        >
+                          <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-800 flex-shrink-0">
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              width={56}
+                              height={56}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-white text-sm truncate group-hover:text-gold-400 transition-colors">
+                              {product.name}
+                            </div>
+                            <div className="text-base font-semibold text-gold-400 mt-1">
+                              ₪{product.price}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No products available
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

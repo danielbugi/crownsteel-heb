@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ProductGrid } from '@/components/shop/product-grid';
 import { SearchFilters } from '@/components/search/search-filters';
 import { SearchSort } from '@/components/search/search-sort';
-import { useLanguage } from '@/contexts/language-context';
 import { Button } from '@/components/ui/button';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { HeroSection } from '@/components/layout/hero-section';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +22,7 @@ interface Product {
   images: string[];
   inStock: boolean;
   featured: boolean;
+  freeShipping: boolean;
   category: {
     id: string;
     name: string;
@@ -52,7 +53,6 @@ export default function SearchPage() {
 
 function SearchPageContent() {
   const searchParams = useSearchParams();
-  const { t, language } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState<Pagination>({
@@ -71,22 +71,7 @@ function SearchPageContent() {
   const inStock = searchParams.get('inStock') || '';
   const featured = searchParams.get('featured') || '';
 
-  useEffect(() => {
-    fetchResults();
-  }, [
-    query,
-    category,
-    minPrice,
-    maxPrice,
-    sortBy,
-    sortOrder,
-    inStock,
-    featured,
-    language,
-    pagination.page,
-  ]);
-
-  const fetchResults = async () => {
+  const fetchResults = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -98,7 +83,6 @@ function SearchPageContent() {
       if (sortOrder) params.append('sortOrder', sortOrder);
       if (inStock) params.append('inStock', inStock);
       if (featured) params.append('featured', featured);
-      params.append('lang', language);
       params.append('page', pagination.page.toString());
       params.append('limit', pagination.limit.toString());
 
@@ -108,11 +92,26 @@ function SearchPageContent() {
       setProducts(data.products || []);
       setPagination(data.pagination);
     } catch (error) {
-      console.error('Search error:', error);
+      logger.error('Search error:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [
+    query,
+    category,
+    minPrice,
+    maxPrice,
+    sortBy,
+    sortOrder,
+    inStock,
+    featured,
+    pagination.page,
+    pagination.limit,
+  ]);
+
+  useEffect(() => {
+    fetchResults();
+  }, [fetchResults]);
 
   const goToPage = (page: number) => {
     setPagination((prev) => ({ ...prev, page }));
@@ -136,15 +135,9 @@ function SearchPageContent() {
   return (
     <div className="min-h-screen bg-background">
       <HeroSection
-        title={
-          query
-            ? `${t('search.resultsFor')}: "${query}"`
-            : t('search.allProducts')
-        }
+        title={query ? `Search Results: "${query}"` : 'All Products'}
         description={
-          loading
-            ? t('common.loading')
-            : `${pagination.total} ${t('search.productsFound')}`
+          loading ? 'Loading...' : `${pagination.total} products found`
         }
         size="md"
       />
@@ -164,8 +157,8 @@ function SearchPageContent() {
               <div className="flex justify-between items-center mb-6">
                 <p className="text-muted-foreground">
                   {loading
-                    ? t('common.loading')
-                    : `${pagination.total} ${t('search.productsFound')}`}
+                    ? 'Loading...'
+                    : `${pagination.total} products found`}
                 </p>
                 <SearchSort />
               </div>
@@ -180,7 +173,13 @@ function SearchPageContent() {
               {/* Results */}
               {!loading && products.length > 0 && (
                 <>
-                  <ProductGrid products={products} />
+                  <ProductGrid
+                    products={
+                      products as unknown as Parameters<
+                        typeof ProductGrid
+                      >[0]['products']
+                    }
+                  />
 
                   {/* Pagination Controls */}
                   {pagination.pages > 1 && (
@@ -245,11 +244,9 @@ function SearchPageContent() {
               {/* No Results */}
               {!loading && products.length === 0 && (
                 <div className="text-center py-20">
-                  <h2 className="text-2xl font-bold mb-2">
-                    {t('search.noResults')}
-                  </h2>
+                  <h2 className="text-2xl font-bold mb-2">No results found</h2>
                   <p className="text-muted-foreground">
-                    {t('search.tryDifferent')}
+                    Try adjusting your search or filters
                   </p>
                 </div>
               )}

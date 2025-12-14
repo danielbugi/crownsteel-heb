@@ -1,11 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
+  // Enable Web Vitals reporting
+  experimental: {
+    webVitalsAttribution: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+
   images: {
     remotePatterns: [
       {
@@ -19,7 +18,6 @@ const nextConfig = {
         hostname: '**',
       },
     ],
-    unoptimized: true, // For static export if needed
   },
 };
 

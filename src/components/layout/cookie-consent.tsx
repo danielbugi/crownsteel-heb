@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { X, Cookie } from 'lucide-react';
-import { useLanguage } from '@/contexts/language-context';
 import Link from 'next/link';
 
 const COOKIE_CONSENT_KEY = 'cookie-consent-accepted';
@@ -16,7 +15,6 @@ interface CookieConsentProps {
 export function CookieConsent({ onAccept }: CookieConsentProps = {}) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const { language } = useLanguage();
 
   useEffect(() => {
     // Check if user has already given consent
@@ -92,7 +90,7 @@ export function CookieConsent({ onAccept }: CookieConsentProps = {}) {
           <div className="flex-1 space-y-4">
             <div className="flex items-start justify-between">
               <h3 className="text-lg font-semibold text-foreground">
-                {language === 'he' ? 'הודעה על עוגיות' : 'Cookie Notice'}
+                Cookie Notice
               </h3>
 
               <Button
@@ -100,7 +98,7 @@ export function CookieConsent({ onAccept }: CookieConsentProps = {}) {
                 size="icon"
                 onClick={handleClose}
                 className="h-8 w-8 -mt-1 -mr-1"
-                aria-label={language === 'he' ? 'סגור' : 'Close'}
+                aria-label="Close"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -108,42 +106,24 @@ export function CookieConsent({ onAccept }: CookieConsentProps = {}) {
 
             <div className="text-sm text-muted-foreground space-y-3">
               <p>
-                {language === 'he'
-                  ? 'אנו משתמשים בעוגיות כדי לשפר את חוויית הגלישה שלך, לנתח תנועה באתר ולהציג תוכן מותאם אישית. על ידי המשך השימוש באתר, אתה מסכים לשימוש שלנו בעוגיות.'
-                  : 'We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. By continuing to use our site, you consent to our use of cookies.'}
+                We use cookies to enhance your browsing experience, analyze site
+                traffic, and personalize content. By continuing to use our site,
+                you consent to our use of cookies.
               </p>
 
               <p>
-                {language === 'he' ? (
-                  <>
-                    לקבלת מידע נוסף, עיין ב
-                    <Link
-                      href="/privacy"
-                      className="text-primary hover:underline mx-1"
-                    >
-                      מדיניות הפרטיות
-                    </Link>
-                    שלנו.
-                  </>
-                ) : (
-                  <>
-                    For more information, please read our{' '}
-                    <Link
-                      href="/privacy"
-                      className="text-primary hover:underline"
-                    >
-                      Privacy Policy
-                    </Link>
-                    .
-                  </>
-                )}
+                For more information, please read our{' '}
+                <Link href="/privacy" className="text-primary hover:underline">
+                  Privacy Policy
+                </Link>
+                .
               </p>
             </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button onClick={handleAcceptAll} className="flex-1 sm:flex-none">
-                {language === 'he' ? 'קבל את כל העוגיות' : 'Accept All Cookies'}
+                Accept All Cookies
               </Button>
 
               <Button
@@ -151,9 +131,7 @@ export function CookieConsent({ onAccept }: CookieConsentProps = {}) {
                 onClick={handleAcceptNecessary}
                 className="flex-1 sm:flex-none"
               >
-                {language === 'he'
-                  ? 'עוגיות נחוצות בלבד'
-                  : 'Necessary Cookies Only'}
+                Necessary Cookies Only
               </Button>
 
               <Button
@@ -162,7 +140,7 @@ export function CookieConsent({ onAccept }: CookieConsentProps = {}) {
                 className="text-xs"
                 onClick={() => window.open('/privacy', '_blank')}
               >
-                {language === 'he' ? 'עוד פרטים' : 'Learn More'}
+                Learn More
               </Button>
             </div>
           </div>

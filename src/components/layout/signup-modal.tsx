@@ -13,7 +13,6 @@ import {
   Loader2,
   CheckCircle,
 } from 'lucide-react';
-import { useLanguage } from '@/contexts/language-context';
 import toast from 'react-hot-toast';
 
 const SIGNUP_MODAL_KEY = 'signup-modal-shown';
@@ -29,7 +28,6 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const { language } = useLanguage();
 
   useEffect(() => {
     if (trigger) {
@@ -60,11 +58,7 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
     e.preventDefault();
 
     if (!email) {
-      toast.error(
-        language === 'he'
-          ? 'אנא הזן כתובת אימייל'
-          : 'Please enter your email address'
-      );
+      toast.error('Please enter your email address');
       return;
     }
 
@@ -89,17 +83,10 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
           handleClose();
         }, 2000);
       } else {
-        toast.error(
-          data.error ||
-            (language === 'he' ? 'הרשמה נכשלה' : 'Failed to subscribe')
-        );
+        toast.error(data.error || 'Failed to subscribe');
       }
     } catch {
-      toast.error(
-        language === 'he'
-          ? 'משהו השתבש. אנא נסה שוב.'
-          : 'Something went wrong. Please try again.'
-      );
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -147,9 +134,7 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
               <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                {language === 'he'
-                  ? 'הצטרף לחברים שלנו!'
-                  : 'Join Our Community!'}
+                Join Our Community!
               </h2>
             </div>
 
@@ -158,7 +143,7 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
               size="icon"
               onClick={handleClose}
               className="h-8 w-8 -mt-1 -mr-1 hover:bg-gray-100 dark:hover:bg-gray-800"
-              aria-label={language === 'he' ? 'סגור' : 'Close'}
+              aria-label="Close"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -168,9 +153,7 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
           <div className="space-y-6">
             <div className="text-center space-y-3">
               <p className="text-gray-700 dark:text-gray-300 font-medium">
-                {language === 'he'
-                  ? 'היה הראשון לדעת על אוספים חדשים ומבצעים בלעדיים!'
-                  : 'Be the first to know about new collections & exclusive deals!'}
+                Be the first to know about new collections & exclusive deals!
               </p>
 
               <div className="flex justify-center gap-6 text-sm text-gray-600 dark:text-gray-400">
@@ -182,9 +165,7 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
                   }`}
                 >
                   <Bell className="h-4 w-4 text-blue-500" />
-                  <span>
-                    {language === 'he' ? 'עדכונים מיידיים' : 'Instant Updates'}
-                  </span>
+                  <span>Instant Updates</span>
                 </div>
                 <div
                   className={`flex items-center gap-2 transition-all duration-500 delay-200 ${
@@ -194,11 +175,7 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
                   }`}
                 >
                   <Gift className="h-4 w-4 text-purple-500" />
-                  <span>
-                    {language === 'he'
-                      ? 'הנחות בלעדיות'
-                      : 'Exclusive Discounts'}
-                  </span>
+                  <span>Exclusive Discounts</span>
                 </div>
               </div>
             </div>
@@ -209,17 +186,12 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
                   type="email"
-                  placeholder={
-                    language === 'he'
-                      ? 'הזן את האימייל שלך'
-                      : 'Enter your email address'
-                  }
+                  placeholder="Enter your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading || success}
                   className="pl-10 h-12 text-base border-2 focus:border-blue-500 focus:ring-blue-500"
                   required
-                  dir={language === 'he' ? 'rtl' : 'ltr'}
                 />
               </div>
 
@@ -231,17 +203,17 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    {language === 'he' ? 'נרשם...' : 'Subscribing...'}
+                    Subscribing...
                   </>
                 ) : success ? (
                   <>
                     <CheckCircle className="mr-2 h-5 w-5" />
-                    {language === 'he' ? 'הצלחנו!' : 'Success!'}
+                    Success!
                   </>
                 ) : (
                   <>
                     <Mail className="mr-2 h-5 w-5" />
-                    {language === 'he' ? 'הצטרף עכשיו' : 'Join Now'}
+                    Join Now
                   </>
                 )}
               </Button>
@@ -249,9 +221,7 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
 
             {/* Privacy Notice */}
             <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-              {language === 'he'
-                ? 'אנו מכבדים את הפרטיות שלך. תוכל לבטל את המנוי בכל עת.'
-                : 'We respect your privacy. You can unsubscribe anytime.'}
+              We respect your privacy. You can unsubscribe anytime.
             </p>
 
             {/* Skip Option */}
@@ -261,7 +231,7 @@ export function SignupModal({ trigger, onClose }: SignupModalProps) {
                 onClick={handleClose}
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
-                {language === 'he' ? 'אולי מאוחר יותר' : 'Maybe Later'}
+                Maybe Later
               </Button>
             </div>
           </div>

@@ -30,14 +30,14 @@ export function WelcomeDiscountEmail({
   const previewText = `Welcome! Here's your ${discountPercentage}% discount code`;
 
   return (
-    <EmailLayout previewText={previewText}>
+    <EmailLayout preview={previewText}>
       {/* Welcome Header */}
       <Section style={welcomeSection}>
         <Text style={welcomeIcon}>🎉</Text>
         <Heading style={welcomeTitle}>Welcome to CrownSteel!</Heading>
         <Text style={welcomeText}>
-          Thank you for subscribing to our newsletter. As a welcome gift, we're
-          giving you an exclusive discount!
+          Thank you for subscribing to our newsletter. As a welcome gift,
+          we&apos;re giving you an exclusive discount!
         </Text>
       </Section>
 
@@ -45,7 +45,7 @@ export function WelcomeDiscountEmail({
       <Section style={couponSection}>
         <Text style={couponLabel}>YOUR EXCLUSIVE CODE</Text>
         <div style={couponBox}>
-          <Text style={couponCode}>{couponCode}</Text>
+          <Text style={couponCodeStyle}>{couponCode}</Text>
         </div>
         <Text style={discountText}>
           {discountPercentage}% OFF YOUR FIRST ORDER
@@ -88,7 +88,7 @@ export function WelcomeDiscountEmail({
       <Section style={section}>
         <Heading style={subheading}>What to Expect</Heading>
         <Text style={paragraph}>
-          As a newsletter subscriber, you'll receive:
+          As a newsletter subscriber, you&apos;ll receive:
         </Text>
         <Text style={benefitText}>✨ Exclusive discounts and offers</Text>
         <Text style={benefitText}>🎁 Early access to new collections</Text>
@@ -164,7 +164,7 @@ const couponBox = {
   margin: '0 0 16px 0',
 };
 
-const couponCode = {
+const couponCodeStyle = {
   fontSize: '32px',
   fontWeight: 'bold',
   color: '#d4af37',

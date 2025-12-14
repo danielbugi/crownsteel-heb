@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { BlogStatus } from '@prisma/client';
+
+// Dynamic route to handle query parameters
+export const dynamic = 'force-dynamic';
 
 // GET /api/blog/posts - Public blog posts listing
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = request.nextUrl;
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '9');
     const categoryId = searchParams.get('categoryId');
@@ -14,7 +18,23 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit;
 
-    const where: any = {
+    const where: {
+      status: BlogStatus;
+      publishedAt: { lte: Date };
+      categoryId?: string;
+      featured?: boolean;
+      tags?: {
+        some: {
+          tag: {
+            slug: string;
+          };
+        };
+      };
+      OR?: Array<
+        | { title: { contains: string; mode: 'insensitive' } }
+        | { excerpt: { contains: string; mode: 'insensitive' } }
+      >;
+    } = {
       status: 'PUBLISHED',
       publishedAt: { lte: new Date() },
     };
@@ -46,7 +66,6 @@ export async function GET(request: NextRequest) {
         select: {
           id: true,
           title: true,
-          titleEn: true,
           slug: true,
           excerpt: true,
           featuredImage: true,
@@ -58,7 +77,6 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               name: true,
-              nameEn: true,
               slug: true,
             },
           },
@@ -74,7 +92,6 @@ export async function GET(request: NextRequest) {
                 select: {
                   id: true,
                   name: true,
-                  nameEn: true,
                   slug: true,
                 },
               },

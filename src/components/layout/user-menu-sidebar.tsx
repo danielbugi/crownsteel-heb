@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useLanguage } from '@/contexts/language-context';
 import { cn } from '@/lib/utils';
 
 interface UserMenuSidebarProps {
@@ -31,11 +30,6 @@ export function UserMenuSidebar({
   onClose,
   user,
 }: UserMenuSidebarProps) {
-  const { t, direction } = useLanguage();
-
-  // Debug logging
-  // console.log('UserMenuSidebar render:', { isOpen, direction, user: !!user });
-
   const handleSignOut = () => {
     signOut();
     onClose();
@@ -44,17 +38,17 @@ export function UserMenuSidebar({
   const menuItems = [
     {
       icon: UserIcon,
-      label: t('nav.profile'),
+      label: 'Profile',
       href: '/profile',
     },
     {
       icon: Package,
-      label: t('nav.orders'),
+      label: 'Orders',
       href: '/orders',
     },
     {
       icon: Heart,
-      label: t('nav.wishlist'),
+      label: 'Wishlist',
       href: '/wishlist',
     },
   ];
@@ -63,7 +57,7 @@ export function UserMenuSidebar({
   if (user && (user.email === 'admin@example.com' || user.role === 'ADMIN')) {
     menuItems.push({
       icon: Shield,
-      label: t('nav.admin'),
+      label: 'Admin',
       href: '/admin',
     });
   }
@@ -83,24 +77,18 @@ export function UserMenuSidebar({
 
       {/* Sidebar */}
       <div
-        key={direction} // Force re-mount on direction change to prevent transition
         className={cn(
-          'fixed top-0 h-full w-full sm:w-80 bg-white shadow-2xl transition-transform duration-300 ease-in-out',
-          // User menu slides from right in LTR, left in RTL
-          direction === 'rtl' ? 'left-0' : 'right-0',
+          'fixed top-0 right-0 h-full w-full sm:w-80 bg-white shadow-2xl transition-transform duration-300 ease-in-out',
           isOpen && user
             ? 'translate-x-0 z-50 visible'
-            : direction === 'rtl'
-              ? '-translate-x-full  z-50'
-              : 'translate-x-full  z-50'
+            : 'translate-x-full z-50'
         )}
-        dir={direction}
       >
         {/* Header with User Info */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-start justify-between mb-4">
             <h2 className="text-xl font-bold text-black uppercase tracking-wide">
-              {t('nav.profile')}
+              Profile
             </h2>
             <Button
               variant="ghost"
@@ -161,7 +149,7 @@ export function UserMenuSidebar({
           >
             <LogOut className="h-5 w-5 text-gray-600" />
             <span className="font-light uppercase tracking-wide text-sm">
-              {t('nav.signout')}
+              Sign Out
             </span>
           </button>
         </nav>

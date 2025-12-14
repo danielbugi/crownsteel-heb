@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { z } from 'zod';
 import { startPerformanceTracking } from '@/lib/track-performance';
+import { withCache, cache } from '@/lib/cache';
 
 const reviewSchema = z.object({
   productId: z.string(),
@@ -33,33 +34,40 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit;
 
-    const [reviews, total] = await Promise.all([
-      prisma.review.findMany({
-        where: {
-          productId,
-          status: status as any,
-        },
-        include: {
-          user: {
-            select: {
-              name: true,
-              image: true,
+    // Cache reviews for 3 minutes (they change less frequently)
+    const cacheKey = `reviews:${productId}:${status}:${page}:${limit}`;
+    const [reviews, total] = await withCache(
+      cacheKey,
+      () =>
+        Promise.all([
+          prisma.review.findMany({
+            where: {
+              productId,
+              status: status as 'PENDING' | 'APPROVED' | 'REJECTED',
             },
-          },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        skip,
-        take: limit,
-      }),
-      prisma.review.count({
-        where: {
-          productId,
-          status: status as any,
-        },
-      }),
-    ]);
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  image: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
+            skip,
+            take: limit,
+          }),
+          prisma.review.count({
+            where: {
+              productId,
+              status: status as 'PENDING' | 'APPROVED' | 'REJECTED',
+            },
+          }),
+        ]),
+      3 // 3 minutes TTL
+    );
 
     trackEnd(200);
     return NextResponse.json({
@@ -147,6 +155,10 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    // Invalidate reviews cache for this product
+    cache.delete(`reviews:${validatedData.productId}:PENDING:1:10`);
+    cache.delete(`reviews:${validatedData.productId}:APPROVED:1:10`);
 
     // Update product rating stats
     await updateProductRatingStats(validatedData.productId);

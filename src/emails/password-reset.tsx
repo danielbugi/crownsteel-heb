@@ -47,7 +47,7 @@ export function PasswordResetEmail({ resetUrl }: PasswordResetEmailProps) {
         <Text style={warningText}>
           • This link will expire in 1 hour
           <br />
-          • If you didn't request this, please ignore this email
+          • If you didn&apos;t request this, please ignore this email
           <br />
           • Your password will remain unchanged
           <br />• Never share this link with anyone
@@ -57,7 +57,8 @@ export function PasswordResetEmail({ resetUrl }: PasswordResetEmailProps) {
       {/* Contact Support */}
       <Section style={section}>
         <Text style={contactText}>
-          If you're having trouble or didn't request this password reset, please{' '}
+          If you&apos;re having trouble or didn&apos;t request this password
+          reset, please{' '}
           <Link
             href={`${process.env.NEXT_PUBLIC_URL}/contact`}
             style={linkStyle}

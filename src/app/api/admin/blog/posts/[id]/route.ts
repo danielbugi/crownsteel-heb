@@ -64,7 +64,6 @@ export async function PUT(
     const body = await request.json();
     const {
       title,
-      titleEn,
       slug,
       excerpt,
       content,
@@ -86,7 +85,6 @@ export async function PUT(
       where: { id: id },
       data: {
         title,
-        titleEn,
         slug,
         excerpt,
         content,

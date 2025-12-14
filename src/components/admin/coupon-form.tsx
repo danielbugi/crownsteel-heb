@@ -43,7 +43,6 @@ const couponSchema = z
         'Code can only contain uppercase letters, numbers, underscores, and hyphens'
       ),
     description: z.string().optional(),
-    descriptionHe: z.string().optional(),
     discountType: z.enum(['PERCENTAGE', 'FIXED']),
     discountValue: z
       .number()
@@ -125,7 +124,6 @@ export function CouponForm({
     defaultValues: {
       code: initialData?.code || '',
       description: initialData?.description || '',
-      descriptionHe: initialData?.descriptionHe || '',
       discountType: initialData?.discountType || 'PERCENTAGE',
       discountValue: initialData?.discountValue || 0,
       minPurchase: initialData?.minPurchase || 0,
@@ -310,28 +308,6 @@ export function CouponForm({
                         </FormControl>
                         <FormDescription>
                           Brief description of the coupon offer
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="descriptionHe"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description (Hebrew)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="20% הנחה על כל פריטי התכשיטים"
-                            className="text-right"
-                            dir="rtl"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Hebrew description for bilingual support
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

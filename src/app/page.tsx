@@ -8,6 +8,9 @@ import { prisma } from '@/lib/prisma';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { serializeProducts } from '@/lib/serialize';
 
+// ISR: Revalidate homepage every 5 minutes
+export const revalidate = 300;
+
 async function getFeaturedProducts() {
   const products = await prisma.product.findMany({
     where: {
@@ -49,40 +52,41 @@ export default async function HomePage() {
     <div className="flex flex-col relative z-10">
       {/* Hero Section - Masculine Energy */}
 
-      <section className="container relative h-[60vh] md:h-[80vh] min-h-[500px] md:min-h-[700px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[60vh] md:h-[80vh] min-h-[500px] md:min-h-[700px] flex items-center justify-center overflow-hidden">
         {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/hero-main.jpg"
-            alt="Luxury Jewelry Collection"
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-            quality={95}
-          />
-          {/* Cinematic Overlay - Deep shadows */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black-pure/80 via-black-pure/60 to-black-pure/70"></div>
-          <div className="absolute inset-0 shadow-cinematic-xl"></div>
-        </div>
+        <Link href="/shop">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/hero-main.jpg"
+              alt="Luxury Jewelry Collection"
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+              quality={95}
+            />
+            {/* Cinematic Overlay - Deep shadows */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black-pure/80 via-black-pure/60 to-black-pure/70"></div>
+            <div className="absolute inset-0 shadow-cinematic-xl"></div>
+          </div>
 
-        {/* Hero Content - Minimal & Powerful */}
-        <div className="contaihttp://localhost:3000/shopner px-4 sm:px-6 mx-auto relative z-10">
-          <ScrollReveal direction="up" delay={100}>
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="space-y-6 md:space-y-8 text-white-pure animate-fade-in">
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white-pure font-cinzel font-bold leading-[1.1] drop-shadow-cinematic-xl tracking-tight">
-                  CROWN STEEL
-                </h1>
+          {/* Hero Content - Minimal & Powerful */}
+          <div className="px-4 sm:px-6 mx-auto relative z-10">
+            <ScrollReveal direction="up" delay={100}>
+              <div className="max-w-4xl mx-auto text-center">
+                <div className="space-y-6 md:space-y-8 text-white-pure animate-fade-in">
+                  <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-4xl text-white-pure font-figtree font-medium leading-[1.1] drop-shadow-cinematic-xl tracking-tight">
+                    The Path To your Throne
+                  </h1>
 
-                <p className="text-xl sm:text-2xl md:text-3xl text-gold-elegant font-light leading-relaxed drop-shadow-cinematic tracking-widest uppercase">
-                  {/* RULE YOUR LOOK <br />
+                  <p className="text-xl sm:text-xl md:text-xl text-white font-light leading-relaxed drop-shadow-cinematic tracking-widest uppercase">
+                    {/* RULE YOUR LOOK <br />
                   FEEL LIKE A KING */}
-                  PREMIUM JEWELRY FOR MODERN KINGS
-                </p>
+                    new collection
+                  </p>
 
-                {/* Minimal CTA */}
-                <div className="pt-6 flex justify-center">
+                  {/* Minimal CTA */}
+                  {/* <div className="pt-6 flex justify-center">
                   <Link href="/shop">
                     <Button
                       size="xlg"
@@ -91,74 +95,61 @@ export default async function HomePage() {
                       Enter
                     </Button>
                   </Link>
+                </div> */}
                 </div>
               </div>
-            </div>
-          </ScrollReveal>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="hidden md:block absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-          <div className="w-6 h-10 border-2 border-gold-elegant/50 rounded-full p-1">
-            <div className="w-1.5 h-3 bg-gold-elegant/50 rounded-full mx-auto"></div>
+            </ScrollReveal>
           </div>
-        </div>
+
+          {/* Scroll Indicator */}
+          {/* <div className="hidden md:block absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+            <div className="w-6 h-10 border-2 border-gold-elegant/50 rounded-full p-1">
+              <div className="w-1.5 h-3 bg-gold-elegant/50 rounded-full mx-auto"></div>
+            </div>
+          </div> */}
+        </Link>
       </section>
 
       {/* Categories Section - Minimalist */}
-      <ScrollReveal direction="up" delay={100}>
-        <section className="py-16 sm:py-20 md:py-24 bg-black-soft">
-          <div className="container px-4 sm:px-6 mx-auto">
-            {/* Power Statement - Less text, more impact */}
-            <div className="text-center mb-16 sm:mb-20 md:mb-24">
-              <div className="space-y-3 sm:space-y-4">
-                <p className="text-2xl sm:text-3xl md:text-4xl font-cinzel font-light text-white-pure tracking-wider leading-tight">
-                  Status.
-                </p>
-                <p className="text-2xl sm:text-3xl md:text-4xl font-cinzel font-light text-white-pure tracking-wider leading-tight">
-                  Presence.
-                </p>
-                <p
-                  className="text-2xl sm:text-3xl md:text-4xl font-cinzel font-bold tracking-wider leading-tight"
-                  style={{ color: '#C5A253' }}
-                >
-                  POWER.
-                </p>
-              </div>
-            </div>
-
+      <ScrollReveal>
+        <section className="py-0 sm:py-0 bg-muted/60 md:py-0 shadow-cinematic-lg">
+          <div className="px-0 sm:px-0 mx-auto">
             {/* First row - 2 columns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 md:gap-8 mb-5 sm:mb-6 md:mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-0 md:gap-0]">
               <CategoryCard
                 href="/shop?category=rings"
-                imageSrc="/images/category-rings.jpg"
+                imageSrc="/images/categories/category-rings.png"
                 title="RINGS"
+                priority={true}
               />
 
               <CategoryCard
-                href="/shop?category=necklaces"
-                imageSrc="/images/category-necklaces.png"
+                href="/shop?category=chains"
+                imageSrc="/images/categories/category-chains.png"
                 title="CHAINS"
+                priority={true}
               />
             </div>
 
             {/* Second row - 3 columns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-0 sm:gap-0 md:gap-0">
               <CategoryCard
                 href="/shop?category=bracelets"
-                imageSrc="/images/category-bracelets.png"
+                imageSrc="/images/categories/category-bracelets.png"
                 title="BRACELETS"
+                priority={true}
               />
 
               <CategoryCard
                 href="/shop?category=pendants"
-                imageSrc="/images/category-pendants.jpg"
+                imageSrc="/images/categories/category-pendants.png"
                 title="PENDANTS"
               />
-
+            </div>
+            <div className="grid grid-cols-1  gap-0 sm:gap-0 md:gap-0">
               <CategoryCard
                 href="/shop?category=bundles"
-                imageSrc="/images/category-bundles.png"
+                imageSrc="/images/categories/category-bundles.png"
                 title="BUNDLES"
               />
             </div>
@@ -168,14 +159,36 @@ export default async function HomePage() {
 
       {/* Featured Products Carousel - Boutique Style */}
       {featuredProducts.length > 0 && (
-        <ScrollReveal direction="up" delay={100}>
+        <ScrollReveal>
           <ProductCarousel
-            products={featuredProducts}
-            title="Selected for You"
-            subtitle="Elegance. Strength. Steel."
+            products={
+              featuredProducts as unknown as Parameters<
+                typeof ProductCarousel
+              >[0]['products']
+            }
+            title="Hot Sellers"
+            subtitle="Most wanted"
+            prioritizeFirstImages={true}
           />
         </ScrollReveal>
       )}
+
+      {/* New Arrivals Carousel
+      {newArrivals.length > 0 && (
+        <ScrollReveal>
+          <div className=" bg-black shadow-cinematic">
+            <ProductCarousel
+              products={
+                newArrivals as unknown as Parameters<
+                  typeof ProductCarousel
+                >[0]['products']
+              }
+              title="NEW DROPS"
+              subtitle="Just Landed"
+            />
+          </div>
+        </ScrollReveal>
+      )} */}
 
       {/* Secondary CTA Section - Dark & Powerful */}
       <section className="relative h-[50vh] sm:h-[60vh] md:h-[75vh] min-h-[400px] md:min-h-[600px] flex items-center justify-center overflow-hidden">
@@ -220,11 +233,11 @@ export default async function HomePage() {
                 <div className="max-w-5xl mx-auto text-center">
                   <div className="space-y-6 sm:space-y-8 text-white-pure animate-fade-in">
                     <h3 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white-pure font-cinzel font-bold leading-tight drop-shadow-cinematic-xl tracking-tight uppercase">
-                      Own Your Power
+                      Take The Throne
                     </h3>
 
                     <p className="uppercase font-light">
-                      Premium Steel Jewelry. Built for Status.
+                      Premium Steel Jewelry.
                     </p>
 
                     <div className="pt-4 flex justify-center">
@@ -243,30 +256,15 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      {/* New Arrivals Carousel */}
-      {newArrivals.length > 0 && (
-        <ScrollReveal direction="up" delay={100}>
-          <div className=" bg-black shadow-cinematic">
-            <ProductCarousel
-              products={newArrivals}
-              title="NEW DROPS"
-              subtitle="Fresh premium steel.
-Just dropped."
-            />
-          </div>
-        </ScrollReveal>
-      )}
-
       {/* Email Subscription Section - Minimal & Dark */}
-      <section className="container py-16 sm:py-20 md:py-24 bg-black text-white-pure shadow-cinematic-lg">
+      <section className="container py-16 sm:py-20 md:py-24 bg-muted-foreground text-black shadow-cinematic-lg">
         <div className="container px-4 sm:px-6 mx-auto text-center">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-cinzel font-bold mb-4 sm:mb-6 drop-shadow-cinematic text-white-pure tracking-tight uppercase">
-              Join the Elite
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-cinzel font-bold mb-4 sm:mb-6 drop-shadow-cinematic text-black tracking-tight uppercase">
+              Join the Club
             </h2>
-            <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10 leading-relaxed px-4">
-              10% off your first order <br /> Exclusive drops. VIP access. For
-              modern kings only.
+            <p className="text-base sm:text-lg text-gray-600 mb-8 sm:mb-10 leading-relaxed px-4">
+              Join our club and get Exclusive drops. VIP access. Kings Choice.
             </p>
             <div className="max-w-md mx-auto px-4 sm:px-0">
               <NewsletterForm

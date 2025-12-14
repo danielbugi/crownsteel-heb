@@ -45,7 +45,16 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const shippingAddr = recentOrder.shippingAddress as any;
+    const shippingAddr = recentOrder.shippingAddress as {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      address: string;
+      city: string;
+      country: string;
+      postalCode: string;
+    };
 
     // Recreate the email data from the order
     const emailData: OrderEmailData = {
@@ -98,13 +107,13 @@ export async function GET(request: NextRequest) {
       },
       emailResult: result,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Debug failed:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
-        stack: error.stack,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
       },
       { status: 500 }
     );

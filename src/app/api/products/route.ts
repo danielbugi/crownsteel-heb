@@ -5,6 +5,9 @@ import { serializeProducts } from '@/lib/serialize';
 import { cache } from '@/lib/cache';
 import { Prisma } from '@prisma/client';
 
+// ISR: Revalidate product listings every 5 minutes
+export const revalidate = 300;
+
 // POST - Get multiple products by IDs (for guest wishlist)
 export async function POST(request: NextRequest) {
   const startTime = Date.now(); // ← ADDED: Start timer
@@ -81,7 +84,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ products: serializedProducts });
   } catch (error) {
-    console.error('Error fetching products:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching products:', error);
+    }
 
     // ← ADDED: Track error
     const duration = Date.now() - startTime;

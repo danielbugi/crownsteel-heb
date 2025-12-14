@@ -121,11 +121,10 @@ const config: Config = {
       },
     },
     extend: {
-      // RTL-aware font families
+      // Font families
       fontFamily: {
-        sans: ['var(--font-rubik)', 'var(--font-heebo)', 'sans-serif'],
-        hebrew: ['var(--font-heebo)', 'sans-serif'],
-        english: ['var(--font-rubik)', 'sans-serif'],
+        sans: ['var(--font-figtree)', 'sans-serif'],
+        figtree: ['var(--font-figtree)', 'sans-serif'],
         cinzel: ['var(--font-cinzel)', 'serif'],
         playfair: ['var(--font-playfair)', 'serif'],
       },

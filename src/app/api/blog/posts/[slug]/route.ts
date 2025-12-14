@@ -19,7 +19,6 @@ export async function GET(
           select: {
             id: true,
             name: true,
-            nameEn: true,
             slug: true,
           },
         },
@@ -36,7 +35,6 @@ export async function GET(
               select: {
                 id: true,
                 name: true,
-                nameEn: true,
                 slug: true,
               },
             },

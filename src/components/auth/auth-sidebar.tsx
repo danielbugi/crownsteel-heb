@@ -7,7 +7,6 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useLanguage } from '@/contexts/language-context';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
@@ -19,7 +18,6 @@ interface AuthSidebarProps {
 
 export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
   const router = useRouter();
-  const { t, direction } = useLanguage();
   const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -120,9 +118,11 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
           router.refresh();
         }, 100);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Registration error:', error);
-      toast.error(error.message || 'Something went wrong');
+      toast.error(
+        error instanceof Error ? error.message : 'Something went wrong'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -148,20 +148,16 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed top-0 h-full w-full sm:w-[400px] bg-white shadow-2xl transition-all duration-300 ease-in-out',
-          direction === 'rtl' ? 'left-0' : 'right-0',
+          'fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-2xl transition-all duration-300 ease-in-out',
           isOpen
             ? 'translate-x-0 z-50 visible'
-            : direction === 'rtl'
-              ? '-translate-x-full invisible z-50'
-              : 'translate-x-full invisible z-50'
+            : 'translate-x-full invisible z-50'
         )}
-        dir={direction}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-black uppercase tracking-wide">
-            {t('auth.welcome')}
+            Welcome
           </h2>
           <Button
             variant="ghost"
@@ -184,7 +180,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             )}
           >
-            {t('auth.signin')}
+            Sign In
           </button>
 
           <button
@@ -196,7 +192,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             )}
           >
-            {t('auth.signup')}
+            Sign Up
           </button>
         </div>
 
@@ -229,7 +225,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                {t('auth.continueWithGoogle')}
+                Continue with Google
               </Button>
 
               {/* Divider */}
@@ -239,7 +235,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-white px-2 text-gray-500 font-light tracking-wide">
-                    {t('auth.orContinueWithEmail')}
+                    Or continue with email
                   </span>
                 </div>
               </div>
@@ -251,7 +247,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signin-email"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    {t('auth.email')}
+                    Email
                   </Label>
                   <Input
                     id="signin-email"
@@ -270,7 +266,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signin-password"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    {t('auth.password')}
+                    Password
                   </Label>
                   <Input
                     id="signin-password"
@@ -289,7 +285,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                   className="w-full bg-black hover:bg-gray-800 text-white font-light uppercase tracking-wide"
                   disabled={isLoading}
                 >
-                  {isLoading ? t('auth.signingIn') : t('auth.signinButton')}
+                  {isLoading ? 'Signing In...' : 'Sign In'}
                 </Button>
                 <div className="text-center text-sm">
                   <Link
@@ -297,7 +293,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     onClick={onClose}
                     className="text-gray-600 hover:underline"
                   >
-                    {t('auth.forgotPassword')}
+                    Forgot Password?
                   </Link>
                 </div>
               </form>
@@ -305,13 +301,13 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
               {/* Switch to Sign Up */}
               <div className="text-center text-sm">
                 <span className="text-gray-600">
-                  {t('auth.dontHaveAccount')}{' '}
+                  Don&apos;t have an account?{' '}
                 </span>
                 <button
                   onClick={() => setActiveTab('signup')}
                   className="text-black font-medium hover:underline"
                 >
-                  {t('auth.signup')}
+                  Sign Up
                 </button>
               </div>
             </div>
@@ -344,7 +340,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                {t('auth.continueWithGoogle')}
+                Continue with Google
               </Button>
 
               {/* Divider */}
@@ -354,7 +350,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-white px-2 text-gray-500 font-light tracking-wide">
-                    {t('auth.orContinueWithEmail')}
+                    Or continue with email
                   </span>
                 </div>
               </div>
@@ -366,7 +362,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signup-name"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    {t('auth.fullName')}
+                    Full Name
                   </Label>
                   <Input
                     id="signup-name"
@@ -385,7 +381,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signup-email"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    {t('auth.email')}
+                    Email
                   </Label>
                   <Input
                     id="signup-email"
@@ -404,7 +400,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signup-password"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    {t('auth.password')}
+                    Password
                   </Label>
                   <Input
                     id="signup-password"
@@ -415,11 +411,9 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     required
                     disabled={isLoading}
                     minLength={6}
-                    className="border-gray-300"
+                    className="border-gray-300 text-black"
                   />
-                  <p className="text-xs text-gray-500">
-                    {t('auth.passwordMinLength')}
-                  </p>
+                  <p className="text-xs text-gray-500">Minimum 6 characters</p>
                 </div>
 
                 <div className="space-y-2">
@@ -427,7 +421,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signup-confirm"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    {t('auth.confirmPassword')}
+                    Confirm Password
                   </Label>
                   <Input
                     id="signup-confirm"
@@ -437,7 +431,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     onChange={(e) => setSignUpConfirmPassword(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="border-gray-300"
+                    className="border-gray-300 text-black"
                   />
                 </div>
 
@@ -446,22 +440,18 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                   className="w-full bg-black hover:bg-gray-800 text-white font-light uppercase tracking-wide"
                   disabled={isLoading}
                 >
-                  {isLoading
-                    ? t('auth.creatingAccount')
-                    : t('auth.signupButton')}
+                  {isLoading ? 'Creating Account...' : 'Create Account'}
                 </Button>
               </form>
 
               {/* Switch to Sign In */}
               <div className="text-center text-sm">
-                <span className="text-gray-600">
-                  {t('auth.alreadyHaveAccount')}{' '}
-                </span>
+                <span className="text-gray-600">Already have an account? </span>
                 <button
                   onClick={() => setActiveTab('signin')}
                   className="text-black font-medium hover:underline"
                 >
-                  {t('auth.signin')}
+                  Sign In
                 </button>
               </div>
             </div>

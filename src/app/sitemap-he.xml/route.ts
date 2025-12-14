@@ -15,7 +15,6 @@ export async function GET() {
   try {
     // Fetch all active products
     const products = await prisma.product.findMany({
-      where: { published: true },
       select: {
         slug: true,
         updatedAt: true,

@@ -19,8 +19,7 @@ async function seedBlog() {
       where: { slug: 'jewelry-care' },
       update: {},
       create: {
-        name: 'טיפוח תכשיטים',
-        nameEn: 'Jewelry Care',
+        name: 'Jewelry Care',
         slug: 'jewelry-care',
         description: 'מדריכים לטיפול ושמירה על תכשיטי כסף וזהב',
         image:
@@ -31,8 +30,7 @@ async function seedBlog() {
       where: { slug: 'style-guides' },
       update: {},
       create: {
-        name: 'מדריכי סטייל',
-        nameEn: 'Style Guides',
+        name: 'Style Guides',
         slug: 'style-guides',
         description: 'איך לשלב תכשיטים בלוק האישי שלך',
         image:
@@ -43,8 +41,7 @@ async function seedBlog() {
       where: { slug: 'trends' },
       update: {},
       create: {
-        name: 'טרנדים',
-        nameEn: 'Trends',
+        name: 'Trends',
         slug: 'trends',
         description: 'הטרנדים החמים ביותר בעולם תכשיטי הגברים',
         image:
@@ -55,8 +52,7 @@ async function seedBlog() {
       where: { slug: 'buyers-guide' },
       update: {},
       create: {
-        name: 'מדריך קניה',
-        nameEn: "Buyer's Guide",
+        name: "Buyer's Guide",
         slug: 'buyers-guide',
         description: 'כל מה שצריך לדעת לפני רכישת תכשיט',
         image:
@@ -70,40 +66,39 @@ async function seedBlog() {
     prisma.blogTag.upsert({
       where: { slug: 'silver' },
       update: {},
-      create: { name: 'כסף', nameEn: 'Silver', slug: 'silver' },
+      create: { name: 'Silver', slug: 'silver' },
     }),
     prisma.blogTag.upsert({
       where: { slug: 'gold' },
       update: {},
-      create: { name: 'זהב', nameEn: 'Gold', slug: 'gold' },
+      create: { name: 'Gold', slug: 'gold' },
     }),
     prisma.blogTag.upsert({
       where: { slug: 'chains' },
       update: {},
-      create: { name: 'שרשראות', nameEn: 'Chains', slug: 'chains' },
+      create: { name: 'Chains', slug: 'chains' },
     }),
     prisma.blogTag.upsert({
       where: { slug: 'rings' },
       update: {},
-      create: { name: 'טבעות', nameEn: 'Rings', slug: 'rings' },
+      create: { name: 'Rings', slug: 'rings' },
     }),
     prisma.blogTag.upsert({
       where: { slug: 'bracelets' },
       update: {},
-      create: { name: 'צמידים', nameEn: 'Bracelets', slug: 'bracelets' },
+      create: { name: 'Bracelets', slug: 'bracelets' },
     }),
     prisma.blogTag.upsert({
       where: { slug: 'maintenance' },
       update: {},
-      create: { name: 'תחזוקה', nameEn: 'Maintenance', slug: 'maintenance' },
+      create: { name: 'Maintenance', slug: 'maintenance' },
     }),
   ]);
 
   // Create sample blog posts
   const posts = [
     {
-      title: 'המדריך המלא לטיפול בתכשיטי כסף',
-      titleEn: 'The Complete Guide to Silver Jewelry Care',
+      title: 'The Complete Guide to Silver Jewelry Care',
       slug: 'complete-guide-silver-jewelry-care',
       excerpt:
         'תכשיטי כסף דורשים טיפול מיוחד כדי לשמור על הברק והיופי שלהם. במדריך זה נלמד את כל הטריקים לשמירה על תכשיטי הכסף שלכם.',
@@ -147,8 +142,7 @@ async function seedBlog() {
       tagIds: [tags[0].id, tags[5].id],
     },
     {
-      title: 'איך לשלב תכשיטים בסגנון היומיומי',
-      titleEn: 'How to Incorporate Jewelry into Your Daily Style',
+      title: 'How to Incorporate Jewelry into Your Daily Style',
       slug: 'incorporate-jewelry-daily-style',
       excerpt:
         'תכשיטים יכולים להעצים את הסטייל האישי שלך. גלה איך לשלב אותם בצורה נכונה.',
@@ -182,8 +176,7 @@ async function seedBlog() {
       tagIds: [tags[2].id, tags[3].id],
     },
     {
-      title: 'טרנדים חמים בתכשיטי גברים 2024',
-      titleEn: "Hot Trends in Men's Jewelry 2024",
+      title: "Hot Trends in Men's Jewelry 2024",
       slug: 'hot-trends-mens-jewelry-2024',
       excerpt:
         'מה חם השנה בעולם תכשיטי הגברים? סקירה מקיפה של הטרנדים המובילים.',
@@ -217,8 +210,7 @@ async function seedBlog() {
       tagIds: [tags[0].id, tags[1].id],
     },
     {
-      title: 'מדריך לרכישת השרשרת הראשונה שלך',
-      titleEn: 'Guide to Buying Your First Chain',
+      title: 'Guide to Buying Your First Chain',
       slug: 'guide-buying-first-chain',
       excerpt: 'חושב לקנות את השרשרת הראשונה שלך? הנה כל מה שאתה צריך לדעת.',
       content: `רוצה לקנות את השרשרת הראשונה שלך? הנה המדריך המלא:

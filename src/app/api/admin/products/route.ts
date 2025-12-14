@@ -24,7 +24,16 @@ export async function GET(request: NextRequest) {
     const inStock = searchParams.get('inStock');
 
     // Build where clause
-    const where: any = {};
+    const where: {
+      OR?: Array<
+        | { name: { contains: string; mode: 'insensitive' } }
+        | { description: { contains: string; mode: 'insensitive' } }
+        | { sku: { contains: string; mode: 'insensitive' } }
+      >;
+      categoryId?: string;
+      featured?: boolean;
+      inStock?: boolean;
+    } = {};
 
     if (search) {
       where.OR = [
@@ -112,7 +121,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching products:', error);
+    }
     trackEnd(500);
     return NextResponse.json(
       { error: 'Failed to fetch products' },

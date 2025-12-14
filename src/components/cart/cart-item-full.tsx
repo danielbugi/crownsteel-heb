@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -19,9 +20,21 @@ interface CartItemProps {
   };
 }
 
-export function CartItem({ item }: CartItemProps) {
+export const CartItem = React.memo<CartItemProps>(function CartItem({ item }) {
   const { updateQuantity, removeItem } = useCartStore();
   const subtotal = item.price * item.quantity;
+
+  const handleIncrement = useCallback(() => {
+    updateQuantity(item.productId, item.quantity + 1);
+  }, [item.productId, item.quantity, updateQuantity]);
+
+  const handleDecrement = useCallback(() => {
+    updateQuantity(item.productId, item.quantity - 1);
+  }, [item.productId, item.quantity, updateQuantity]);
+
+  const handleRemove = useCallback(() => {
+    removeItem(item.productId);
+  }, [item.productId, removeItem]);
 
   return (
     <div>
@@ -52,7 +65,7 @@ export function CartItem({ item }: CartItemProps) {
               variant="ghost"
               size="icon"
               className="h-8 w-8 text-muted-foreground hover:text-destructive"
-              onClick={() => removeItem(item.productId)}
+              onClick={handleRemove}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -64,9 +77,7 @@ export function CartItem({ item }: CartItemProps) {
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() =>
-                  updateQuantity(item.productId, item.quantity - 1)
-                }
+                onClick={handleDecrement}
                 disabled={item.quantity <= 1}
               >
                 <Minus className="h-3 w-3" />
@@ -78,9 +89,7 @@ export function CartItem({ item }: CartItemProps) {
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() =>
-                  updateQuantity(item.productId, item.quantity + 1)
-                }
+                onClick={handleIncrement}
               >
                 <Plus className="h-3 w-3" />
               </Button>
@@ -92,4 +101,4 @@ export function CartItem({ item }: CartItemProps) {
       <Separator />
     </div>
   );
-}
+});

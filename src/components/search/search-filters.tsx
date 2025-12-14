@@ -1,131 +1,118 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { useLanguage } from "@/contexts/language-context";
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
 
 interface Category {
   id: string;
   name: string;
-  nameEn?: string | null;
-  nameHe?: string | null;
   slug: string;
 }
 
 export function SearchFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t, language } = useLanguage();
 
   const [categories, setCategories] = useState<Category[]>([]);
-  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
-  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
+  const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
+  const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
   const [selectedCategory, setSelectedCategory] = useState(
-    searchParams.get("category") || ""
+    searchParams.get('category') || ''
   );
   const [inStockOnly, setInStockOnly] = useState(
-    searchParams.get("inStock") === "true"
+    searchParams.get('inStock') === 'true'
   );
   const [featuredOnly, setFeaturedOnly] = useState(
-    searchParams.get("featured") === "true"
+    searchParams.get('featured') === 'true'
   );
 
   useEffect(() => {
-    fetch("/api/categories")
+    fetch('/api/categories')
       .then((res) => res.json())
       .then((data) => setCategories(data));
   }, []);
-
-  const getCategoryName = (category: Category) => {
-    if (language === "he") {
-      return category.nameHe || category.nameEn || category.name;
-    }
-    return category.nameEn || category.name;
-  };
 
   const applyFilters = () => {
     const params = new URLSearchParams(searchParams.toString());
 
     // Keep search query
-    const query = searchParams.get("q");
-    if (query) params.set("q", query);
+    const query = searchParams.get('q');
+    if (query) params.set('q', query);
 
     // Apply filters
     if (selectedCategory) {
-      params.set("category", selectedCategory);
+      params.set('category', selectedCategory);
     } else {
-      params.delete("category");
+      params.delete('category');
     }
 
     if (minPrice) {
-      params.set("minPrice", minPrice);
+      params.set('minPrice', minPrice);
     } else {
-      params.delete("minPrice");
+      params.delete('minPrice');
     }
 
     if (maxPrice) {
-      params.set("maxPrice", maxPrice);
+      params.set('maxPrice', maxPrice);
     } else {
-      params.delete("maxPrice");
+      params.delete('maxPrice');
     }
 
     if (inStockOnly) {
-      params.set("inStock", "true");
+      params.set('inStock', 'true');
     } else {
-      params.delete("inStock");
+      params.delete('inStock');
     }
 
     if (featuredOnly) {
-      params.set("featured", "true");
+      params.set('featured', 'true');
     } else {
-      params.delete("featured");
+      params.delete('featured');
     }
 
     router.push(`/search?${params.toString()}`);
   };
 
   const clearFilters = () => {
-    const query = searchParams.get("q");
-    setMinPrice("");
-    setMaxPrice("");
-    setSelectedCategory("");
+    const query = searchParams.get('q');
+    setMinPrice('');
+    setMaxPrice('');
+    setSelectedCategory('');
     setInStockOnly(false);
     setFeaturedOnly(false);
 
     if (query) {
       router.push(`/search?q=${query}`);
     } else {
-      router.push("/search");
+      router.push('/search');
     }
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("search.filters")}</CardTitle>
+        <CardTitle>Filters</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Categories */}
         <div className="space-y-2">
-          <Label className="text-base font-semibold">
-            {t("search.category")}
-          </Label>
+          <Label className="text-base font-semibold">Category</Label>
           <div className="space-y-2">
             <button
-              onClick={() => setSelectedCategory("")}
+              onClick={() => setSelectedCategory('')}
               className={`w-full text-left py-2 px-3 rounded-md transition-colors ${
                 !selectedCategory
-                  ? "bg-accent text-accent-foreground"
-                  : "hover:bg-secondary"
+                  ? 'bg-accent text-accent-foreground'
+                  : 'hover:bg-secondary'
               }`}
             >
-              {t("search.allCategories")}
+              All Categories
             </button>
             {categories.map((category) => (
               <button
@@ -133,11 +120,11 @@ export function SearchFilters() {
                 onClick={() => setSelectedCategory(category.slug)}
                 className={`w-full text-left py-2 px-3 rounded-md transition-colors ${
                   selectedCategory === category.slug
-                    ? "bg-accent text-accent-foreground"
-                    : "hover:bg-secondary"
+                    ? 'bg-accent text-accent-foreground'
+                    : 'hover:bg-secondary'
                 }`}
               >
-                {getCategoryName(category)}
+                {category.name}
               </button>
             ))}
           </div>
@@ -147,13 +134,11 @@ export function SearchFilters() {
 
         {/* Price Range */}
         <div className="space-y-3">
-          <Label className="text-base font-semibold">
-            {t("search.priceRange")}
-          </Label>
+          <Label className="text-base font-semibold">Price Range</Label>
           <div className="space-y-2">
             <div>
               <Label htmlFor="minPrice" className="text-sm">
-                {t("search.minPrice")}
+                Min Price
               </Label>
               <Input
                 id="minPrice"
@@ -166,7 +151,7 @@ export function SearchFilters() {
             </div>
             <div>
               <Label htmlFor="maxPrice" className="text-sm">
-                {t("search.maxPrice")}
+                Max Price
               </Label>
               <Input
                 id="maxPrice"
@@ -184,13 +169,11 @@ export function SearchFilters() {
 
         {/* Additional Filters */}
         <div className="space-y-3">
-          <Label className="text-base font-semibold">
-            {t("search.availability")}
-          </Label>
+          <Label className="text-base font-semibold">Availability</Label>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label htmlFor="inStock" className="text-sm cursor-pointer">
-                {t("search.inStockOnly")}
+                In Stock Only
               </Label>
               <Switch
                 id="inStock"
@@ -200,7 +183,7 @@ export function SearchFilters() {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="featured" className="text-sm cursor-pointer">
-                {t("search.featuredOnly")}
+                Featured Only
               </Label>
               <Switch
                 id="featured"
@@ -216,10 +199,10 @@ export function SearchFilters() {
         {/* Action Buttons */}
         <div className="space-y-2">
           <Button onClick={applyFilters} className="w-full">
-            {t("search.applyFilters")}
+            Apply Filters
           </Button>
           <Button onClick={clearFilters} variant="outline" className="w-full">
-            {t("search.clearFilters")}
+            Clear Filters
           </Button>
         </div>
       </CardContent>

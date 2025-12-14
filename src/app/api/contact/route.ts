@@ -28,16 +28,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log the contact form submission
-    console.log('Contact form submission:', {
-      name,
-      email,
-      phone,
-      subject,
-      message,
-      timestamp: new Date().toISOString(),
-    });
-
     // Send email notification to admin
     const emailResult = await sendContactFormNotification({
       name,

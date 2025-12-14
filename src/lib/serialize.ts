@@ -15,8 +15,6 @@ type ProductWithRelations = Product & {
     id: string;
     name: string;
     slug: string;
-    nameEn?: string | null;
-    nameHe?: string | null;
   };
   variants?: ProductVariant[];
   reviews?: Review[];
@@ -65,40 +63,51 @@ export function serializeProduct(product: SerializableProduct) {
     typeof product.price === 'object' &&
     'toNumber' in product.price
   ) {
-    serialized.price = (product.price as any).toNumber();
+    serialized.price = (product.price as { toNumber: () => number }).toNumber();
   }
   if (
     product.comparePrice &&
     typeof product.comparePrice === 'object' &&
     'toNumber' in product.comparePrice
   ) {
-    serialized.comparePrice = (product.comparePrice as any).toNumber();
+    serialized.comparePrice = (
+      product.comparePrice as { toNumber: () => number }
+    ).toNumber();
   }
   if (
     product.averageRating &&
     typeof product.averageRating === 'object' &&
     'toNumber' in product.averageRating
   ) {
-    serialized.averageRating = (product.averageRating as any).toNumber();
+    serialized.averageRating = (
+      product.averageRating as { toNumber: () => number }
+    ).toNumber();
   }
 
   // Process variants if they exist
   if (product.variants && Array.isArray(product.variants)) {
-    serialized.variants = product.variants.map((variant: any) => ({
-      ...variant,
-      price:
-        variant.price &&
-        typeof variant.price === 'object' &&
-        'toNumber' in variant.price
-          ? variant.price.toNumber()
-          : variant.price,
-      priceAdjustment:
-        variant.priceAdjustment &&
-        typeof variant.priceAdjustment === 'object' &&
-        'toNumber' in variant.priceAdjustment
-          ? variant.priceAdjustment.toNumber()
-          : variant.priceAdjustment,
-    }));
+    serialized.variants = product.variants.map(
+      (variant: {
+        price?: { toNumber?: () => number };
+        priceAdjustment?: { toNumber?: () => number };
+      }) => ({
+        ...variant,
+        price:
+          variant.price &&
+          typeof variant.price === 'object' &&
+          'toNumber' in variant.price &&
+          variant.price.toNumber
+            ? variant.price.toNumber()
+            : variant.price,
+        priceAdjustment:
+          variant.priceAdjustment &&
+          typeof variant.priceAdjustment === 'object' &&
+          'toNumber' in variant.priceAdjustment &&
+          variant.priceAdjustment.toNumber
+            ? variant.priceAdjustment.toNumber()
+            : variant.priceAdjustment,
+      })
+    );
   }
 
   return serialized;
@@ -107,9 +116,9 @@ export function serializeProduct(product: SerializableProduct) {
 /**
  * Serialize multiple products with batch processing optimization
  */
-export function serializeProducts(products: ProductWithRelations[]) {
+export function serializeProducts(products: ProductWithRelations[]): SerializableProduct[] {
   if (!products || !Array.isArray(products)) return [];
-  return products.map(serializeProduct);
+  return products.map(serializeProduct) as SerializableProduct[];
 }
 
 /**

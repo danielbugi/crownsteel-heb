@@ -1,10 +1,9 @@
 // src/components/shop/related-products.tsx
-// IMPROVED VERSION - Added loading state, better layout, and translation support
+// IMPROVED VERSION - Added loading state, better layout
 
 'use client';
 
 import { ProductCard } from './product-card';
-import { useLanguage } from '@/contexts/language-context';
 import { Sparkles } from 'lucide-react';
 
 interface Product {
@@ -32,8 +31,6 @@ interface RelatedProductsProps {
 }
 
 export function RelatedProducts({ products }: RelatedProductsProps) {
-  const { t } = useLanguage();
-
   if (products.length === 0) {
     return null;
   }
@@ -44,7 +41,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl md:text-2xl font-light flex items-center gap-2">
-            {t('product.relatedProducts') || 'You May Also Like'}
+            You May Also Like
           </h2>
         </div>
       </div>
@@ -61,7 +58,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
         <div className="mt-8 text-center">
           <a
             href={`/shop?category=${products[0]?.category.slug}`}
-            className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
+            className="inline-flex items-center gap-2 text-primary hover:underline hover:text-white font-medium"
           >
             View All {products[0]?.category.name} Products
             <svg

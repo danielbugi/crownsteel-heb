@@ -111,7 +111,9 @@ export async function GET(request: NextRequest) {
       query,
     });
   } catch (error) {
-    console.error('Search error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Search error:', error);
+    }
 
     // ← ADDED: Track performance (error)
     const duration = Date.now() - startTime;

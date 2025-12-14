@@ -126,7 +126,7 @@ export default function PrivacyPage() {
                   <li>Process and fulfill orders</li>
                   <li>Communicate with you about orders and products</li>
                   <li>Improve our service and experience</li>
-                  <li>Send marketing updates (only if you've opted in)</li>
+                  <li>Send marketing updates (only if you&apos;ve opted in)</li>
                   <li>Prevent fraud and ensure security</li>
                 </ul>
               </div>

@@ -116,7 +116,13 @@ export function AdminReviewsManagement() {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: any; className: string }> = {
+    const variants: Record<
+      string,
+      {
+        variant: 'default' | 'destructive' | 'outline' | 'secondary';
+        className: string;
+      }
+    > = {
       PENDING: {
         variant: 'outline',
         className: 'bg-yellow-50 text-yellow-700 border-yellow-200',
@@ -169,7 +175,11 @@ export function AdminReviewsManagement() {
                   key={status}
                   variant={filter === status ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setFilter(status as any)}
+                  onClick={() =>
+                    setFilter(
+                      status as 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'
+                    )
+                  }
                 >
                   {status}
                 </Button>
