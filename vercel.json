@@ -2,8 +2,5 @@
   "buildCommand": "prisma generate && next build",
   "installCommand": "npm ci --legacy-peer-deps",
   "framework": "nextjs",
-  "regions": ["iad1"],
-  "env": {
-    "TURBOPACK": "false"
-  }
+  "regions": ["iad1"]
 }
