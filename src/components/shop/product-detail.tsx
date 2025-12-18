@@ -84,12 +84,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
         : product.inventory;
 
     if (!product.inStock || availableInventory === 0) {
-      toast.error('פריט זה אינו זמין כרגע');
+      toast.error('This item is currently unavailable');
       return;
     }
 
     if (quantity > availableInventory) {
-      toast.error(`רק ${availableInventory} זמינים`);
+      toast.error(`Only ${availableInventory} available`);
       return;
     }
 
@@ -128,12 +128,13 @@ export function ProductDetail({ product }: ProductDetailProps) {
         : product.inventory;
 
     if (!product.inStock || availableInventory === 0) {
-      toast.error('פריט זה אינו זמין כרגע');
+      // translate it to english
+      toast.error('This item is currently unavailable');
       return;
     }
 
     if (quantity > availableInventory) {
-      toast.error(`רק ${availableInventory} זמינים`);
+      toast.error(`Only ${availableInventory} available`);
       return;
     }
 
@@ -191,7 +192,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
       {/* Back Button */}
       <Link
         href="/shop"
-        className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8"
+        className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-8 font-medium"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
         Back to Shop
@@ -201,7 +202,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
         {/* Product Images Gallery */}
         <div className="space-y-4">
           {/* Main Image */}
-          <div className="relative aspect-square overflow-hidden bg-secondary">
+          <div className="relative aspect-square overflow-hidden bg-gray-50 border border-gray-200  shadow-lg">
             <Image
               src={selectedImage}
               alt={product.name}
@@ -211,7 +212,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
               sizes="(max-width: 768px) 100vw, 50vw"
             />
             {discount > 0 && (
-              <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground text-lg px-3 py-1">
+              <Badge className="absolute top-4 left-4 bg-red-500 text-white text-lg px-3 py-1 shadow-md">
                 Save {discount}%
               </Badge>
             )}
@@ -225,10 +226,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   key={index}
                   onClick={() => setSelectedImage(image)}
                   className={cn(
-                    'relative aspect-square overflow-hidden border-2 transition-all',
+                    'relative aspect-square overflow-hidden border-2 transition-all rounded-md shadow-sm',
                     selectedImage === image
-                      ? 'border-accent ring-2 ring-accent'
-                      : 'border-border hover:border-accent/50'
+                      ? 'border-gray-800 ring-2 ring-gray-800'
+                      : 'border-gray-200 hover:border-gray-400'
                   )}
                 >
                   <Image
@@ -255,10 +256,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
             </Link>
           </div> */}
 
-          <h1 className="text-xl font-light mb-4">{product.name}</h1>
+          <h1 className="text-2xl md:text-2xl font-semibold font-figtree mb-4 text-gray-900">
+            {product.name}
+          </h1>
 
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-2xl font-light">
+            <span className="text-xl font-bold text-gray-900">
               {formatPrice(
                 selectedVariant
                   ? selectedVariant.price ||
@@ -267,14 +270,14 @@ export function ProductDetail({ product }: ProductDetailProps) {
               )}
             </span>
             {product.comparePrice && (
-              <span className="text-xl text-muted-foreground line-through">
+              <span className="text-xl text-gray-400 line-through">
                 {formatPrice(product.comparePrice)}
               </span>
             )}
           </div>
 
           {product.description && (
-            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-base text-gray-600 mb-6 leading-relaxed">
               {product.description}
             </p>
           )}
@@ -285,10 +288,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
           {product.hasVariants &&
             product.variants &&
             product.variants.length > 0 && (
-              <div className="mb-6 p-4">
+              <div className="mb-6 p-4 bg-amber-50 border border-amber-200 ">
                 <div className="flex items-center gap-2 mb-3">
-                  <AlertCircle className="h-5 w-5 text-orange-500" />
-                  <span className="font-medium text-sm text-muted-foreground">
+                  <AlertCircle className="h-5 w-5 text-amber-600" />
+                  <span className="font-medium text-sm text-gray-700">
                     {product.variantLabel || 'Variant'} selection required
                   </span>
                 </div>
@@ -304,17 +307,22 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
           {/* Quantity Selector */}
           <div className="mb-6">
-            <label className="block text-sm font-medium mb-2">Quantity</label>
+            <label className="block text-sm font-medium mb-2 text-gray-700">
+              Quantity
+            </label>
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
                 size="icon"
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 disabled={quantity <= 1}
+                className="border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-900"
               >
                 -
               </Button>
-              <span className="w-16 text-center font-medium">{quantity}</span>
+              <span className="w-16 text-center font-medium text-gray-900">
+                {quantity}
+              </span>
               <Button
                 variant="outline"
                 size="icon"
@@ -331,6 +339,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                     ? selectedVariant.inventory
                     : product.inventory)
                 }
+                className="border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-900"
               >
                 +
               </Button>
@@ -367,7 +376,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           {/* Add to Cart Button - BLOCKED if variants required but not selected */}
           <Button
             size="lg"
-            className="w-full mb-3 font-light"
+            className="w-full mb-3 bg-gray-900 hover:bg-gray-800 text-white font-medium shadow-md"
             onClick={handleAddToCart}
             disabled={isAddToCartDisabled()}
           >
@@ -385,7 +394,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           <Button
             size="lg"
             variant="outline"
-            className="w-full mb-6 border-2 border-black hover:bg-black hover:text-white font-light"
+            className="w-full mb-6 border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white font-medium shadow-sm"
             onClick={handleBuyNow}
             disabled={isAddToCartDisabled()}
           >
@@ -403,30 +412,30 @@ export function ProductDetail({ product }: ProductDetailProps) {
             {/* Product Details */}
             <AccordionItem
               value="details"
-              className="border-0 bg-gray-600 overflow-hidden "
+              className="border border-gray-200  overflow-hidden shadow-sm"
             >
-              <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40 ">
-                <span className="font-light text-left">Product Details</span>
+              <AccordionTrigger className="hover:no-underline px-4 py-3 hover:bg-gray-50 bg-gray-100 text-gray-900">
+                <span className="font-medium text-left">Product Details</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
-                <div className="bg-background p-4 space-y-4">
+                <div className="bg-white p-4 space-y-4">
                   <div className="space-y-2 text-sm">
                     <p className="flex justify-between">
-                      <span className="text-muted-foreground">Category:</span>
-                      <span className="font-medium">
+                      <span className="text-gray-600">Category:</span>
+                      <span className="font-medium text-gray-900">
                         {product.category.name}
                       </span>
                     </p>
                     {product.sku && (
                       <p className="flex justify-between">
-                        <span className="text-muted-foreground">SKU:</span>
-                        <span className="font-mono text-xs">{product.sku}</span>
+                        <span className="text-gray-600">SKU:</span>
+                        <span className="font-mono text-xs text-gray-900">
+                          {product.sku}
+                        </span>
                       </p>
                     )}
                     <p className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        Availability:
-                      </span>
+                      <span className="text-gray-600">Availability:</span>
                       <span
                         className={
                           product.inStock
@@ -442,23 +451,25 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   </div>
 
                   <div>
-                    <h4 className="font-light mb-2 text-sm">Features</h4>
-                    <ul className="space-y-1.5 text-sm text-muted-foreground">
+                    <h4 className="font-medium mb-2 text-sm text-gray-900">
+                      Features
+                    </h4>
+                    <ul className="space-y-1.5 text-sm text-gray-600">
                       <li className="flex items-start gap-2">
-                        <span className="text-primary mt-0.5">✓</span>
+                        <span className="text-green-600 mt-0.5">✓</span>
                         Premium handcrafted quality
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-primary mt-0.5">✓</span>
+                        <span className="text-green-600 mt-0.5">✓</span>
                         Durable materials
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-primary mt-0.5">✓</span>
+                        <span className="text-green-600 mt-0.5">✓</span>
                         Stylish modern design
                       </li>
                       {product.freeShipping && (
                         <li className="flex items-start gap-2">
-                          <span className="text-primary mt-0.5">✓</span>
+                          <span className="text-green-600 mt-0.5">✓</span>
                           Free shipping included
                         </li>
                       )}
@@ -466,20 +477,20 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   </div>
 
                   <div>
-                    <h4 className="font-light mb-2 text-sm">
+                    <h4 className="font-medium mb-2 text-sm text-gray-900">
                       Care Instructions
                     </h4>
-                    <ul className="space-y-1.5 text-sm text-muted-foreground">
+                    <ul className="space-y-1.5 text-sm text-gray-600">
                       <li className="flex items-start gap-2">
-                        <span className="text-primary mt-0.5">•</span>
+                        <span className="text-gray-400 mt-0.5">•</span>
                         Clean with soft cloth
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-primary mt-0.5">•</span>
+                        <span className="text-gray-400 mt-0.5">•</span>
                         Avoid harsh chemicals
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-primary mt-0.5">•</span>
+                        <span className="text-gray-400 mt-0.5">•</span>
                         Store in dry place
                       </li>
                     </ul>
@@ -491,16 +502,18 @@ export function ProductDetail({ product }: ProductDetailProps) {
             {/* Shipping Policy */}
             <AccordionItem
               value="shipping"
-              className="border-0 bg-gray-600 overflow-hidden"
+              className="border border-gray-200  overflow-hidden shadow-sm"
             >
-              <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40">
-                <span className="font-light text-left">Shipping Policy</span>
+              <AccordionTrigger className="hover:no-underline px-4 py-3 hover:bg-gray-50 bg-gray-100 text-gray-900">
+                <span className="font-medium text-left">Shipping Policy</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
-                <div className="bg-background p-4 space-y-3 text-sm">
+                <div className="bg-white p-4 space-y-3 text-sm">
                   <div>
-                    <h4 className="font-light mb-1.5">Domestic Shipping</h4>
-                    <ul className="space-y-1 text-muted-foreground">
+                    <h4 className="font-medium mb-1.5 text-gray-900">
+                      Domestic Shipping
+                    </h4>
+                    <ul className="space-y-1 text-gray-600">
                       <li className="flex items-start gap-2">
                         <span>•</span>
                         <span>Standard: 3-5 business days (₪20)</span>
@@ -519,8 +532,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
                     </ul>
                   </div>
 
-                  <div className="bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md p-3">
-                    <p className="text-xs">
+                  <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                    <p className="text-xs text-gray-700">
                       <strong>Note:</strong> Orders processed within 1-2
                       business days. Tracking number provided with shipment.
                     </p>
@@ -532,34 +545,34 @@ export function ProductDetail({ product }: ProductDetailProps) {
             {/* Payment Options */}
             <AccordionItem
               value="payment"
-              className="border-0 bg-gray-600 overflow-hidden"
+              className="border border-gray-200  overflow-hidden shadow-sm"
             >
-              <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40">
-                <span className="font-light text-left">Payment Options</span>
+              <AccordionTrigger className="hover:no-underline px-4 py-3 hover:bg-gray-50 bg-gray-100 text-gray-900">
+                <span className="font-medium text-left">Payment Options</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
-                <div className="bg-background p-4 space-y-3 text-sm">
-                  <p className="text-muted-foreground">
+                <div className="bg-white p-4 space-y-3 text-sm">
+                  <p className="text-gray-600">
                     We accept the following payment methods:
                   </p>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="border rounded-md p-3">
-                      <h4 className="font-light mb-1.5 text-xs">
+                    <div className="border border-gray-200 rounded-md p-3 bg-gray-50">
+                      <h4 className="font-medium mb-1.5 text-xs text-gray-900">
                         Credit Cards
                       </h4>
-                      <ul className="space-y-0.5 text-xs text-muted-foreground">
+                      <ul className="space-y-0.5 text-xs text-gray-600">
                         <li>• Visa</li>
                         <li>• Mastercard</li>
                         <li>• American Express</li>
                       </ul>
                     </div>
 
-                    <div className="border rounded-md p-3">
-                      <h4 className="font-light mb-1.5 text-xs">
+                    <div className="border border-gray-200 rounded-md p-3 bg-gray-50">
+                      <h4 className="font-medium mb-1.5 text-xs text-gray-900">
                         Digital Wallets
                       </h4>
-                      <ul className="space-y-0.5 text-xs text-muted-foreground">
+                      <ul className="space-y-0.5 text-xs text-gray-600">
                         <li>• PayPal</li>
                         <li>• Apple Pay</li>
                         <li>• Google Pay</li>
@@ -567,10 +580,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
                     </div>
                   </div>
 
-                  <div className="bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md p-3">
+                  <div className="bg-green-50 border border-green-200 rounded-md p-3">
                     <div className="flex items-start gap-2">
-                      <Shield className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
-                      <p className="text-xs">
+                      <Shield className="h-4 w-4 text-green-600 mt-0.5" />
+                      <p className="text-xs text-gray-700">
                         <strong>Secure Payment:</strong> All transactions
                         encrypted with SSL technology.
                       </p>
@@ -583,34 +596,36 @@ export function ProductDetail({ product }: ProductDetailProps) {
             {/* Guarantee */}
             <AccordionItem
               value="guarantee"
-              className="border-0 bg-gray-600 overflow-hidden"
+              className="border border-gray-200  overflow-hidden shadow-sm"
             >
-              <AccordionTrigger className="hover:text-gold-600 hover:no-underline px-4 py-3 hover:bg-muted/40">
-                <span className="font-light text-left">Quality Guarantee</span>
+              <AccordionTrigger className="hover:no-underline px-4 py-3 hover:bg-gray-50 bg-gray-100 text-gray-900">
+                <span className="font-medium text-left">Quality Guarantee</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
-                <div className="bg-background p-4 space-y-3 text-sm">
+                <div className="bg-white p-4 space-y-3 text-sm">
                   <div>
-                    <h4 className="font-light mb-1.5">
+                    <h4 className="font-medium mb-1.5 text-gray-900">
                       30-Day Money Back Guarantee
                     </h4>
-                    <p className="text-muted-foreground text-xs">
+                    <p className="text-gray-600 text-xs">
                       Not satisfied? Return within 30 days for a full refund -
                       no questions asked.
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="font-light mb-1.5">Lifetime Warranty</h4>
-                    <p className="text-muted-foreground text-xs">
+                    <h4 className="font-medium mb-1.5 text-gray-900">
+                      Lifetime Warranty
+                    </h4>
+                    <p className="text-gray-600 text-xs">
                       We cover manufacturing defects for life. If the product
                       breaks due to faulty craftsmanship, we&apos;ll repair or
                       replace it for free.
                     </p>
                   </div>
 
-                  <div className="bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md p-3">
-                    <p className="text-xs">
+                  <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+                    <p className="text-xs text-gray-700">
                       <strong>How to Claim:</strong> Contact us with order
                       number and photos. We&apos;ll provide a prepaid shipping
                       label.
@@ -624,13 +639,13 @@ export function ProductDetail({ product }: ProductDetailProps) {
           {/* Product Features */}
           <div className="space-y-4">
             {product.freeShipping && (
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <Truck className="h-5 w-5 text-accent" />
+              <div className="flex items-center gap-3 text-sm text-gray-600">
+                <Truck className="h-5 w-5 text-green-600" />
                 <span>Free shipping on this item</span>
               </div>
             )}
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <Shield className="h-5 w-5 text-accent" />
+            <div className="flex items-center gap-3 text-sm text-gray-600">
+              <Shield className="h-5 w-5 text-green-600" />
               <span>Secure Payment</span>
             </div>
           </div>

@@ -112,11 +112,11 @@ export const ReviewsList = React.memo<ReviewsListProps>(function ReviewsList({
   if (reviews.length === 0) {
     return (
       <div className="text-center py-12">
-        <Star className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-        <h3 className="text-lg font-semibold mb-2">No Reviews Yet</h3>
-        <p className="text-muted-foreground">
-          Be the first to review this product!
-        </p>
+        <Star className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+        <h3 className="text-lg font-semibold mb-2 text-gray-900">
+          No Reviews Yet
+        </h3>
+        <p className="text-gray-600">Be the first to review this product!</p>
       </div>
     );
   }
@@ -124,7 +124,7 @@ export const ReviewsList = React.memo<ReviewsListProps>(function ReviewsList({
   return (
     <div className="space-y-6">
       {reviews.map((review) => (
-        <Card key={review.id} className="border-border">
+        <Card key={review.id} className="bg-white border-gray-200 shadow-sm">
           <CardContent className="p-6">
             {/* User Info */}
             <div className="flex items-start justify-between mb-4">
@@ -137,7 +137,9 @@ export const ReviewsList = React.memo<ReviewsListProps>(function ReviewsList({
                 </Avatar>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold">{review.user.name}</p>
+                    <p className="font-semibold text-gray-900">
+                      {review.user.name}
+                    </p>
                     {review.verified && (
                       <Badge
                         variant="outline"
@@ -148,7 +150,7 @@ export const ReviewsList = React.memo<ReviewsListProps>(function ReviewsList({
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-gray-600">
                     {formatDistanceToNow(new Date(review.createdAt), {
                       addSuffix: true,
                     })}
@@ -173,10 +175,12 @@ export const ReviewsList = React.memo<ReviewsListProps>(function ReviewsList({
 
             {/* Review Content */}
             {review.title && (
-              <h4 className="font-semibold mb-2">{review.title}</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">
+                {review.title}
+              </h4>
             )}
             {review.comment && (
-              <p className="text-muted-foreground mb-4">{review.comment}</p>
+              <p className="text-gray-700 mb-4">{review.comment}</p>
             )}
 
             {/* Helpful Button */}
@@ -185,7 +189,7 @@ export const ReviewsList = React.memo<ReviewsListProps>(function ReviewsList({
                 variant="ghost"
                 size="sm"
                 onClick={() => handleHelpful(review.id)}
-                className="text-muted-foreground hover:text-primary"
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               >
                 <ThumbsUp className="w-4 h-4 mr-2" />
                 Helpful ({review.helpful})
@@ -202,16 +206,18 @@ export const ReviewsList = React.memo<ReviewsListProps>(function ReviewsList({
             variant="outline"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
+            className="border-gray-300 text-gray-900 hover:bg-gray-100"
           >
             Previous
           </Button>
-          <span className="flex items-center px-4">
+          <span className="flex items-center px-4 text-gray-900">
             Page {page} of {totalPages}
           </span>
           <Button
             variant="outline"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
+            className="border-gray-300 text-gray-900 hover:bg-gray-100"
           >
             Next
           </Button>

@@ -15,7 +15,7 @@ function Logo() {
                 {settings?.siteName || 'FORGE & STEEL'}
               </h1> */}
       <Image
-        src={'/images/logo/crownsteel-white.png'}
+        src={'/images/logo/crownsteel-black.png'}
         alt={'CrownSteel'}
         width={150}
         height={150}

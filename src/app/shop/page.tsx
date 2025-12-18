@@ -224,7 +224,9 @@ function ShopPageContent() {
                   onClick={() => setViewMode('list')}
                   title="תצוגת רשימה"
                 >
-                  <LayoutList className="h-4 w-4 text-gray-700" />
+                  <LayoutList
+                    className={`h-4 w-4 ${viewMode === 'list' ? 'text-white' : 'text-gray-700'}`}
+                  />
                 </Button>
                 <Button
                   variant={viewMode === 'grid-2' ? 'secondary' : 'ghost'}
@@ -233,7 +235,9 @@ function ShopPageContent() {
                   onClick={() => setViewMode('grid-2')}
                   title="2 עמודות"
                 >
-                  <Columns2 className="h-4 w-4 text-gray-700" />
+                  <Columns2
+                    className={`h-4 w-4 ${viewMode === 'grid-2' ? 'text-white' : 'text-gray-700'}`}
+                  />
                 </Button>
                 <Button
                   variant={viewMode === 'grid-3' ? 'secondary' : 'ghost'}
@@ -242,7 +246,9 @@ function ShopPageContent() {
                   onClick={() => setViewMode('grid-3')}
                   title="3 עמודות"
                 >
-                  <Columns3 className="h-4 w-4 text-gray-700" />
+                  <Columns3
+                    className={`h-4 w-4 ${viewMode === 'grid-3' ? 'text-white' : 'text-gray-700'}`}
+                  />
                 </Button>
                 <Button
                   variant={viewMode === 'grid-4' ? 'secondary' : 'ghost'}
@@ -251,7 +257,9 @@ function ShopPageContent() {
                   onClick={() => setViewMode('grid-4')}
                   title="4 עמודות"
                 >
-                  <LayoutGrid className="h-4 w-4 text-gray-700" />
+                  <LayoutGrid
+                    className={`h-4 w-4 ${viewMode === 'grid-4' ? 'text-white' : 'text-gray-700'}`}
+                  />
                 </Button>
               </div>
 

@@ -1,31 +1,25 @@
 {
-  "timestamp": "2025-12-14T17:40:58.082Z",
+  "timestamp": "2025-12-14T20:28:05.654Z",
   "javascript": {
-    "total": "1287.05 KB",
-    "totalKB": "1287.05",
+    "total": "1309.22 KB",
+    "totalKB": "1309.22",
     "files": [
       {
-        "file": "framework-32492dd9c4fc5870.js",
-        "size": 178.455078125,
-        "formatted": "178.46 KB",
+        "file": "1517-0942f8778538c0ca.js",
+        "size": 196.35546875,
+        "formatted": "196.36 KB",
         "warning": true
       },
       {
-        "file": "4bd1b696-100b9d70ed4e49c1.js",
-        "size": 168.9697265625,
-        "formatted": "168.97 KB",
+        "file": "framework-71e0db4da603e486.js",
+        "size": 178.494140625,
+        "formatted": "178.49 KB",
         "warning": true
       },
       {
-        "file": "1255-ad92d48e3e7ce61a.js",
-        "size": 168.2939453125,
-        "formatted": "168.29 KB",
-        "warning": true
-      },
-      {
-        "file": "main-b3a6a6415d274f2f.js",
-        "size": 119.12109375,
-        "formatted": "119.12 KB",
+        "file": "4bd1b696-91bcb71b24febfc3.js",
+        "size": 163.1787109375,
+        "formatted": "163.18 KB",
         "warning": true
       },
       {
@@ -35,46 +29,52 @@
         "warning": true
       },
       {
-        "file": "7357-c095d1fe0b2f7cf1.js",
-        "size": 88.5234375,
-        "formatted": "88.52 KB",
+        "file": "main-bff5d2e2ebb0bc08.js",
+        "size": 108.4638671875,
+        "formatted": "108.46 KB",
+        "warning": true
+      },
+      {
+        "file": "5033-c3615425da87b36b.js",
+        "size": 89.0244140625,
+        "formatted": "89.02 KB",
         "warning": false
       },
       {
-        "file": "5118-9fb5408668515a93.js",
-        "size": 30.3544921875,
-        "formatted": "30.35 KB",
+        "file": "5905-e2a9e46ce6fd4ea1.js",
+        "size": 34.826171875,
+        "formatted": "34.83 KB",
         "warning": false
       },
       {
-        "file": "6093-da8af415b686f250.js",
-        "size": 26.431640625,
-        "formatted": "26.43 KB",
+        "file": "9974-ce7f962eca7b8d09.js",
+        "size": 30.634765625,
+        "formatted": "30.63 KB",
         "warning": false
       },
       {
-        "file": "5327-563758691ff73213.js",
-        "size": 26.1201171875,
-        "formatted": "26.12 KB",
+        "file": "9895-e0355d09048e721a.js",
+        "size": 26.587890625,
+        "formatted": "26.59 KB",
         "warning": false
       },
       {
-        "file": "3033-33deda496d12d09b.js",
-        "size": 24.615234375,
-        "formatted": "24.62 KB",
+        "file": "5327-17c61f6ccdee42ee.js",
+        "size": 26.1494140625,
+        "formatted": "26.15 KB",
         "warning": false
       }
     ],
     "warning": true
   },
   "css": {
-    "total": "97.34 KB",
-    "totalKB": "97.34",
+    "total": "97.27 KB",
+    "totalKB": "97.27",
     "files": [
       {
-        "file": "502fdd44528844e8.css",
-        "size": 80.8603515625,
-        "formatted": "80.86 KB"
+        "file": "dd91eef3ed65b190.css",
+        "size": 80.7880859375,
+        "formatted": "80.79 KB"
       },
       {
         "file": "756c41fcfd0e873c.css",
@@ -85,8 +85,8 @@
     "warning": true
   },
   "summary": {
-    "totalSize": "1384.39 KB",
-    "jsFiles": 43,
+    "totalSize": "1406.49 KB",
+    "jsFiles": 42,
     "cssFiles": 2
   }
 }

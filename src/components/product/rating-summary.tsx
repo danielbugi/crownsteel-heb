@@ -50,12 +50,12 @@ export function RatingSummary({
   };
 
   return (
-    <Card className="border-border">
+    <Card className="border-gray-200 bg-white shadow-sm">
       <CardContent className="p-6">
         <div className="grid md:grid-cols-2 gap-8">
           {/* Overall Rating */}
           <div className="flex flex-col items-center justify-center text-center">
-            <div className="text-5xl font-bold mb-2">
+            <div className="text-5xl font-bold mb-2 text-gray-900">
               {averageRating.toFixed(1)}
             </div>
             <div className="flex gap-1 mb-2">
@@ -70,7 +70,7 @@ export function RatingSummary({
                 />
               ))}
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-gray-600">
               Based on {reviewCount} {reviewCount === 1 ? 'review' : 'reviews'}
             </p>
           </div>
@@ -80,14 +80,16 @@ export function RatingSummary({
             {[5, 4, 3, 2, 1].map((rating) => (
               <div key={rating} className="flex items-center gap-3">
                 <div className="flex items-center gap-1 w-12">
-                  <span className="text-sm font-medium">{rating}</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {rating}
+                  </span>
                   <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                 </div>
                 <Progress
                   value={getPercentage(distribution[rating] || 0)}
                   className="flex-1 h-2"
                 />
-                <span className="text-sm text-muted-foreground w-8 text-right">
+                <span className="text-sm text-gray-600 w-8 text-right">
                   {distribution[rating] || 0}
                 </span>
               </div>

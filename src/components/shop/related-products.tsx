@@ -40,7 +40,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl md:text-2xl font-light flex items-center gap-2">
+          <h2 className="text-2xl md:text-2xl font-semibold flex items-center gap-2 text-gray-900">
             You May Also Like
           </h2>
         </div>
@@ -58,7 +58,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
         <div className="mt-8 text-center">
           <a
             href={`/shop?category=${products[0]?.category.slug}`}
-            className="inline-flex items-center gap-2 text-primary hover:underline hover:text-white font-medium"
+            className="inline-flex items-center gap-2 text-gray-900 hover:text-gray-600 hover:underline font-medium"
           >
             View All {products[0]?.category.name} Products
             <svg

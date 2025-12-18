@@ -82,7 +82,7 @@ export function Navbar() {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <header className="sticky top-0 z-40 w-full bg-black text-white-pure border-b border-black-rich shadow-cinematic">
+      <header className="sticky top-0 z-40 w-full bg-white text-gray-900 border-b border-gray-200 shadow-sm">
         {/* Responsive Navbar Container */}
         <div className="container px-4 md:px-6">
           {/* Mobile Layout: Logo on top, icons below */}
@@ -98,7 +98,7 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-gold-elegant hover:bg-black-rich hover:text-gold-elegant"
+                className="text-gray-900 hover:bg-gray-100"
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open menu"
               >
@@ -117,7 +117,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gold-elegant hover:bg-black-rich hover:text-gold-elegant"
+                  className="text-gray-900 hover:bg-gray-100"
                   onClick={() => setShowSearch(!showSearch)}
                   aria-label="Search"
                 >
@@ -129,14 +129,14 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gold-elegant hover:bg-black-rich hover:text-gold-elegant"
+                    className="text-gray-900 hover:bg-gray-100"
                     onClick={toggleWishlist}
                     aria-label={`Wishlist${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
                   >
                     <Heart className="size-4" />
                   </Button>
                   {wishlistMounted && wishlistCount > 0 && (
-                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-elegant text-black-pure text-[10px] flex items-center justify-center font-bold shadow-cinematic border border-gold-elegant">
+                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-sm">
                       {wishlistCount > 99 ? '99+' : wishlistCount}
                     </span>
                   )}
@@ -147,14 +147,14 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gold-elegant hover:bg-black-rich hover:text-gold-elegant"
+                    className="text-gray-900 hover:bg-gray-100"
                     onClick={toggleCart}
                     aria-label={`Cart${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
                   >
                     <ShoppingCart className="size-4" />
                   </Button>
                   {mounted && totalItems > 0 && (
-                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-elegant text-black-pure text-[10px] flex items-center justify-center font-bold shadow-cinematic border border-gold-elegant">
+                    <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gray-900 text-white text-[10px] flex items-center justify-center font-bold shadow-sm">
                       {totalItems > 99 ? '99+' : totalItems}
                     </span>
                   )}
@@ -165,16 +165,16 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gold-elegant hover:bg-black-rich hover:text-gold-elegant"
+                    className="text-gray-900 hover:bg-gray-100"
                     onClick={() => setIsUserMenuOpen(true)}
                     aria-label="User menu"
                   >
-                    <Avatar className="h-6 w-6 border-2 border-gold-elegant">
+                    <Avatar className="h-6 w-6 border-2 border-gray-300">
                       <AvatarImage
                         src={session.user?.image || undefined}
                         alt={session.user?.name || 'User'}
                       />
-                      <AvatarFallback className="bg-gold-elegant text-black-pure text-xs font-semibold">
+                      <AvatarFallback className="bg-gray-900 text-white text-xs font-semibold">
                         {session.user?.name?.charAt(0) || 'U'}
                       </AvatarFallback>
                     </Avatar>
@@ -183,7 +183,7 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gold-elegant hover:bg-black-rich hover:text-gold-elegant"
+                    className="text-gray-900 hover:bg-gray-100"
                     onClick={() => setIsAuthModalOpen(true)}
                     aria-label="Sign in"
                   >
@@ -208,7 +208,7 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-foreground hover:bg-gold-400 hover:text-black"
+                className="text-gray-900 hover:bg-gray-100"
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open menu"
               >
@@ -227,7 +227,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-foreground hover:bg-gold-400 hover:text-black"
+                  className="text-gray-900 hover:bg-gray-100"
                   onClick={() => setShowSearch(!showSearch)}
                   aria-label="Search"
                 >
@@ -247,14 +247,14 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-foreground hover:bg-gold-400 hover:text-black"
+                  className="text-gray-900 hover:bg-gray-100"
                   onClick={toggleWishlist}
                   aria-label={`Wishlist${wishlistMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
                 >
                   <Heart className="size-5" />
                 </Button>
                 {wishlistMounted && wishlistCount > 0 && (
-                  <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-lg border border-border">
+                  <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shadow-sm">
                     {wishlistCount > 99 ? '99+' : wishlistCount}
                   </span>
                 )}
@@ -264,14 +264,14 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-foreground hover:bg-gold-400 hover:text-black"
+                  className="text-gray-900 hover:bg-gray-100"
                   onClick={toggleCart}
                   aria-label={`Cart${mounted && totalItems > 0 ? ` (${totalItems} items)` : ''}`}
                 >
                   <ShoppingCart className="size-5" />
                 </Button>
                 {mounted && totalItems > 0 && (
-                  <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gold-500 text-black text-[10px] flex items-center justify-center font-bold shadow-lg border border-border">
+                  <span className="absolute top-0 right-0.5 h-4 w-4 min-w-4 rounded-full bg-gray-900 text-white text-[10px] flex items-center justify-center font-bold shadow-sm">
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
@@ -281,16 +281,16 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-foreground hover:bg-gold-400 hover:text-black"
+                  className="text-gray-900 hover:bg-gray-100"
                   onClick={() => setIsUserMenuOpen(true)}
                   aria-label="User menu"
                 >
-                  <Avatar className="h-7 w-7 md:h-7 md:w-7 ">
+                  <Avatar className="h-7 w-7 md:h-7 md:w-7 border-2 border-gray-300">
                     <AvatarImage
                       src={session.user?.image || undefined}
                       alt={session.user?.name || 'User'}
                     />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                    <AvatarFallback className="bg-gray-900 text-white text-xs">
                       {session.user?.name?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -299,7 +299,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-foreground hover:bg-gold-400 hover:text-black"
+                  className="text-gray-900 hover:bg-gray-100"
                   onClick={() => setIsAuthModalOpen(true)}
                   aria-label="Sign in"
                 >

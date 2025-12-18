@@ -208,28 +208,31 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <section className="container mx-auto px-4 md:px-6 py-12">
+          <section className="container mx-auto px-4 md:px-6 py-12 bg-white">
             <RelatedProducts products={relatedProducts} />
           </section>
         )}
 
         {/* Reviews Section */}
-        <section className="container mx-auto px-4 md:px-6 py-12 bg-muted/30">
+        <section className="container mx-auto px-4 md:px-6 py-12 bg-gray-50 border-y border-gray-200">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl md:text-2xl font-light mb-8 flex items-center gap-2">
+            <h2 className="text-2xl md:text-2xl font-semibold mb-8 flex items-center gap-2 text-gray-900">
               Customer Reviews
             </h2>
 
             <Tabs defaultValue="reviews" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8 bg-white border border-gray-200">
                 <TabsTrigger
                   value="reviews"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 data-[state=active]:bg-gray-900 data-[state=active]:text-white text-gray-700"
                 >
                   <Star className="h-4 w-4" />
                   Reviews ({product.reviewCount || 0})
                 </TabsTrigger>
-                <TabsTrigger value="write" className="flex items-center gap-2">
+                <TabsTrigger
+                  value="write"
+                  className="flex items-center gap-2 data-[state=active]:bg-gray-900 data-[state=active]:text-white text-gray-700"
+                >
                   <MessageSquare className="h-4 w-4" />
                   Write a Review
                 </TabsTrigger>

@@ -173,7 +173,7 @@ export const ProductCard = React.memo<ProductCardProps>(function ProductCard({
     <>
       <Link href={`/shop/${product.slug}`}>
         <Card
-          className="group border border-gray-200 bg-white hover:border-gray-300 transition-all duration-500 overflow-hidden shadow-sm hover:shadow-md"
+          className="group  bg-white hover:border-gray-300 transition-all duration-500 overflow-hidden shadow-sm hover:shadow-md"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -251,7 +251,7 @@ export const ProductCard = React.memo<ProductCardProps>(function ProductCard({
           <CardContent className="py-4 px-3">
             {/* Header with Product Name only - Minimal & Centered */}
             <div className=" text-center">
-              <h3 className="text-xs md:text-sm font-light tracking-widest uppercase line-clamp-2 leading-relaxed text-gray-900">
+              <h3 className="text-xs md:text-xsm font-semibold tracking-widest uppercase line-clamp-2 leading-relaxed text-gray-900">
                 {product.name}
               </h3>
             </div>
@@ -260,7 +260,7 @@ export const ProductCard = React.memo<ProductCardProps>(function ProductCard({
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 flex-wrap">
                 {/* Current Price */}
-                <p className="text-base md:text-lg font-semibold text-gray-900">
+                <p className="text-base md:text-sm font-semibold text-gray-900">
                   {formatPrice(product.price)}
                 </p>
                 {/* Original Price - Strikethrough */}

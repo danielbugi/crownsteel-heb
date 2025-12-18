@@ -461,7 +461,7 @@ export function ProductCarousel({
   if (loading) {
     return (
       <section className="py-12 md:py-16">
-        <div className="px-4 mx-auto">
+        <div className=" mx-auto">
           <div className="flex items-center justify-between mb-8 md:mb-10">
             <div>
               <div className="h-8 bg-muted rounded-md w-48 mb-2 animate-pulse"></div>
@@ -488,7 +488,7 @@ export function ProductCarousel({
   if (error) {
     return (
       <section className="py-12 md:py-16">
-        <div className="px-4 mx-auto text-center">
+        <div className=" mx-auto text-center">
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
             <p className="text-destructive font-medium">
               Failed to load products
@@ -503,7 +503,7 @@ export function ProductCarousel({
   if (products.length === 0) {
     return (
       <section className="py-12 md:py-16">
-        <div className="px-4 mx-auto text-center">
+        <div className=" mx-auto text-center">
           <div className="bg-muted/50 rounded-lg p-8">
             <p className="text-muted-foreground">No products available</p>
           </div>
@@ -514,7 +514,7 @@ export function ProductCarousel({
 
   return (
     <section className="py-16 md:py-20 overflow-hidden bg-white-pure">
-      <div className="px-4 mx-auto">
+      <div className="mx-auto">
         {/* Grid Layout: Title Section (1/6) + Carousel (5/6) */}
         {/* <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 items-center"> */}
         {/* Title Section - Left Side */}
@@ -581,7 +581,7 @@ export function ProductCarousel({
               <div
                 ref={scrollContainerRef}
                 className={cn(
-                  'flex gap-0 overflow-x-auto scrollbar-hide px-4 md:px-0 ',
+                  'flex gap-0 overflow-x-auto scrollbar-hide px-4 md:px-0 border-t border-b border-gray-200',
                   isDragging ? 'cursor-grabbing' : 'cursor-grab',
                   'select-none' // Prevent text selection during drag
                 )}
@@ -600,10 +600,13 @@ export function ProductCarousel({
                   scrollBehavior: 'smooth',
                 }}
               >
+                {/* Empty slot at the start */}
+                <div className="flex-none w-[320px] md:w-[400px] lg:w-[420px] xl:w-[450px]" />
+
                 {products.map((product, index) => (
                   <div
                     key={product.id}
-                    className="flex-none w-[320px] md:w-[400px] lg:w-[420px] xl:w-[450px] transition-transform duration-200 border border-border "
+                    className="flex-none w-[320px] md:w-[400px] lg:w-[420px] xl:w-[450px] transition-transform duration-200 "
                     style={{
                       pointerEvents: hasDraggedRef.current ? 'none' : 'auto',
                       animationDelay: `${index * 100}ms`,
@@ -656,6 +659,9 @@ export function ProductCarousel({
                     </div>
                   </div>
                 ))}
+
+                {/* Empty slot at the end */}
+                <div className="flex-none w-[320px] md:w-[400px] lg:w-[420px] xl:w-[450px]" />
               </div>
             </div>
           </div>

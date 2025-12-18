@@ -70,8 +70,8 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
 
   if (!session) {
     return (
-      <div className="bg-secondary/30 p-6 rounded-lg text-center">
-        <p className="text-muted-foreground">Please log in to leave a review</p>
+      <div className="bg-gray-50 p-6 rounded-lg text-center border border-gray-200">
+        <p className="text-gray-700">Please log in to leave a review</p>
       </div>
     );
   }
@@ -79,7 +79,7 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <Label className="text-base font-semibold mb-3 block">
+        <Label className="text-base font-semibold mb-3 block text-gray-900">
           Your Rating
         </Label>
         <div className="flex gap-2">
@@ -125,7 +125,7 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
           rows={5}
           maxLength={1000}
         />
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           {comment.length}/1000 characters
         </p>
       </div>

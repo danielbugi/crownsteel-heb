@@ -1,0 +1,27 @@
+# VERCEL ENVIRONMENT VARIABLES - COPY & PASTE
+# Save this file for future deployments!
+
+DATABASE_URL=postgresql://neondb_owner:npg_8YMqpCTz0AkK@ep-steep-dust-agcy9ujg-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
+
+NEXTAUTH_SECRET=94527504302fdb006b09e36bdb7948dcb8f516fbbf754d7bb6ce48065a86f3c1
+
+NEXTAUTH_URL=https://your-project.vercel.app
+
+NEXT_PUBLIC_URL=https://your-project.vercel.app
+
+AUTH_TRUST_HOST=true
+
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=diergd8rm
+
+CLOUDINARY_API_KEY=279517452928368
+
+CLOUDINARY_API_SECRET=z8xHYbWCnURy4OdRO3mudyhTStY
+
+RESEND_API_KEY=re_ZHVhexF6_7WxRK2VqfZzS3unWEYK3y9eQ
+
+ADMIN_EMAIL=dabogatesting@gmail.com
+
+FROM_EMAIL=onboarding@resend.dev
+
+
+

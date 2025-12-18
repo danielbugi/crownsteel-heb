@@ -52,13 +52,17 @@ export function ProductSort() {
   return (
     <div className="flex items-center gap-2">
       <Select value={currentSort} onValueChange={handleSortChange}>
-        <SelectTrigger className="w-[180px] h-9 border-gray-300">
+        <SelectTrigger className="w-[180px] h-9 border-gray-300 text-gray-900">
           <ArrowUpDown className="h-4 w-4 mr-2 text-gray-600" />
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white">
           {sortOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              className="text-gray-900"
+            >
               {option.label}
             </SelectItem>
           ))}
