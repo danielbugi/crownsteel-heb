@@ -64,7 +64,7 @@ const AnnouncementItem = ({
       opacityClass = 'opacity-0';
     }
 
-    return `absolute top-0 left-0 w-full h-full flex items-center justify-center gap-2 text-xs tracking-widest uppercase font-bold transform ${translateClass} ${opacityClass} ${transitionClass}`;
+    return `absolute top-0 left-0 w-full h-full flex items-center justify-center gap-2 text-[10px] tracking-widest uppercase font-extrabold transform ${translateClass} ${opacityClass} ${transitionClass}`;
   }, [isActive, isNext, isPrevious]);
 
   // Early return for invisible items to reduce render work
@@ -105,7 +105,7 @@ export function AnnouncementBar() {
   }, [handleNext]);
 
   return (
-    <div className="bg-white text-gray-900 py-2 overflow-hidden relative w-full will-change-transform border-b-4 border-black">
+    <div className="bg-yellow-300 text-gray-900 py-2 overflow-hidden relative w-full will-change-transform">
       <div className="relative w-full h-6">
         {announcements.map((announcement, index) => (
           <AnnouncementItem

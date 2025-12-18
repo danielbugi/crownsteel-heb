@@ -82,18 +82,18 @@ export function Navbar() {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <header className="sticky top-0 z-40 w-full bg-white text-gray-900 border-b border-gray-200 shadow-sm">
+      <header className="sticky top-1 z-40 w-full bg-white text-gray-900 border-b border-gray-200 shadow-sm">
         {/* Responsive Navbar Container */}
         <div className="container px-4 md:px-6">
           {/* Mobile Layout: Logo on top, icons below */}
           <div className="sm:hidden">
             {/* Logo centered on top */}
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center py-2">
               <Logo />
             </div>
 
             {/* Icons and hamburger on bottom with space-between */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-2">
               {/* Left - Hamburger Menu */}
               <Button
                 variant="ghost"

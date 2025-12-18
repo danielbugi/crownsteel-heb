@@ -268,6 +268,13 @@ export function ProductCarousel({
     const timer = setTimeout(() => {
       detectRTLScrollBehavior();
       checkScroll();
+
+      // Scroll to first product (skip empty slot) on mobile
+      const container = scrollContainerRef.current;
+      if (container && window.innerWidth < 768) {
+        const cardWidth = 320; // mobile card width
+        container.scrollLeft = cardWidth;
+      }
     }, 100);
 
     const container = scrollContainerRef.current;

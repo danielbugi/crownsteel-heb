@@ -195,6 +195,7 @@ export default function RootLayout({
               <WebVitalsProvider>
                 <div className="flex min-h-screen flex-col">
                   <AnnouncementBar />
+                  <div className="sticky top-0 z-50 border-b-4 border-black" />
                   <Navbar />
                   <main className="flex-1">{children}</main>
                   <Footer />

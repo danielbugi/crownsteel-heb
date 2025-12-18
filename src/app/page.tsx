@@ -172,7 +172,7 @@ export default async function HomePage() {
       )} */}
 
       {/* Gift Collections Section - Split Design */}
-      <section className="relative h-[50vh] sm:h-[60vh] md:h-[75vh] min-h-[400px] md:min-h-[600px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[60vh] sm:h-[60vh] md:h-[75vh] min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 grid grid-cols-1 md:grid-cols-2">
           {/* Left Image - Gifts for Him */}
           <div className="relative h-full group">
@@ -187,16 +187,16 @@ export default async function HomePage() {
             <div className="absolute inset-0 bg-black-pure/50 group-hover:bg-black-pure/40 transition-all"></div>
 
             {/* Text Overlay - Left */}
-            <div className="absolute inset-0 flex items-end justify-start z-10 px-8 sm:px-12 lg:px-16 py-12 sm:py-16 lg:py-20">
+            <div className="absolute inset-0 flex items-end justify-start z-10 px-6 sm:px-12 lg:px-16 py-8 sm:py-16 lg:py-20">
               <ScrollReveal direction="up" delay={100}>
                 <div className="flex flex-col items-start">
-                  <h3 className="text-xl sm:text-xl md:text-xl lg:text-xl text-white-pure font-sans font-bold leading-tight drop-shadow-cinematic-xl tracking-tight uppercase mb-6">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white-pure font-sans font-bold leading-tight drop-shadow-cinematic-xl tracking-tight uppercase mb-4 sm:mb-6">
                     Gifts for Him
                   </h3>
                   <Link href="/shop?gender=him">
                     <Button
                       size="lg"
-                      className="bg-white text-black hover:bg-gray-200 font-semibold uppercase"
+                      className="bg-white text-black hover:bg-gray-200 font-semibold uppercase text-sm sm:text-base px-6 sm:px-8"
                     >
                       Explore
                     </Button>
@@ -219,16 +219,16 @@ export default async function HomePage() {
             <div className="absolute inset-0 bg-black-pure/50 group-hover:bg-black-pure/40 transition-all"></div>
 
             {/* Text Overlay - Right */}
-            <div className="absolute inset-0 flex items-end justify-start z-10 px-8 sm:px-12 lg:px-16 py-12 sm:py-16 lg:py-20">
+            <div className="absolute inset-0 flex items-end justify-start z-10 px-6 sm:px-12 lg:px-16 py-8 sm:py-16 lg:py-20">
               <ScrollReveal direction="up" delay={150}>
                 <div className="flex flex-col items-start">
-                  <h3 className="text-xl sm:text-xl md:text-xl lg:text-xl text-white-pure font-sans font-bold leading-tight drop-shadow-cinematic-xl tracking-tight uppercase mb-6">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white-pure font-sans font-bold leading-tight drop-shadow-cinematic-xl tracking-tight uppercase mb-4 sm:mb-6">
                     Gifts for Her
                   </h3>
                   <Link href="/shop?gender=her">
                     <Button
                       size="lg"
-                      className="bg-white text-black hover:bg-gray-200 font-semibold  uppercase"
+                      className="bg-white text-black hover:bg-gray-200 font-semibold uppercase text-sm sm:text-base px-6 sm:px-8"
                     >
                       Explore
                     </Button>
@@ -242,16 +242,16 @@ export default async function HomePage() {
 
       {/* Categories Section - Our Collections */}
       <ScrollReveal>
-        <section className="py-16 px-10 sm:py-20 bg-white">
+        <section className="py-12 px-6 sm:py-20 sm:px-10 bg-white">
           {/* Section Header */}
-          <div className=" mb-12">
-            <h2 className="text-lg sm:text-lg font-normal text-gray-900 mb-2">
+          <div className="mb-8 sm:mb-12">
+            <h2 className="text-base sm:text-lg font-normal text-gray-900 mb-2">
               Our Collections
             </h2>
           </div>
 
           {/* Collections Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-20">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-12 lg:gap-20">
             {/* Rings */}
             <Link href="/shop?category=rings" className="group">
               <div className="relative aspect-square mb-4 overflow-hidden bg-gray-100">
@@ -264,7 +264,7 @@ export default async function HomePage() {
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors ">
+              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
                 Rings
               </h3>
             </Link>
@@ -281,7 +281,7 @@ export default async function HomePage() {
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
+              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
                 Chains
               </h3>
             </Link>
@@ -298,7 +298,7 @@ export default async function HomePage() {
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
+              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
                 Bracelets
               </h3>
             </Link>
@@ -314,7 +314,7 @@ export default async function HomePage() {
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
+              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
                 Pendants
               </h3>
             </Link>
@@ -330,7 +330,7 @@ export default async function HomePage() {
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors ">
+              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
                 Bundles
               </h3>
             </Link>

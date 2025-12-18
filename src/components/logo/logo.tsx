@@ -8,7 +8,7 @@ function Logo() {
   return (
     <Link
       href="/"
-      className="flex items-center"
+      className="flex items-center "
       aria-label={`${settings?.siteName || 'Crown Steel'} home`}
     >
       {/* <h1 className="font-sans text-xl md:text-2xl text-white tracking-wide">
