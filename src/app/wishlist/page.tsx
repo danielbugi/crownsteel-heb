@@ -54,47 +54,6 @@ export default function WishlistPage() {
     setWishlistCount(getItemCount());
   }, [items, getItemCount]);
 
-  // ...existing code...
-  // Add RTL and Hebrew translation to main render
-  return (
-    <div className="min-h-screen bg-background" dir="rtl">
-      <HeroSection
-        title="רשימת המשאלות שלי"
-        description="כל המוצרים ששמרת כאן"
-        size="md"
-      />
-      <section className="py-10">
-        <div className="container px-4 mx-auto max-w-4xl">
-          <Card>
-            <CardContent className="p-8">
-              <div className="flex flex-col gap-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">המוצרים ששמרת</h2>
-                  <Badge variant="outline" className="text-lg">{wishlistCount} מוצרים</Badge>
-                </div>
-                {items.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Heart className="mx-auto mb-4 h-10 w-10 text-gray-400" />
-                    <p className="text-lg">הרשימה שלך ריקה כרגע</p>
-                    <Link href="/shop">
-                      <Button className="mt-6">לגלישה בחנות</Button>
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {items.map((item) => (
-                      <ProductCard key={item.id} product={item} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-    </div>
-  );
-}
   const loadProducts = useCallback(async () => {
     setLoading(true);
 
