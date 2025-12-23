@@ -167,8 +167,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   // Generate Breadcrumb Schema
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: 'Home', url: SITE_URL },
-    { name: 'Shop', url: `${SITE_URL}/shop` },
+    { name: 'דף הבית', url: SITE_URL },
+    { name: 'חנות', url: `${SITE_URL}/shop` },
     {
       name: product.category.name,
       url: `${SITE_URL}/categories/${product.category.slug}`,
@@ -189,7 +189,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <section className="container mx-auto px-4 py-4 md:py-6">
           <Breadcrumb
             items={[
-              { label: 'Shop', href: '/shop' },
+              { label: 'חנות', href: '/shop' },
               {
                 label: product.category.name,
                 href: `/shop?category=${product.category.slug}`,
@@ -217,7 +217,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <section className="container mx-auto px-4 md:px-6 py-12 bg-gray-50 border-y border-gray-200">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-2xl md:text-2xl font-semibold mb-8 flex items-center gap-2 text-gray-900">
-              Customer Reviews
+              חוות דעת של לקוחות
             </h2>
 
             <Tabs defaultValue="reviews" className="w-full">
@@ -227,14 +227,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   className="flex items-center gap-2 data-[state=active]:bg-gray-900 data-[state=active]:text-white text-gray-700"
                 >
                   <Star className="h-4 w-4" />
-                  Reviews ({product.reviewCount || 0})
+                  חוות דעת ({product.reviewCount || 0})
                 </TabsTrigger>
                 <TabsTrigger
                   value="write"
                   className="flex items-center gap-2 data-[state=active]:bg-gray-900 data-[state=active]:text-white text-gray-700"
                 >
                   <MessageSquare className="h-4 w-4" />
-                  Write a Review
+                  כתוב חוות דעת
                 </TabsTrigger>
               </TabsList>
 

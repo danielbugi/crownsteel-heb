@@ -170,8 +170,8 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
-      dir="ltr"
+      lang="he"
+      dir="rtl"
       className={`${figtree.variable} ${cinzel.variable} ${playfair.variable}`}
     >
       <head>

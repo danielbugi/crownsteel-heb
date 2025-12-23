@@ -98,8 +98,8 @@ function ShopPageContent() {
     // Update page title dynamically
     const categoryName = categories.find((c) => c.slug === category)?.name;
     document.title = categoryName
-      ? `${categoryName} Collection | Forge & Steel`
-      : 'Shop All Jewelry | Forge & Steel';
+      ? `${categoryName} Collection | Crownsteel`
+      : 'Shop All Jewelry | Crownsteel';
 
     // Update meta description
     const metaDescription = document.querySelector('meta[name="description"]');
@@ -176,8 +176,8 @@ function ShopPageContent() {
   };
 
   const currentCategory = categories.find((c) => c.slug === category);
-  const pageTitle = currentCategory?.name || 'All Products';
-  const pageDescription = 'Claim Your Style';
+  const pageTitle = currentCategory?.name || 'כל המוצרים';
+  const pageDescription = 'תהנו ממגוון התכשיטים המעוצבים שלנו.';
 
   return (
     <div className="min-h-screen bg-white">
@@ -273,9 +273,7 @@ function ShopPageContent() {
             {/* Active Category Tag (if filtered) */}
             {currentCategory && (
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm text-gray-600 font-medium">
-                  Viewing:
-                </span>
+                <span className="text-sm text-gray-600 font-medium">מציג:</span>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-sm text-gray-900">
                   <span>{pageTitle}</span>
                   <Button
@@ -284,7 +282,7 @@ function ShopPageContent() {
                     className="h-4 w-4 p-0 hover:bg-gray-200 text-gray-600"
                     onClick={() => (window.location.href = '/shop')}
                   >
-                    <span className="sr-only">Clear filter</span>×
+                    <span className="sr-only">נקה סינון</span>×
                   </Button>
                 </div>
               </div>

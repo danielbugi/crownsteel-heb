@@ -67,55 +67,57 @@ export default function ContactPage() {
   const contactInfo = [
     {
       icon: Mail,
-      label: 'Email',
+      label: 'אימייל',
       value: settings?.contactEmail || 'contact@forgesteel.com',
       href: `mailto:${settings?.contactEmail || 'contact@forgesteel.com'}`,
     },
     {
       icon: Phone,
-      label: 'Phone',
+      label: 'טלפון',
       value: settings?.contactPhone || '+972-50-123-4567',
       href: `tel:${settings?.contactPhone || '+972501234567'}`,
     },
     {
       icon: MapPin,
-      label: 'Address',
-      value: settings?.address || '123 Main Street, Tel Aviv, Israel',
+      label: 'כתובת',
+      value: settings?.address || 'רחוב ראשי 123, תל אביב, ישראל',
       href: null,
     },
     {
       icon: Clock,
-      label: 'Hours',
-      value: 'Sun - Thu: 9:00 AM - 6:00 PM',
+      label: 'שעות פעילות',
+      value: 'א׳-ה׳: 9:00-18:00',
       href: null,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir="rtl">
       <HeroSection
-        title="Contact Us"
-        description="Have a question? Want to schedule an appointment? We're here to help!"
+        title="צור קשר"
+        description="יש לכם שאלה? רוצים לקבוע פגישה? אנחנו כאן בשבילכם!"
         size="lg"
       />
 
       {/* Contact Content */}
       <section className="py-16">
-        <div className="container px-4 mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="container px-4 py-4 sm:px-8 sm:py-8 mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-right">
             {/* Contact Info */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
+            <div className="space-y-6 p-4 sm:p-6 md:p-8 bg-gray-50 rounded-lg shadow border border-gray-200">
+              <h2 className="text-2xl font-bold mb-6 text-right">
+                פרטי התקשרות
+              </h2>
               {contactInfo.map((info, index) => {
                 const Icon = info.icon;
                 const content = (
                   <Card key={index}>
                     <CardContent className="pt-6">
-                      <div className="flex items-start space-x-4 rtl:space-x-reverse">
+                      <div className="flex items-start space-x-4 space-x-reverse">
                         <div className="p-2 bg-accent rounded-lg">
                           <Icon className="h-5 w-5 text-accent-foreground" />
                         </div>
-                        <div>
+                        <div className="text-right">
                           <h3 className="font-semibold mb-1">{info.label}</h3>
                           <p className="text-sm text-muted-foreground">
                             {info.value}
@@ -146,7 +148,7 @@ export default function ContactPage() {
                     <MapPin className="h-12 w-12 text-muted-foreground" />
                   </div>
                   <p className="text-sm text-muted-foreground mt-4 text-center">
-                    Visit our showroom
+                    בואו לבקר באולם התצוגה שלנו
                   </p>
                 </CardContent>
               </Card>
@@ -154,16 +156,21 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Send us a Message</CardTitle>
+              <Card className="p-2 sm:p-4 md:p-8 bg-gray-50 rounded-lg shadow border border-gray-200">
+                <CardHeader className="text-right pb-2">
+                  <CardTitle className="text-gray-900">
+                    שלחו לנו הודעה
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                <CardContent className="p-0 text-gray-800">
+                  <form
+                    onSubmit={handleSubmit}
+                    className="space-y-4 text-right"
+                  >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="name">
-                          Full Name <span className="text-red-500">*</span>
+                        <Label htmlFor="name" className="block text-right">
+                          שם מלא <span className="text-red-500">*</span>
                         </Label>
                         <Input
                           id="name"
@@ -171,13 +178,14 @@ export default function ContactPage() {
                           value={formData.name}
                           onChange={handleChange}
                           required
-                          placeholder="John Doe"
+                          placeholder="ישראל ישראלי"
+                          className="text-right text-black"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="email">
-                          Email <span className="text-red-500">*</span>
+                        <Label htmlFor="email" className="block text-right">
+                          אימייל <span className="text-red-500">*</span>
                         </Label>
                         <Input
                           id="email"
@@ -186,27 +194,31 @@ export default function ContactPage() {
                           value={formData.email}
                           onChange={handleChange}
                           required
-                          placeholder="john@example.com"
+                          placeholder="israel@example.com"
+                          className="text-right text-black"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="phone">Phone</Label>
+                        <Label htmlFor="phone" className="block text-right">
+                          טלפון
+                        </Label>
                         <Input
                           id="phone"
                           name="phone"
                           type="tel"
                           value={formData.phone}
                           onChange={handleChange}
-                          placeholder="+972-50-123-4567"
+                          placeholder="050-1234567"
+                          className="text-right text-black"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="subject">
-                          Subject <span className="text-red-500">*</span>
+                        <Label htmlFor="subject" className="block text-right">
+                          נושא <span className="text-red-500">*</span>
                         </Label>
                         <Input
                           id="subject"
@@ -214,14 +226,15 @@ export default function ContactPage() {
                           value={formData.subject}
                           onChange={handleChange}
                           required
-                          placeholder="How can we help?"
+                          placeholder="איך נוכל לעזור?"
+                          className="text-right text-black"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="message">
-                        Message <span className="text-red-500">*</span>
+                      <Label htmlFor="message" className="block text-right">
+                        הודעה <span className="text-red-500">*</span>
                       </Label>
                       <Textarea
                         id="message"
@@ -230,12 +243,13 @@ export default function ContactPage() {
                         onChange={handleChange}
                         required
                         rows={6}
-                        placeholder="Write your message here..."
+                        placeholder="כתבו את ההודעה כאן..."
+                        className="text-right text-black"
                       />
                     </div>
 
                     <Button type="submit" disabled={isSubmitting} size="lg">
-                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                      {isSubmitting ? 'שולח...' : 'שלח הודעה'}
                     </Button>
                   </form>
                 </CardContent>

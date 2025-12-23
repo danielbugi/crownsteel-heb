@@ -29,7 +29,9 @@ export const CartItem = React.memo<CartItemProps>(function CartItem({ item }) {
   }, [item.productId, item.quantity, updateQuantity]);
 
   const handleDecrement = useCallback(() => {
-    updateQuantity(item.productId, item.quantity - 1);
+    if (item.quantity > 1) {
+      updateQuantity(item.productId, item.quantity - 1);
+    }
   }, [item.productId, item.quantity, updateQuantity]);
 
   const handleRemove = useCallback(() => {
@@ -76,7 +78,7 @@ export const CartItem = React.memo<CartItemProps>(function CartItem({ item }) {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8"
+                className="h-8 w-8 text-black border-black hover:bg-black hover:text-white"
                 onClick={handleDecrement}
                 disabled={item.quantity <= 1}
               >
@@ -88,7 +90,7 @@ export const CartItem = React.memo<CartItemProps>(function CartItem({ item }) {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8"
+                className="h-8 w-8 text-black border-black hover:bg-black hover:text-white"
                 onClick={handleIncrement}
               >
                 <Plus className="h-3 w-3" />

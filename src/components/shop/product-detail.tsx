@@ -386,8 +386,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 product.variants.length > 0 &&
                 !selectedVariant
                 ? `Select ${product.variantLabel || 'Variant'} First`
-                : 'Out of Stock'
-              : 'Add to Cart'}
+                : 'אזל מהמלאי'
+              : 'הוסף לעגלה'}
           </Button>
 
           {/* Buy Now Button - Instant Checkout */}
@@ -398,7 +398,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
             onClick={handleBuyNow}
             disabled={isAddToCartDisabled()}
           >
-            Buy Now
+            קנה עכשיו
           </Button>
 
           <Separator className="my-2" />
@@ -415,7 +415,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
               className="border border-gray-200  overflow-hidden shadow-sm"
             >
               <AccordionTrigger className="hover:no-underline px-4 py-3 hover:bg-gray-50 bg-gray-100 text-gray-900">
-                <span className="font-medium text-left">Product Details</span>
+                <span className="font-medium text-left">פרטי מוצר</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
                 <div className="bg-white p-4 space-y-4">
@@ -505,7 +505,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
               className="border border-gray-200  overflow-hidden shadow-sm"
             >
               <AccordionTrigger className="hover:no-underline px-4 py-3 hover:bg-gray-50 bg-gray-100 text-gray-900">
-                <span className="font-medium text-left">Shipping Policy</span>
+                <span className="font-medium text-left">מדיניות משלוחים</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
                 <div className="bg-white p-4 space-y-3 text-sm">
@@ -548,7 +548,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
               className="border border-gray-200  overflow-hidden shadow-sm"
             >
               <AccordionTrigger className="hover:no-underline px-4 py-3 hover:bg-gray-50 bg-gray-100 text-gray-900">
-                <span className="font-medium text-left">Payment Options</span>
+                <span className="font-medium text-left">אפשרויות תשלום</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
                 <div className="bg-white p-4 space-y-3 text-sm">
@@ -559,23 +559,23 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="border border-gray-200 rounded-md p-3 bg-gray-50">
                       <h4 className="font-medium mb-1.5 text-xs text-gray-900">
-                        Credit Cards
+                        כרטיסי אשראי
                       </h4>
                       <ul className="space-y-0.5 text-xs text-gray-600">
-                        <li>• Visa</li>
-                        <li>• Mastercard</li>
-                        <li>• American Express</li>
+                        <li>• ויזה</li>
+                        <li>• מאסטרקארד</li>
+                        <li>• אמריקן אקספרס</li>
                       </ul>
                     </div>
 
                     <div className="border border-gray-200 rounded-md p-3 bg-gray-50">
                       <h4 className="font-medium mb-1.5 text-xs text-gray-900">
-                        Digital Wallets
+                        ארנקים דיגיטליים
                       </h4>
                       <ul className="space-y-0.5 text-xs text-gray-600">
-                        <li>• PayPal</li>
-                        <li>• Apple Pay</li>
-                        <li>• Google Pay</li>
+                        <li>• פייפאל</li>
+                        <li>• אפל פיי</li>
+                        <li>• גוגל פיי</li>
                       </ul>
                     </div>
                   </div>
@@ -584,8 +584,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
                     <div className="flex items-start gap-2">
                       <Shield className="h-4 w-4 text-green-600 mt-0.5" />
                       <p className="text-xs text-gray-700">
-                        <strong>Secure Payment:</strong> All transactions
-                        encrypted with SSL technology.
+                        <strong>תשלום מאובטח:</strong> כל העסקאות מוצפנות
+                        בטכנולוגיית SSL.
                       </p>
                     </div>
                   </div>
@@ -599,36 +599,34 @@ export function ProductDetail({ product }: ProductDetailProps) {
               className="border border-gray-200  overflow-hidden shadow-sm"
             >
               <AccordionTrigger className="hover:no-underline px-4 py-3 hover:bg-gray-50 bg-gray-100 text-gray-900">
-                <span className="font-medium text-left">Quality Guarantee</span>
+                <span className="font-medium text-left">אחריות איכות</span>
               </AccordionTrigger>
               <AccordionContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-1 pb-1">
                 <div className="bg-white p-4 space-y-3 text-sm">
                   <div>
                     <h4 className="font-medium mb-1.5 text-gray-900">
-                      30-Day Money Back Guarantee
+                      החזר כספי עד 30 יום
                     </h4>
                     <p className="text-gray-600 text-xs">
-                      Not satisfied? Return within 30 days for a full refund -
-                      no questions asked.
+                      לא מרוצה? החזר את המוצר תוך 30 יום ותקבל החזר מלא - ללא
+                      שאלות.
                     </p>
                   </div>
 
                   <div>
                     <h4 className="font-medium mb-1.5 text-gray-900">
-                      Lifetime Warranty
+                      אחריות לכל החיים
                     </h4>
                     <p className="text-gray-600 text-xs">
-                      We cover manufacturing defects for life. If the product
-                      breaks due to faulty craftsmanship, we&apos;ll repair or
-                      replace it for free.
+                      אנו מכסים פגמים בייצור לכל החיים. אם המוצר נשבר עקב פגם
+                      בייצור, נתקן או נחליף אותו ללא עלות.
                     </p>
                   </div>
 
                   <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
                     <p className="text-xs text-gray-700">
-                      <strong>How to Claim:</strong> Contact us with order
-                      number and photos. We&apos;ll provide a prepaid shipping
-                      label.
+                      <strong>איך להפעיל אחריות:</strong> צרו קשר עם מספר הזמנה
+                      ותמונות. נספק לכם תווית משלוח מראש.
                     </p>
                   </div>
                 </div>
@@ -641,12 +639,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
             {product.freeShipping && (
               <div className="flex items-center gap-3 text-sm text-gray-600">
                 <Truck className="h-5 w-5 text-green-600" />
-                <span>Free shipping on this item</span>
+                <span>משלוח חינם למוצר זה</span>
               </div>
             )}
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <Shield className="h-5 w-5 text-green-600" />
-              <span>Secure Payment</span>
+              <span>תשלום מאובטח</span>
             </div>
           </div>
         </div>

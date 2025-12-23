@@ -202,17 +202,20 @@ export function CheckoutForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Contact Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
+        <Card
+          className="p-4 sm:p-6 md:p-8 bg-white rounded-lg shadow border border-gray-200"
+          dir="rtl"
+        >
+          <CardHeader className="pb-2">
+            <CardTitle className="text-gray-900">פרטי קשר</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 p-0 text-gray-800">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>אימייל</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -229,7 +232,7 @@ export function CheckoutForm({
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mobile Phone</FormLabel>
+                  <FormLabel>טלפון נייד</FormLabel>
                   <FormControl>
                     <Input type="tel" placeholder="050-123-4567" {...field} />
                   </FormControl>
@@ -241,20 +244,23 @@ export function CheckoutForm({
         </Card>
 
         {/* Shipping Address */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Shipping Address</CardTitle>
+        <Card
+          className="p-4 sm:p-6 md:p-8 bg-white rounded-lg shadow border border-gray-200"
+          dir="rtl"
+        >
+          <CardHeader className="pb-2">
+            <CardTitle className="text-gray-900">כתובת למשלוח</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 p-0 text-gray-800">
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>שם פרטי</FormLabel>
                     <FormControl>
-                      <Input placeholder="John" {...field} />
+                      <Input placeholder="ישראל" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -265,9 +271,9 @@ export function CheckoutForm({
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel>שם משפחה</FormLabel>
                     <FormControl>
-                      <Input placeholder="Doe" {...field} />
+                      <Input placeholder="כהן" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -280,9 +286,9 @@ export function CheckoutForm({
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address</FormLabel>
+                  <FormLabel>כתובת</FormLabel>
                   <FormControl>
-                    <Input placeholder="123 Main Street" {...field} />
+                    <Input placeholder="רחוב ראשי 123" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -295,9 +301,9 @@ export function CheckoutForm({
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City</FormLabel>
+                    <FormLabel>עיר</FormLabel>
                     <FormControl>
-                      <Input placeholder="Tel Aviv" {...field} />
+                      <Input placeholder="תל אביב" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -308,7 +314,7 @@ export function CheckoutForm({
                 name="postalCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Postal Code</FormLabel>
+                    <FormLabel>מיקוד</FormLabel>
                     <FormControl>
                       <Input placeholder="6473921" {...field} />
                     </FormControl>
@@ -321,11 +327,14 @@ export function CheckoutForm({
         </Card>
 
         {/* Coupon Code */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Coupon Code</CardTitle>
+        <Card
+          className="p-4 sm:p-6 md:p-8 bg-white rounded-lg shadow border border-gray-200"
+          dir="rtl"
+        >
+          <CardHeader className="pb-2">
+            <CardTitle className="text-gray-900">קוד קופון</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 text-gray-800">
             <CouponInput
               subtotal={subtotal}
               userId={session?.user?.id}
@@ -337,13 +346,16 @@ export function CheckoutForm({
         </Card>
 
         {/* Order Summary (Mobile Only) */}
-        <Card className="lg:hidden">
-          <CardHeader>
-            <CardTitle>Order Summary</CardTitle>
+        <Card
+          className="lg:hidden p-4 sm:p-6 md:p-8 bg-white rounded-lg shadow border border-gray-200"
+          dir="rtl"
+        >
+          <CardHeader className="pb-2">
+            <CardTitle className="text-gray-900">סיכום הזמנה</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-2 p-0 text-gray-800">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Subtotal</span>
+              <span className="text-muted-foreground">סך ביניים</span>
               <span>
                 {settings?.currencySymbol}
                 {subtotal.toFixed(2)}
@@ -351,7 +363,7 @@ export function CheckoutForm({
             </div>
             {discountAmount > 0 && (
               <div className="flex justify-between text-green-600">
-                <span>Discount ({appliedCoupon?.code})</span>
+                <span>הנחה ({appliedCoupon?.code})</span>
                 <span>
                   -{settings?.currencySymbol}
                   {discountAmount.toFixed(2)}
@@ -359,20 +371,20 @@ export function CheckoutForm({
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Shipping</span>
+              <span className="text-muted-foreground">משלוח</span>
               <span className={shippingInfo.isFree ? 'text-green-600' : ''}>
                 {shippingInfo.displayText}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">VAT ({taxRate}%)</span>
+              <span className="text-muted-foreground">מע"מ ({taxRate}%)</span>
               <span>
                 {settings?.currencySymbol}
                 {taxAmount.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between text-lg font-bold border-t pt-2">
-              <span>Total</span>
+              <span>סה"כ</span>
               <span>
                 {settings?.currencySymbol}
                 {finalTotal.toFixed(2)}
@@ -382,16 +394,18 @@ export function CheckoutForm({
         </Card>
 
         {/* Payment Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Payment</CardTitle>
+        <Card
+          className="p-4 sm:p-6 md:p-8 bg-white rounded-lg shadow border border-gray-200"
+          dir="rtl"
+        >
+          <CardHeader className="pb-2">
+            <CardTitle className="text-gray-900">תשלום</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 text-gray-50">
             <div className="bg-muted p-4 rounded-lg space-y-2">
-              <p className="text-sm">Secure payment via Tranzila</p>
+              <p className="text-sm">תשלום מאובטח באמצעות טרנזילה</p>
               <p className="text-xs text-muted-foreground">
-                After clicking &quot;Continue to Payment&quot; you will be
-                redirected to a secure payment page
+                לאחר לחיצה על "המשך לתשלום" תועברו לעמוד תשלום מאובטח
               </p>
             </div>
           </CardContent>
@@ -404,8 +418,8 @@ export function CheckoutForm({
           disabled={isLoading || items.length === 0}
         >
           {isLoading
-            ? 'Processing...'
-            : `Continue to Payment (${settings?.currencySymbol}${finalTotal.toFixed(2)})`}
+            ? 'מעבד...'
+            : `המשך לתשלום (${settings?.currencySymbol}${finalTotal.toFixed(2)})`}
         </Button>
       </form>
     </Form>

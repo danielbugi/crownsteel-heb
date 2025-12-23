@@ -43,11 +43,14 @@ export function CartSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
-      <SheetContent className="flex w-full flex-col p-0 sm:max-w-lg bg-white border-l border-gray-200">
+      <SheetContent
+        side="left"
+        className="flex w-full flex-col p-0 sm:max-w-lg bg-white border-r border-gray-200 left-0 !right-auto"
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <SheetTitle className="text-xl font-bold text-black">
-            Cart ({totalItems})
+            עגלה ({totalItems})
           </SheetTitle>
           <Button
             onClick={toggleCart}
@@ -61,7 +64,7 @@ export function CartSheet() {
 
         {items.length > 0 ? (
           <>
-            {/* Cart Items */}
+            {/* פריטי עגלה */}
             <div className="flex-1 overflow-auto">
               {items.map((item, index) => (
                 <div key={item.id}>
@@ -82,8 +85,8 @@ export function CartSheet() {
                     <div className="flex items-center gap-2">
                       <Truck className="h-4 w-4 text-blue-600" />
                       <span className="text-gray-600">
-                        Add {formatPrice(remainingForFreeShipping)} for free
-                        shipping
+                        הוסף {formatPrice(remainingForFreeShipping)} כדי לקבל
+                        משלוח חינם
                       </span>
                     </div>
                   </div>
@@ -95,16 +98,14 @@ export function CartSheet() {
               {remainingForFreeShipping === 0 && shippingCost === 0 && (
                 <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-3 rounded-lg">
                   <Gift className="h-4 w-4" />
-                  <span className="font-medium">
-                    You have earned free shipping!
-                  </span>
+                  <span className="font-medium">קיבלת משלוח חינם!</span>
                 </div>
               )}
 
               {/* Subtotal */}
               <div className="flex justify-between text-sm">
                 <span className="font-light uppercase tracking-wide text-gray-600">
-                  Subtotal
+                  סיכום ביניים
                 </span>
                 <span className="font-medium text-black">
                   {formatPrice(subtotal)}
@@ -114,7 +115,7 @@ export function CartSheet() {
               {/* Shipping */}
               <div className="flex justify-between text-sm">
                 <span className="font-light uppercase tracking-wide text-gray-600">
-                  Shipping
+                  משלוח
                 </span>
                 <span
                   className={`font-medium ${shippingCost === 0 ? 'text-green-600' : 'text-black'}`}
@@ -129,7 +130,7 @@ export function CartSheet() {
               {/* Total */}
               <div className="flex justify-between">
                 <span className="font-light uppercase tracking-wide text-black text-base">
-                  Total
+                  סה"כ
                 </span>
                 <span className="font-bold text-black text-lg">
                   {formatPrice(totalWithShipping)}
@@ -139,10 +140,10 @@ export function CartSheet() {
               {/* Checkout Buttons */}
               <div className="space-y-2 pt-2 gap-2 flex flex-col">
                 <Button size="lg" asChild onClick={toggleCart}>
-                  <Link href="/checkout">Checkout</Link>
+                  <Link href="/checkout">לתשלום</Link>
                 </Button>
                 <Button size="lg" asChild onClick={toggleCart}>
-                  <Link href="/cart">View Cart</Link>
+                  <Link href="/cart">לצפייה בעגלה</Link>
                 </Button>
               </div>
             </div>
@@ -151,7 +152,7 @@ export function CartSheet() {
           <div className="flex h-full flex-col items-center justify-center space-y-4 p-6">
             <ShoppingBag className="h-16 w-16 text-gray-300" />
             <span className="text-lg font-light uppercase tracking-wide text-gray-600">
-              Your cart is empty
+              העגלה שלך ריקה
             </span>
             <Button
               size="lg"
@@ -159,7 +160,7 @@ export function CartSheet() {
               className="w-full hover:text-black"
               onClick={toggleCart}
             >
-              <Link href="/shop">Continue Shopping</Link>
+              <Link href="/shop">להמשיך לקנות</Link>
             </Button>
           </div>
         )}

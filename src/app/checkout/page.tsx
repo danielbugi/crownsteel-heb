@@ -22,16 +22,16 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background" dir="rtl">
         <div className="container px-4 py-20 mx-auto">
           <div className="max-w-md mx-auto text-center">
             <ShoppingBag className="h-24 w-24 mx-auto mb-6 text-muted-foreground" />
-            <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
+            <h1 className="text-3xl font-bold mb-4">העגלה שלך ריקה</h1>
             <p className="text-muted-foreground mb-8">
-              Add some items to your cart before checking out.
+              הוסף פריטים לעגלה לפני מעבר לתשלום.
             </p>
             <Button size="lg" asChild>
-              <Link href="/shop">Continue Shopping</Link>
+              <Link href="/shop">המשך קניות</Link>
             </Button>
           </div>
         </div>
@@ -40,16 +40,16 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir="rtl">
       <HeroSection
-        title="Checkout"
-        description="Complete your order"
+        title="לתשלום"
+        description="סיימו את ההזמנה שלכם"
         size="md"
       />
 
       {/* Checkout Content */}
       <section className="py-12">
-        <div className="container px-4 mx-auto">
+        <div className="container px-4 py-4 sm:px-8 sm:py-8 mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}
             <div className="lg:col-span-2">

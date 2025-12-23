@@ -28,12 +28,15 @@ function PaymentSuccessContent() {
   }, [orderId, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-green-50">
+    <div
+      className="min-h-screen flex items-center justify-center bg-green-50"
+      dir="rtl"
+    >
       <div className="text-center">
         <div className="text-6xl mb-4">✓</div>
-        <h1 className="text-2xl font-bold mb-2">Payment Successful!</h1>
-        <p className="text-gray-600 mb-4">Order #{orderId}</p>
-        <p className="text-sm text-gray-500">Redirecting...</p>
+        <h1 className="text-2xl font-bold mb-2">התשלום הצליח!</h1>
+        <p className="text-gray-600 mb-4">הזמנה #{orderId}</p>
+        <p className="text-sm text-gray-500">מעביר לאישור הזמנה...</p>
       </div>
     </div>
   );

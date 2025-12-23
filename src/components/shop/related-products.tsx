@@ -41,7 +41,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl md:text-2xl font-semibold flex items-center gap-2 text-gray-900">
-            You May Also Like
+            מוצרים קשורים
           </h2>
         </div>
       </div>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import { useSettings } from '@/contexts/settings-context';
+import Logo from '../logo/logo';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -41,10 +42,8 @@ export function Footer() {
     <footer className="bg-black-soft border-t border-black-rich">
       <div className="container px-6 sm:px-8 lg:px-12 py-12 sm:py-16 mx-auto">
         {/* Header - CrownSteel */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white font-sans tracking-wide">
-            CROWNSTEEL
-          </h2>
+        <div className="flex justify-center mb-8">
+          <Logo variant="white" size="xxlg" />
         </div>
 
         {/* White Separator */}
@@ -55,12 +54,11 @@ export function Footer() {
           {/* Newsletter Sign Up Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold text-white font-sans mb-4">
-              Stay Connected
+              הישארו מעודכנים
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Join the CrownSteel community and be the first to discover our
-              exclusive collections. Premium handcrafted jewelry designed for
-              those who demand excellence and timeless style.
+              הצטרפו לקהילת קראון סטיל והיו הראשונים לגלות את הקולקציות הבלעדיות
+              שלנו. תכשיטים בעבודת יד לאנשים שמעריכים איכות וסטייל על-זמני.
             </p>
 
             {/* Newsletter Form */}
@@ -75,7 +73,7 @@ export function Footer() {
                 >
                   <input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="הכניסו את כתובת האימייל שלכם"
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
@@ -87,7 +85,7 @@ export function Footer() {
                     type="submit"
                     className="px-6 py-3 bg-white text-black font-semibold hover:bg-gray-200 transition-all whitespace-nowrap"
                   >
-                    Subscribe
+                    הרשמה
                   </button>
                 </div>
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
@@ -95,20 +93,19 @@ export function Footer() {
 
               {/* Consent Text */}
               <p className="text-xs text-gray-500 leading-relaxed">
-                By submitting this form, you consent to the processing of your
-                personal data and agree to our{' '}
+                בהרשמה לטופס זה, הנך מאשר/ת את עיבוד המידע האישי שלך ומסכים/ה ל
                 <Link
                   href="/privacy"
                   className="text-gray-400 hover:text-white underline"
                 >
-                  Privacy Policy
-                </Link>{' '}
-                and{' '}
+                  מדיניות הפרטיות
+                </Link>
+                ו-
                 <Link
                   href="/terms"
                   className="text-gray-400 hover:text-white underline"
                 >
-                  Terms of Service
+                  תנאי השימוש
                 </Link>
                 .
               </p>
@@ -118,7 +115,7 @@ export function Footer() {
           {/* Useful Links Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold text-white font-sans mb-4">
-              Quick Links
+              קישורים מהירים
             </h3>
 
             <div className="grid grid-cols-2 gap-8">
@@ -130,7 +127,7 @@ export function Footer() {
                       href="/shop"
                       className="text-gray-400 hover:text-white transition-colors text-sm font-sans"
                     >
-                      Shop
+                      חנות
                     </Link>
                   </li>
                   <li>
@@ -138,7 +135,7 @@ export function Footer() {
                       href="/about"
                       className="text-gray-400 hover:text-white transition-colors text-sm font-sans"
                     >
-                      About Us
+                      אודות
                     </Link>
                   </li>
                   <li>
@@ -146,7 +143,7 @@ export function Footer() {
                       href="/contact"
                       className="text-gray-400 hover:text-white transition-colors text-sm font-sans"
                     >
-                      Contact
+                      צור קשר
                     </Link>
                   </li>
                 </ul>
@@ -160,7 +157,7 @@ export function Footer() {
                       href="/faq"
                       className="text-gray-400 hover:text-white transition-colors text-sm font-sans"
                     >
-                      FAQ
+                      שאלות נפוצות
                     </Link>
                   </li>
                   <li>
@@ -168,7 +165,7 @@ export function Footer() {
                       href="/privacy"
                       className="text-gray-400 hover:text-white transition-colors text-sm font-sans"
                     >
-                      Privacy Policy
+                      מדיניות הפרטיות
                     </Link>
                   </li>
                   <li>
@@ -176,7 +173,7 @@ export function Footer() {
                       href="/terms"
                       className="text-gray-400 hover:text-white transition-colors text-sm font-sans"
                     >
-                      Terms of Service
+                      תנאי שימוש
                     </Link>
                   </li>
                 </ul>
@@ -215,8 +212,8 @@ export function Footer() {
 
             {/* Copyright */}
             <p className="text-gray-600 text-sm font-sans">
-              © {currentYear} {settings?.siteName || 'CrownSteel'}. All rights
-              reserved.
+              © {currentYear} {settings?.siteName || 'Crownsteel'}. כל הזכויות
+              שמורות.
             </p>
           </div>
         </div>

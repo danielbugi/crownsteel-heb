@@ -122,8 +122,8 @@ export function SearchBar({ showSearch, onClose }: SearchBarProps) {
       <div className="fixed inset-0 bg-black z-40 animate-in fade-in duration-300" />
 
       {/* Search Modal */}
-      <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 pointer-events-none">
-        <div className="w-full max-w-4xl bg-black backdrop-blur-xl rounded-lg shadow-2xl pointer-events-auto animate-in slide-in-from-top-4 duration-300">
+      <div className="fixed bg-black inset-0 z-50 flex items-start justify-center pt-20 px-4 pointer-events-none">
+        <div className="w-full max-w-4xl bg-black rounded-lg shadow-2xl pointer-events-auto animate-in slide-in-from-top-4 duration-300">
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4">
             <h2 className="text-xl font-semibold text-white">Search</h2>
@@ -147,7 +147,7 @@ export function SearchBar({ showSearch, onClose }: SearchBarProps) {
                   placeholder="Search for products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-12 pl-12 pr-12 bg-transparent border-0 border-b border-white text-white placeholder:text-gray-400 text-base focus:ring-0 focus:border-white focus:outline-none transition-all duration-300 rounded-none"
+                  className="w-full min-h-[48px] pl-12 pr-12 bg-transparent border-0 border-b border-white !text-white placeholder:text-gray-400 text-sm font-light focus:ring-0"
                   autoFocus
                 />
                 {searchQuery && (

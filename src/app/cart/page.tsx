@@ -17,7 +17,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background" dir="rtl">
         <div className="container px-4 py-20 mx-auto">
           <div className="max-w-md mx-auto text-center">
             <ShoppingBag className="h-24 w-24 mx-auto mb-6 text-muted-foreground" />
@@ -35,13 +35,13 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir="rtl">
       <HeroSection title="עגלת קניות" size="md">
         <Link
           href="/shop"
           className="inline-flex items-center text-sm text-white/80 hover:text-white"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="ml-2 h-4 w-4" />
           המשך קניות
         </Link>
         <p className="text-white/80 mt-1">{totalItems} פריטים בעגלה שלך</p>
@@ -49,23 +49,23 @@ export default function CartPage() {
 
       {/* Cart Content */}
       <section className="py-12">
-        <div className="container px-4 mx-auto">
+        <div className="container px-4 py-4 sm:px-8 sm:py-8 mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>Cart Items</CardTitle>
+              <Card className="p-4 sm:p-6 md:p-8 bg-gray-50 rounded-lg shadow border border-gray-200">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-gray-900">פריטים בעגלה</CardTitle>
                   <Button
                     variant="default"
                     size="sm"
                     onClick={clearCart}
                     className="text-destructive hover:text-destructive"
                   >
-                    Clear Cart
+                    נקה עגלה
                   </Button>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-0 text-gray-800">
                   {items.map((item) => (
                     <CartItem key={item.id} item={item} />
                   ))}
@@ -75,25 +75,25 @@ export default function CartPage() {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <Card className="sticky top-4">
-                <CardHeader>
-                  <CardTitle>Order Summary</CardTitle>
+              <Card className="sticky top-4 p-4 sm:p-6 md:p-8 bg-gray-50 rounded-lg shadow border border-gray-200">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-gray-900">סיכום הזמנה</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-0 text-gray-800">
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Subtotal</span>
+                      <span className="text-muted-foreground">סך ביניים</span>
                       <span className="font-medium">
                         {formatPrice(totalPrice)}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Shipping</span>
-                      <span className="font-medium text-green-600">Free</span>
+                      <span className="text-muted-foreground">משלוח</span>
+                      <span className="font-medium text-green-600">חינם</span>
                     </div>
                     <Separator />
                     <div className="flex justify-between text-lg font-bold">
-                      <span>Total</span>
+                      <span>סה"כ</span>
                       <span>{formatPrice(totalPrice)}</span>
                     </div>
                   </div>
@@ -103,21 +103,21 @@ export default function CartPage() {
                     size="lg"
                     asChild
                   >
-                    <Link href="/checkout">Proceed to Checkout</Link>
+                    <Link href="/checkout">להמשך לתשלום</Link>
                   </Button>
 
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <p className="flex items-center gap-2">
-                      <span className="text-green-600">✓</span> Free shipping on
-                      all orders
+                      <span className="text-green-600">✓</span> משלוח חינם על כל
+                      ההזמנות
                     </p>
                     <p className="flex items-center gap-2">
-                      <span className="text-green-600">✓</span> Lifetime
-                      warranty included
+                      <span className="text-green-600">✓</span> אחריות לכל החיים
+                      כלולה
                     </p>
                     <p className="flex items-center gap-2">
-                      <span className="text-green-600">✓</span> 30-day return
-                      policy
+                      <span className="text-green-600">✓</span> מדיניות החזרה
+                      ל-30 יום
                     </p>
                   </div>
                 </CardContent>

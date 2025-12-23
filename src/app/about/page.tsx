@@ -9,35 +9,35 @@ export default function AboutPage() {
   const values = [
     {
       icon: Gem,
-      title: 'Premium Quality',
+      title: 'איכות פרימיום',
       description:
-        'Every piece is crafted with precision using the finest materials, ensuring lasting beauty and durability.',
+        'כל תכשיט נוצר בדיוק מחומרים מובחרים, להבטחת יופי ועמידות לאורך זמן.',
     },
     {
       icon: Award,
-      title: 'Expert Craftsmanship',
+      title: 'מומחיות אומנותית',
       description:
-        'Our master jewelers bring decades of experience, combining traditional techniques with modern design.',
+        'הצורפים שלנו משלבים ניסיון של עשרות שנים עם עיצוב מודרני וטכניקות מסורתיות.',
     },
     {
       icon: Heart,
-      title: 'Customer First',
+      title: 'הלקוח במרכז',
       description:
-        "Your satisfaction is our priority. We're here to help you find the perfect piece that tells your story.",
+        'ההצלחה שלכם היא בראש סדר העדיפויות שלנו. אנו כאן לעזור לכם למצוא את התכשיט המושלם שמספר את הסיפור שלכם.',
     },
     {
       icon: Shield,
-      title: 'Lifetime Guarantee',
+      title: 'אחריות לכל החיים',
       description:
-        'We stand behind our work with a comprehensive lifetime warranty on all our handcrafted pieces.',
+        'אנו עומדים מאחורי עבודתנו עם אחריות מקיפה לכל החיים על כל תכשיט בעבודת יד.',
     },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <HeroSection
-        title="About Us"
-        description="Handcrafted jewelry combining ancient tradition with modern design for the contemporary gentleman"
+        title="אודות"
+        description="תכשיטים בעבודת יד המשלבים מסורת עתיקה עם עיצוב מודרני לגבר העכשווי"
         size="lg"
       />
 
@@ -45,26 +45,24 @@ export default function AboutPage() {
       <section className="py-16">
         <div className="container px-4 mx-auto">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6 text-center">Our Story</h2>
+            <h2 className="text-3xl font-bold mb-6 text-center">הסיפור שלנו</h2>
             <div className="space-y-4 text-lg text-muted-foreground">
               <p>
-                Forge & Steel was born from a passion for exceptional men&apos;s
-                jewelry. Our journey began in a small workshop, where two
-                craftsmen shared a vision - to create jewelry that tells a
-                story, combines strength with elegance, and reflects the unique
-                personality of each wearer.
+                Forge & Steel נולדה מתוך תשוקה לתכשיטי גברים יוצאי דופן. המסע
+                שלנו החל בסדנה קטנה, שם שני צורפים חלקו חזון - ליצור תכשיטים
+                שמספרים סיפור, משלבים עוצמה עם אלגנטיות, ומשקפים את האישיות
+                הייחודית של כל עונד.
               </p>
               <p>
-                Today, we&apos;re proud to be leaders in men&apos;s jewelry,
-                serving customers worldwide. Each piece is still meticulously
-                crafted by skilled artisans, using only the finest materials and
-                time-honored techniques that stand the test of time.
+                היום אנו גאים להיות מובילים בתחום תכשיטי הגברים, ומשרתים לקוחות
+                בכל העולם. כל פריט עדיין נוצר בקפידה על ידי אומנים מיומנים, תוך
+                שימוש בחומרים הטובים ביותר ובטכניקות מסורתיות שמחזיקות לאורך
+                זמן.
               </p>
               <p>
-                Our commitment to quality, craftsmanship, and exceptional
-                customer service remains at the heart of everything we do. We
-                don&apos;t just sell jewelry - we create heirlooms that are
-                passed down through generations.
+                המחויבות שלנו לאיכות, אומנות ושירות יוצא דופן ללקוח עומדת בלב כל
+                מה שאנו עושים. אנחנו לא רק מוכרים תכשיטים - אנחנו יוצרים ירושות
+                שמועברות מדור לדור.
               </p>
             </div>
           </div>
@@ -74,7 +72,7 @@ export default function AboutPage() {
       {/* Values Section */}
       <section className="py-16 bg-secondary/30">
         <div className="container px-4 mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center">Our Values</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center">הערכים שלנו</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value, index) => {
               const Icon = value.icon;
@@ -102,13 +100,11 @@ export default function AboutPage() {
       <section className="py-16">
         <div className="container px-4 mx-auto">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6">Our Team</h2>
+            <h2 className="text-3xl font-bold mb-6">הצוות שלנו</h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Our team consists of master craftsmen, designers, and dedicated
-              sales professionals who share a passion for exceptional jewelry.
-              Each team member brings unique expertise and a personal touch,
-              ensuring every customer receives personalized attention and
-              outstanding service.
+              הצוות שלנו מורכב מאומנים, מעצבים ואנשי מכירות מסורים, כולם חולקים
+              תשוקה לתכשיטים יוצאי דופן. כל אחד מביא עמו מומחיות ייחודית ונגיעה
+              אישית, כדי להבטיח שכל לקוח יקבל יחס אישי ושירות יוצא דופן.
             </p>
           </div>
         </div>
@@ -118,16 +114,16 @@ export default function AboutPage() {
       <section className="py-16 bg-gradient-steel text-white">
         <div className="container px-4 mx-auto text-center">
           <h2 className="text-3xl font-light mb-4 text-white">
-            Ready to Find Your Perfect Piece?
+            מוכנים למצוא את התכשיט המושלם עבורכם?
           </h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Explore our collection and discover jewelry that tells your story
+            חקרו את הקולקציה שלנו וגלה תכשיטים שמספרים את הסיפור שלך
           </p>
           <Link
             href="/shop"
             className="inline-block bg-white text-black px-8 py-3  font-semibold hover:bg-gray-100 transition-colors"
           >
-            Shop Now
+            לקנייה
           </Link>
         </div>
       </section>

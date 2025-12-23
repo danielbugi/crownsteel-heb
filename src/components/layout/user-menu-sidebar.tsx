@@ -38,17 +38,17 @@ export function UserMenuSidebar({
   const menuItems = [
     {
       icon: UserIcon,
-      label: 'Profile',
+      label: 'פרופיל',
       href: '/profile',
     },
     {
       icon: Package,
-      label: 'Orders',
+      label: 'הזמנות',
       href: '/orders',
     },
     {
       icon: Heart,
-      label: 'Wishlist',
+      label: 'מועדפים',
       href: '/wishlist',
     },
   ];
@@ -57,7 +57,7 @@ export function UserMenuSidebar({
   if (user && (user.email === 'admin@example.com' || user.role === 'ADMIN')) {
     menuItems.push({
       icon: Shield,
-      label: 'Admin',
+      label: 'מנהל',
       href: '/admin',
     });
   }
@@ -78,17 +78,17 @@ export function UserMenuSidebar({
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed top-0 right-0 h-full w-full sm:w-80 bg-white shadow-2xl transition-transform duration-300 ease-in-out',
+          'fixed top-0 left-0 h-full w-full sm:w-80 bg-white shadow-2xl transition-transform duration-300 ease-in-out',
           isOpen && user
             ? 'translate-x-0 z-50 visible'
-            : 'translate-x-full z-50'
+            : '-translate-x-full z-50'
         )}
       >
         {/* Header with User Info */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-start justify-between mb-4">
             <h2 className="text-xl font-bold text-black uppercase tracking-wide">
-              Profile
+              פרופיל
             </h2>
             <Button
               variant="ghost"
@@ -149,7 +149,7 @@ export function UserMenuSidebar({
           >
             <LogOut className="h-5 w-5 text-gray-600" />
             <span className="font-light uppercase tracking-wide text-sm">
-              Sign Out
+              התנתק
             </span>
           </button>
         </nav>

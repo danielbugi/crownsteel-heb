@@ -108,12 +108,15 @@ export function WishlistSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleWishlist}>
-      <SheetContent className="flex w-full flex-col p-0 sm:max-w-lg bg-white border-l border-gray-200">
+      <SheetContent
+        side="left"
+        className="flex w-full flex-col p-0 sm:max-w-lg bg-white border-r border-gray-200 left-0 !right-auto"
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <SheetTitle className="text-xl font-bold text-black flex items-center gap-2">
             <Heart className="h-5 w-5 fill-red-500 text-red-500" />
-            FAVORITES ({wishlistCount})
+            מועדפים ({wishlistCount})
           </SheetTitle>
           <Button
             onClick={toggleWishlist}
@@ -130,7 +133,7 @@ export function WishlistSheet() {
           <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-500">
             <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3">
               <p className="text-sm font-semibold text-gray-900 mb-2">
-                💡 Sign in to save your favorites forever!
+                💡 התחבר כדי לשמור את המועדפים שלך לתמיד!
               </p>
               <Button
                 size="sm"
@@ -138,7 +141,7 @@ export function WishlistSheet() {
                 className="w-full"
                 onClick={handleSignIn}
               >
-                Sign In Now
+                התחבר עכשיו
               </Button>
             </div>
           </div>
@@ -149,8 +152,7 @@ export function WishlistSheet() {
           <div className="px-4 pt-2">
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
               <p className="text-sm text-orange-800">
-                ⚠️ {20 - wishlistCount} spots left! Sign in for unlimited
-                favorites.
+                ⚠️ נשארו {20 - wishlistCount} מקומות! התחבר למועדפים ללא הגבלה.
               </p>
             </div>
           </div>

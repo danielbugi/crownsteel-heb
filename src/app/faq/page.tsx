@@ -17,92 +17,92 @@ export default function FAQPage() {
 
   const faqCategories = [
     {
-      title: 'Orders & Shipping',
+      title: 'הזמנות ומשלוחים',
       questions: [
         {
-          question: 'How long does shipping take?',
+          question: 'כמה זמן לוקח המשלוח?',
           answer:
-            'Standard shipping within Israel takes 3-5 business days. Express shipping is available for next-day delivery in major cities. International shipping times vary by destination, typically 7-14 business days.',
+            'משלוח רגיל בתוך ישראל לוקח 3-5 ימי עסקים. משלוח אקספרס זמין לערים מרכזיות ביום למחרת. משלוחים בינלאומיים מגיעים בדרך כלל תוך 7-14 ימי עסקים.',
         },
         {
-          question: 'Do you offer free shipping?',
+          question: 'האם יש משלוח חינם?',
           answer:
-            'Yes! We offer free standard shipping on all orders over ₪500 within Israel. International orders over $200 also qualify for free shipping.',
+            'כן! אנו מציעים משלוח חינם על כל הזמנה מעל 500 ש"ח בתוך ישראל. הזמנות בינלאומיות מעל 200$ גם כן זכאיות למשלוח חינם.',
         },
         {
-          question: 'Can I track my order?',
+          question: 'האם אפשר לעקוב אחרי ההזמנה?',
           answer:
-            "Absolutely! Once your order ships, you'll receive a tracking number via email. You can also track your order status by logging into your account and viewing your order history.",
+            'בהחלט! לאחר שליחת ההזמנה תקבלו מספר מעקב במייל. ניתן גם לעקוב אחרי סטטוס ההזמנה דרך החשבון באתר.',
         },
       ],
     },
     {
-      title: 'Returns & Exchanges',
+      title: 'החזרות והחלפות',
       questions: [
         {
-          question: 'What is your return policy?',
+          question: 'מה מדיניות ההחזרה שלכם?',
           answer:
-            'We offer a 30-day return policy on all unworn items in their original packaging. Custom and personalized pieces are final sale. Returns are free within Israel, and we provide a prepaid shipping label.',
+            'ניתן להחזיר כל פריט שלא נלבש באריזתו המקורית תוך 30 יום. פריטים בהתאמה אישית אינם ניתנים להחזרה. החזרות בתוך ישראל ללא עלות ואנו מספקים תווית משלוח מראש.',
         },
         {
-          question: 'How do I exchange an item?',
+          question: 'איך מחליפים פריט?',
           answer:
-            "To exchange an item, contact our customer service team within 30 days of delivery. We'll arrange for the return pickup and send your replacement item. Exchanges are subject to availability.",
+            'להחלפת פריט, צרו קשר עם שירות הלקוחות תוך 30 יום מהקבלה. נארגן איסוף ונשלח את הפריט החלופי. ההחלפה כפופה למלאי.',
         },
         {
-          question: 'What if my item arrives damaged?',
+          question: 'מה קורה אם קיבלתי פריט פגום?',
           answer:
-            "If your item arrives damaged, please contact us immediately with photos. We'll arrange for a replacement or full refund at no cost to you. All items are insured during shipping.",
+            'במקרה של קבלת פריט פגום, צרו איתנו קשר מיד עם תמונות. נארגן החלפה או החזר כספי מלא ללא עלות. כל הפריטים מבוטחים במשלוח.',
         },
       ],
     },
     {
-      title: 'Product Care',
+      title: 'טיפול במוצרים',
       questions: [
         {
-          question: 'How do I care for my jewelry?',
+          question: 'איך לשמור על התכשיטים?',
           answer:
-            'Each piece comes with specific care instructions. Generally: avoid water and chemicals, store in a dry place, clean gently with a soft cloth. For deep cleaning, bring your piece to our store or a professional jeweler.',
+            'כל פריט מגיע עם הוראות טיפול. באופן כללי: להימנע ממגע עם מים וכימיקלים, לאחסן במקום יבש, ולנקות בעדינות עם מטלית רכה. לניקוי עמוק מומלץ להגיע אלינו או לצורף מקצועי.',
         },
         {
-          question: 'Is your jewelry water-resistant?',
+          question: 'האם התכשיטים עמידים במים?',
           answer:
-            'While many of our pieces are made from durable materials like titanium and stainless steel, we recommend removing jewelry before swimming, showering, or exercising to maintain its appearance and longevity.',
+            'רבים מהפריטים עשויים מחומרים עמידים כמו טיטניום ופלדת אל-חלד, אך מומלץ להסיר תכשיטים לפני שחייה, מקלחת או פעילות ספורטיבית לשמירה על מראה ועמידות.',
         },
         {
-          question: 'Do you offer repair services?',
+          question: 'האם יש שירות תיקונים?',
           answer:
-            'Yes! We offer complimentary repairs for manufacturing defects covered under warranty. Additional repair services are available for a fee. Contact us for a quote.',
+            'כן! אנו מציעים תיקונים חינם לפגמים בייצור במסגרת האחריות. שירותי תיקון נוספים בתשלום. צרו קשר לקבלת הצעת מחיר.',
         },
       ],
     },
     {
-      title: 'Sizing & Fit',
+      title: 'מידות והתאמה',
       questions: [
         {
-          question: 'How do I find my ring size?',
+          question: 'איך אדע את מידת הטבעת שלי?',
           answer:
-            'We offer a free ring sizer that you can order online. Alternatively, visit any jewelry store for professional sizing. Our size guide provides detailed measuring instructions.',
+            'ניתן להזמין מדיד טבעות חינם באתר. לחלופין, ניתן להיבדק אצל כל צורף. מדריך המידות שלנו מסביר כיצד למדוד במדויק.',
         },
         {
-          question: 'Can rings be resized?',
+          question: 'האם אפשר לשנות מידה לטבעת?',
           answer:
-            'Most of our rings can be resized within 1-2 sizes. However, some materials like tungsten and carbon fiber cannot be resized. Contact us before ordering if you have sizing concerns.',
+            'רוב הטבעות ניתנות להקטנה או הגדלה בטווח של מידה-שתיים. יש חומרים כמו טונגסטן וסיבי פחמן שלא ניתנים לשינוי מידה. מומלץ להתייעץ לפני ההזמנה.',
         },
       ],
     },
     {
-      title: 'Payment & Security',
+      title: 'תשלום ואבטחה',
       questions: [
         {
-          question: 'What payment methods do you accept?',
+          question: 'אילו אמצעי תשלום מתקבלים?',
           answer:
-            'We accept all major credit cards (Visa, Mastercard, American Express), PayPal, and bank transfers. All transactions are secured with SSL encryption.',
+            'אנו מקבלים את כל כרטיסי האשראי (ויזה, מאסטרקארד, אמריקן אקספרס), פייפאל והעברה בנקאית. כל העסקאות מאובטחות בהצפנת SSL.',
         },
         {
-          question: 'Is my payment information secure?',
+          question: 'האם המידע שלי בטוח?',
           answer:
-            'Absolutely. We use industry-standard encryption and never store your complete credit card information. All payments are processed through secure, PCI-compliant payment gateways.',
+            'בהחלט. אנו משתמשים בהצפנה מתקדמת ולא שומרים את פרטי האשראי המלאים. כל התשלומים מעובדים בשערי תשלום מאובטחים ומאושרים.',
         },
       ],
     },
@@ -123,8 +123,8 @@ export default function FAQPage() {
   return (
     <div className="min-h-screen bg-background">
       <SearchHeroSection
-        title="Frequently Asked Questions"
-        description="Find answers to the most common questions"
+        title="שאלות נפוצות"
+        description="מצאו תשובות לשאלות הנפוצות ביותר"
         searchElement={
           <div className="relative">
             <Search
@@ -133,14 +133,14 @@ export default function FAQPage() {
             />
             <Input
               type="search"
-              placeholder="Search questions..."
+              placeholder="חיפוש בשאלות..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-white text-black"
             />
           </div>
         }
-      />{' '}
+      />
       {/* FAQ Content */}
       <section className="py-16">
         <div className="container px-4 mx-auto max-w-4xl">
@@ -148,7 +148,7 @@ export default function FAQPage() {
             // Show filtered results
             <div>
               <p className="text-muted-foreground mb-6">
-                Found {filteredQuestions.length} results
+                נמצאו {filteredQuestions.length} תוצאות
               </p>
               <Accordion type="single" collapsible className="space-y-4">
                 {filteredQuestions.map((item, index) => (
@@ -168,7 +168,7 @@ export default function FAQPage() {
               </Accordion>
               {filteredQuestions.length === 0 && (
                 <p className="text-center text-muted-foreground py-12">
-                  No results found
+                  לא נמצאו תוצאות
                 </p>
               )}
             </div>
@@ -206,15 +206,15 @@ export default function FAQPage() {
       {/* Contact CTA */}
       <section className="py-16 bg-secondary/30">
         <div className="container px-4 mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-4">Still Have Questions?</h2>
+          <h2 className="text-2xl font-bold mb-4">עדיין יש לכם שאלות?</h2>
           <p className="text-muted-foreground mb-6">
-            Our customer service team is here to help
+            צוות שירות הלקוחות שלנו כאן בשבילכם
           </p>
           <a
             href="/contact"
             className="inline-block bg-accent text-accent-foreground px-6 py-3 rounded-lg font-semibold hover:bg-accent/90 transition-colors"
           >
-            Contact Us
+            צרו קשר
           </a>
         </div>
       </section>

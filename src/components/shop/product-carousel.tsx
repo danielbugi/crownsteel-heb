@@ -525,16 +525,11 @@ export function ProductCarousel({
         {/* Grid Layout: Title Section (1/6) + Carousel (5/6) */}
         {/* <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 items-center"> */}
         {/* Title Section - Left Side */}
-        {/* <div className="lg:col-span-1 space-y-4">
-            <div>
-              <h2 className="text-3xl lg:text-4xl font-cinzel font-light mb-6 text-white-pure tracking-wider uppercase">
-                {title}
-              </h2>
-              {subtitle && (
-                <p className="text-muted-foreground text-lg mb-6">{subtitle}</p>
-              )}
-            </div>
-          </div> */}
+        <div className="mb-8 sm:mb-12 text-center">
+          <h2 className="text-base sm:text-lg font-normal text-gray-900 mb-2">
+            {title}
+          </h2>
+        </div>
 
         {/* Carousel Section - Right Side */}
         <div className="lg:col-span-5">

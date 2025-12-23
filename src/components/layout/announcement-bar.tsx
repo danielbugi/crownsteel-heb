@@ -6,18 +6,22 @@ import { Truck, Tag, Shield, Sparkles } from 'lucide-react';
 const announcements = [
   {
     en: 'Free Shipping on Orders Over ₪350',
+    he: 'משלוח חינם בהזמנות מעל ₪350',
     icon: Truck,
   },
   {
     en: '25% Off All Collections',
+    he: '25% הנחה על כל הקולקציות',
     icon: Tag,
   },
   {
     en: 'Lifetime Warranty on All Jewelry',
+    he: 'אחריות לכל החיים על כל התכשיטים',
     icon: Shield,
   },
   {
     en: 'New Collection Just Arrived',
+    he: 'קולקציה חדשה הגיעה עכשיו',
     icon: Sparkles,
   },
 ];
@@ -64,7 +68,7 @@ const AnnouncementItem = ({
       opacityClass = 'opacity-0';
     }
 
-    return `absolute top-0 left-0 w-full h-full flex items-center justify-center gap-2 text-[10px] tracking-widest uppercase font-extrabold transform ${translateClass} ${opacityClass} ${transitionClass}`;
+    return `absolute top-0 left-0 w-full h-full flex items-center justify-center gap-2 text-sm font-medium tracking-wide transform ${translateClass} ${opacityClass} ${transitionClass}`;
   }, [isActive, isNext, isPrevious]);
 
   // Early return for invisible items to reduce render work
@@ -73,25 +77,38 @@ const AnnouncementItem = ({
       <div
         key={index}
         className={classes}
-        style={{ visibility: 'hidden' }} // Better than opacity for non-participating elements
+        style={{ visibility: 'hidden' }}
         dir={language === 'he' ? 'rtl' : 'ltr'}
       >
         <Icon className="h-4 w-4 flex-shrink-0" />
-        <span className="whitespace-nowrap">{announcement.en}</span>
+        <span className="whitespace-nowrap">
+          {language === 'he' && announcement.he
+            ? announcement.he
+            : announcement.en}
+        </span>
       </div>
     );
   }
 
   return (
-    <div key={index} className={classes} dir={'ltr'}>
+    <div
+      key={index}
+      className={classes}
+      dir={language === 'he' ? 'rtl' : 'ltr'}
+    >
       <Icon className="h-4 w-4 flex-shrink-0" />
-      <span className="whitespace-nowrap">{announcement.en}</span>
+      <span className="whitespace-nowrap">
+        {language === 'he' && announcement.he
+          ? announcement.he
+          : announcement.en}
+      </span>
     </div>
   );
 };
 
 export function AnnouncementBar() {
-  // const { language } = useLanguage();
+  // const language = 'he';
+  const language = 'he';
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Optimized interval with useCallback
@@ -113,7 +130,7 @@ export function AnnouncementBar() {
             announcement={announcement}
             index={index}
             currentIndex={currentIndex}
-            language="en"
+            language={language}
           />
         ))}
       </div>

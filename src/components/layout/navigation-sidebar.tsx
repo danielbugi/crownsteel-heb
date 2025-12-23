@@ -29,11 +29,11 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
   }, []);
 
   const menuLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/categories', label: 'Collections' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
+    { href: '/', label: 'דף הבית' },
+    { href: '/categories', label: 'קטגוריות' },
+    { href: '/blog', label: 'בלוג' },
+    { href: '/about', label: 'אודות' },
+    { href: '/contact', label: 'צור קשר' },
   ];
 
   return (
@@ -60,7 +60,7 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-black">Menu</h2>
+          <h2 className="text-xl font-bold text-black">תפריט</h2>
           <div className="flex items-center gap-2">
             {/* Close Button */}
             <Button
@@ -85,7 +85,7 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             )}
           >
-            Menu
+            תפריט
           </button>
           <button
             onClick={() => setActiveTab('shop')}
@@ -96,7 +96,7 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             )}
           >
-            Shop
+            חנות
           </button>
         </div>
 
@@ -117,6 +117,16 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
                   {link.label}
                 </Link>
               ))}
+              {/* English Version Button */}
+              <a
+                href={process.env.ENGLISH_WEBSITE_URL}
+                // target="_blank"
+                rel="noopener noreferrer"
+                className="block px-6 py-4 text-sm font-light uppercase tracking-wide text-blue-700 hover:bg-gray-50 transition-colors border-t border-gray-200 text-center cursor-pointer"
+                style={{ direction: 'ltr' }}
+              >
+                English Website
+              </a>
             </nav>
           )}
 
@@ -127,7 +137,7 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
                 onClick={onClose}
                 className="block px-6 py-4 text-sm font-light uppercase tracking-wide text-black hover:bg-gray-50 transition-colors border-b border-gray-200"
               >
-                View All Products
+                כל המוצרים
               </Link>
 
               {categories.length > 0 && (

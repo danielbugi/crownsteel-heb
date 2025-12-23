@@ -30,85 +30,86 @@ function ResetPasswordForm() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
+      function ResetPasswordForm() {
+        const router = useRouter();
+        const searchParams = useSearchParams();
+        const [token, setToken] = useState('');
+        const [password, setPassword] = useState('');
+        const [confirmPassword, setConfirmPassword] = useState('');
+        const [isLoading, setIsLoading] = useState(false);
 
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters');
-      return;
-    }
+        useEffect(() => {
+          const tokenParam = searchParams.get('token');
+          if (!tokenParam) {
+            toast.error('קישור איפוס לא תקין');
+            router.push('/');
+          } else {
+            setToken(tokenParam);
+          }
+        }, [searchParams, router]);
 
-    setIsLoading(true);
+        const handleSubmit = async (e: React.FormEvent) => {
+          e.preventDefault();
 
-    try {
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
-      });
+          if (password !== confirmPassword) {
+            toast.error('הסיסמאות אינן תואמות');
+            return;
+          }
 
-      const data = await response.json();
+          if (password.length < 6) {
+            toast.error('הסיסמה חייבת להיות לפחות 6 תווים');
+            return;
+          }
 
-      if (response.ok) {
-        toast.success('Password reset successfully');
-        router.push('/');
-      } else {
-        toast.error(data.error || 'Failed to reset password');
-      }
-    } catch (error) {
-      toast.error('An error occurred');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+          setIsLoading(true);
 
-  return (
-    <div className="container max-w-md mx-auto py-16">
-      <Card>
-        <CardHeader>
-          <CardTitle>Reset Password</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+          try {
+            const response = await fetch('/api/auth/reset-password', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ token, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              toast.success('הסיסמה אופסה בהצלחה');
+              router.push('/');
+            } else {
+              toast.error(data.error || 'נכשל איפוס הסיסמה');
+            }
+          } catch (error) {
+            toast.error('אירעה שגיאה');
+          } finally {
+            setIsLoading(false);
+          }
+        };
+
+        return (
+          <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
+            <div>
+              <Label htmlFor="password">סיסמה חדשה</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
               />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <div>
+              <Label htmlFor="confirmPassword">אישור סיסמה</Label>
               <Input
                 id="confirmPassword"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                minLength={6}
               />
             </div>
-
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Resetting...' : 'Reset Password'}
+              {isLoading ? 'מאפס...' : 'אפס סיסמה'}
             </Button>
           </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-export default function ResetPasswordPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ResetPasswordForm />
-    </Suspense>
-  );
-}
+        );
+      }

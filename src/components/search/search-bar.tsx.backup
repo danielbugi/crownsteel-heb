@@ -1,0 +1,328 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Search, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { logger } from '@/lib/logger';
+
+interface SearchProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  image: string;
+  category: {
+    name: string;
+  };
+}
+
+interface SearchBarProps {
+  showSearch: boolean;
+  onClose: () => void;
+}
+
+export function SearchBar({ showSearch, onClose }: SearchBarProps) {
+  // const { t } = useLanguage();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchProduct[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [suggestedProducts, setSuggestedProducts] = useState<SearchProduct[]>(
+    []
+  );
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Focus input when search opens
+  useEffect(() => {
+    if (showSearch && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [showSearch]);
+
+  // Fetch suggested products when search opens
+  useEffect(() => {
+    if (showSearch) {
+      fetchSuggestedProducts();
+      setSearchResults([]);
+      setSearchQuery('');
+    }
+  }, [showSearch]);
+
+  // Search products as user types
+  useEffect(() => {
+    if (searchQuery.length > 1) {
+      const searchProducts = async () => {
+        setSearchLoading(true);
+        try {
+          const response = await fetch(
+            `/api/search?q=${encodeURIComponent(searchQuery)}&limit=3`
+          );
+          const data = await response.json();
+          setSearchResults(data.products || []);
+        } catch (error) {
+          setSearchResults([]);
+        } finally {
+          setSearchLoading(false);
+        }
+      };
+
+      const timer = setTimeout(searchProducts, 300);
+      return () => clearTimeout(timer);
+    } else {
+      setSearchResults([]);
+      setSearchLoading(false);
+    }
+  }, [searchQuery]);
+
+  const fetchSuggestedProducts = async () => {
+    try {
+      const response = await fetch('/api/products?featured=true&limit=3');
+      const data = await response.json();
+      setSuggestedProducts(data.products || []);
+    } catch (error) {
+      logger.error('Failed to fetch suggested products:', error);
+      setSuggestedProducts([]);
+    }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      handleClose();
+    }
+  };
+
+  const handleClose = () => {
+    setSearchQuery('');
+    onClose();
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchResults([]);
+  };
+
+  // Quick links data
+  const quickLinks = [
+    { label: 'Shop All', href: '/shop' },
+    { label: 'New Arrivals', href: '/shop?sort=newest' },
+    { label: 'Best Sellers', href: '/shop?featured=true' },
+    { label: 'Sale', href: '/shop?sale=true' },
+  ];
+
+  if (!showSearch) return null;
+
+  return (
+    <>
+      {/* Backdrop Overlay */}
+      <div 
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 animate-in fade-in duration-300" 
+        onClick={handleClose}
+      />
+
+      {/* Search Modal */}
+      <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 md:pt-20 px-4 pointer-events-none">
+        <div className="w-full max-w-4xl bg-gradient-to-b from-zinc-900/95 to-black/95 backdrop-blur-xl border border-gold-elegant/20 rounded-2xl shadow-2xl pointer-events-auto animate-in slide-in-from-top-4 duration-300 overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 md:px-8 py-5 border-b border-gold-elegant/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold-elegant/20 to-gold-elegant/5 flex items-center justify-center">
+                <Search className="w-5 h-5 text-gold-elegant" />
+              </div>
+              <h2 className="text-xl md:text-2xl font-cinzel font-light tracking-wider text-white">
+                Search
+              </h2>
+            </div>
+            <button
+              onClick={handleClose}
+              className="text-gray-400 hover:text-white transition-all duration-200 p-2.5 hover:bg-white/5 rounded-full group"
+              aria-label="Close search"
+            >
+              <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+            </button>
+          </div>
+
+          {/* Search Input Section */}
+          <div className="px-6 md:px-8 py-6">
+            <form onSubmit={handleSearch}>
+              <div className="relative group">
+                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-gold-elegant w-5 h-5 pointer-events-none transition-colors duration-200" />
+                <Input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Search for luxury items..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full min-h-[56px] pl-14 pr-12 bg-white/5 border border-gold-elegant/20 hover:border-gold-elegant/40 focus:border-gold-elegant/60 !text-white placeholder:text-gray-500 text-base font-light focus:ring-2 focus:ring-gold-elegant/20 rounded-xl transition-all duration-300"
+                  autoFocus
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={clearSearch}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-all duration-200 p-1.5 hover:bg-white/10 rounded-full"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* Content Section */}
+          <div className="px-6 md:px-8 py-6 max-h-[65vh] overflow-y-auto custom-scrollbar">
+            {/* Search Results */}
+            {searchQuery.length > 1 && (
+              <div className="mb-8">
+                {searchLoading ? (
+                  <div className="flex flex-col items-center justify-center py-16">
+                    <div className="relative">
+                      <div className="animate-spin rounded-full h-12 w-12 border-2 border-gold-elegant/30 border-t-gold-elegant"></div>
+                      <Search className="absolute inset-0 m-auto w-5 h-5 text-gold-elegant animate-pulse" />
+                    </div>
+                    <span className="text-gray-300 text-base mt-4 font-light">Searching our collection...</span>
+                  </div>
+                ) : searchResults.length > 0 ? (
+                  <div>
+                    <div className="flex items-center gap-2 mb-6">
+                      <h3 className="text-white font-cinzel font-light text-lg tracking-wide">
+                        Results
+                      </h3>
+                      <span className="text-gold-elegant text-sm font-light">
+                        ({searchResults.length})
+                      </span>
+                    </div>
+                    <div className="space-y-3">
+                      {searchResults.map((product) => (
+                        <Link
+                          key={product.id}
+                          href={`/shop/${product.slug}`}
+                          onClick={handleClose}
+                          className="flex items-center gap-4 p-4 hover:bg-white/5 border border-transparent hover:border-gold-elegant/20 rounded-xl transition-all duration-300 group"
+                        >
+                          <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-gold-elegant/10">
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              width={80}
+                              height={80}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-light text-white text-base truncate group-hover:text-gold-elegant transition-colors duration-300">
+                              {product.name}
+                            </div>
+                            <div className="text-sm text-gray-400 mt-1 font-light">
+                              {product.category.name}
+                            </div>
+                          </div>
+                          <div className="text-lg font-light text-gold-elegant">
+                            ₪{product.price.toLocaleString()}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                    <Link
+                      href={`/search?q=${encodeURIComponent(searchQuery)}`}
+                      onClick={handleClose}
+                      className="mt-4 block text-center text-sm text-gray-400 hover:text-gold-elegant transition-colors duration-200 font-light"
+                    >
+            {/* Bottom Section: Quick Links & Most Wanted Products */}
+            {searchQuery.length <= 1 && (
+              <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+                {/* Quick Links */}
+                <div>
+                  <h3 className="text-white font-cinzel font-light text-lg tracking-wide mb-5 flex items-center gap-2">
+                    Quick Links
+                    <span className="h-px flex-1 bg-gradient-to-r from-gold-elegant/30 to-transparent" />
+                  </h3>
+
+                  <div className="space-y-2">
+                    {quickLinks.map((link, index) => (
+                      <Link
+                        key={index}
+                        href={link.href}
+                        onClick={handleClose}
+                        className="group flex items-center gap-3 py-3 px-4 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-gold-elegant/30 group-hover:bg-gold-elegant group-hover:scale-150 transition-all duration-300" />
+                        <span className="font-light">{link.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Most Wanted Products */}
+                <div>
+                  <h3 className="text-white font-cinzel font-light text-lg tracking-wide mb-5 flex items-center gap-2">
+                    Featured
+                    <span className="h-px flex-1 bg-gradient-to-r from-gold-elegant/30 to-transparent" />
+                  </h3>
+                  {suggestedProducts.length > 0 ? (
+                    <div className="space-y-3">
+                      {suggestedProducts.map((product) => (
+                        <Link
+                          key={product.id}
+                          href={`/shop/${product.slug}`}
+                          onClick={handleClose}
+                          className="flex items-center gap-4 p-3 hover:bg-white/5 border border-transparent hover:border-gold-elegant/20 rounded-xl transition-all duration-300 group"
+                        >
+                          <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-white/5 flex-shrink-0 border border-gold-elegant/10">
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-light text-white text-sm truncate group-hover:text-gold-elegant transition-colors duration-300">
+                              {product.name}
+                            </div>
+                            <div className="text-base font-light text-gold-elegant/80 mt-1">
+                              ₪{product.price.toLocaleString()}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-10 text-gray-500 font-light">
+                      No featured products
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}            </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-white text-sm truncate group-hover:text-gold-400 transition-colors">
+                              {product.name}
+                            </div>
+                            <div className="text-base font-semibold text-gold-400 mt-1">
+                              ₪{product.price}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No products available
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

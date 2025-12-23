@@ -131,7 +131,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
   const handleGoogleSignIn = () => {
     signIn('google', { callbackUrl: '/' });
   };
-
+  ``;
   return (
     <>
       {/* Overlay */}
@@ -148,16 +148,16 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-2xl transition-all duration-300 ease-in-out',
+          'fixed top-0 left-0 h-full w-full sm:w-[400px] bg-white shadow-2xl transition-all duration-300 ease-in-out',
           isOpen
             ? 'translate-x-0 z-50 visible'
-            : 'translate-x-full invisible z-50'
+            : '-translate-x-full invisible z-50'
         )}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-black uppercase tracking-wide">
-            Welcome
+            ברוך הבא
           </h2>
           <Button
             variant="ghost"
@@ -180,7 +180,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             )}
           >
-            Sign In
+            התחברות
           </button>
 
           <button
@@ -192,7 +192,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             )}
           >
-            Sign Up
+            הרשמה
           </button>
         </div>
 
@@ -225,7 +225,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                Continue with Google
+                המשך עם Google
               </Button>
 
               {/* Divider */}
@@ -235,7 +235,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-white px-2 text-gray-500 font-light tracking-wide">
-                    Or continue with email
+                    או המשך עם אימייל
                   </span>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signin-email"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    Email
+                    אימייל
                   </Label>
                   <Input
                     id="signin-email"
@@ -266,7 +266,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signin-password"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    Password
+                    סיסמה
                   </Label>
                   <Input
                     id="signin-password"
@@ -285,7 +285,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                   className="w-full bg-black hover:bg-gray-800 text-white font-light uppercase tracking-wide"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Signing In...' : 'Sign In'}
+                  {isLoading ? 'מתחבר...' : 'התחברות'}
                 </Button>
                 <div className="text-center text-sm">
                   <Link
@@ -293,21 +293,19 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     onClick={onClose}
                     className="text-gray-600 hover:underline"
                   >
-                    Forgot Password?
+                    שכחת סיסמה?
                   </Link>
                 </div>
               </form>
 
               {/* Switch to Sign Up */}
               <div className="text-center text-sm">
-                <span className="text-gray-600">
-                  Don&apos;t have an account?{' '}
-                </span>
+                <span className="text-gray-600">אין לך חשבון?</span>
                 <button
                   onClick={() => setActiveTab('signup')}
                   className="text-black font-medium hover:underline"
                 >
-                  Sign Up
+                  להרשמה
                 </button>
               </div>
             </div>
@@ -318,7 +316,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
               {/* Google Sign In */}
               <Button
                 variant="outline"
-                className="w-full border-gray-300 text-black hover:bg-gray-50 font-light"
+                className="flex gap-2 w-full border-gray-300 text-black hover:bg-gray-50 font-light"
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
               >
@@ -340,7 +338,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                Continue with Google
+                המשך עם Google
               </Button>
 
               {/* Divider */}
@@ -362,12 +360,12 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signup-name"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    Full Name
+                    שם מלא
                   </Label>
                   <Input
                     id="signup-name"
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="ישראל ישראלי"
                     value={signUpName}
                     onChange={(e) => setSignUpName(e.target.value)}
                     required
@@ -381,7 +379,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signup-email"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    Email
+                    אימייל
                   </Label>
                   <Input
                     id="signup-email"
@@ -400,7 +398,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signup-password"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    Password
+                    סיסמה
                   </Label>
                   <Input
                     id="signup-password"
@@ -413,7 +411,8 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     minLength={6}
                     className="border-gray-300 text-black"
                   />
-                  <p className="text-xs text-gray-500">Minimum 6 characters</p>
+
+                  <p className="text-xs text-gray-500">לפחות 6 תווים</p>
                 </div>
 
                 <div className="space-y-2">
@@ -421,7 +420,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                     htmlFor="signup-confirm"
                     className="text-sm font-light uppercase tracking-wide text-gray-700"
                   >
-                    Confirm Password
+                    אשר סיסמה
                   </Label>
                   <Input
                     id="signup-confirm"
@@ -440,18 +439,18 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
                   className="w-full bg-black hover:bg-gray-800 text-white font-light uppercase tracking-wide"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Creating Account...' : 'Create Account'}
+                  {isLoading ? 'יוצר חשבון...' : 'צור חשבון'}
                 </Button>
               </form>
 
               {/* Switch to Sign In */}
               <div className="text-center text-sm">
-                <span className="text-gray-600">Already have an account? </span>
+                <span className="text-gray-600">כבר יש לך חשבון? </span>
                 <button
                   onClick={() => setActiveTab('signin')}
                   className="text-black font-medium hover:underline"
                 >
-                  Sign In
+                  התחברות
                 </button>
               </div>
             </div>

@@ -72,71 +72,43 @@ export default async function HomePage() {
   const featuredProducts = await getFeaturedProducts();
   const newArrivals = await getNewArrivals();
   const latestBlogPosts = await getLatestBlogPosts();
-  // const bestSellers = await getBestSellers();
 
   return (
-    <div className="flex flex-col relative z-10">
-      {/* Hero Section - Masculine Energy */}
-
+    <div className="flex flex-col relative z-10" dir="rtl">
+      {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[80vh] min-h-[500px] md:min-h-[700px] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
         <Link href="/shop">
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/hero-main.jpg"
-              alt="Luxury Jewelry Collection"
+              alt="אוסף תכשיטים יוקרתי"
               fill
               priority
               className="object-cover"
               sizes="100vw"
               quality={95}
             />
-            {/* Cinematic Overlay - Deep shadows */}
             <div className="absolute inset-0 bg-gradient-to-r from-black-pure/80 via-black-pure/60 to-black-pure/70"></div>
             <div className="absolute inset-0 shadow-cinematic-xl"></div>
           </div>
-
-          {/* Hero Content - Minimal & Powerful */}
           <div className="px-4 sm:px-6 mx-auto relative z-10">
             <ScrollReveal direction="up" delay={100}>
               <div className="max-w-4xl mx-auto text-center">
                 <div className="space-y-6 md:space-y-8 text-white-pure animate-fade-in">
                   <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-4xl text-white-pure font-figtree font-medium leading-[1.1] drop-shadow-cinematic-xl tracking-tight">
-                    The Path To your Throne
+                    עד 30% הנחה על כל הקולקציה החדשה שלנו
                   </h1>
-
-                  <p className="text-xl sm:text-xl md:text-xl text-white font-light leading-relaxed drop-shadow-cinematic tracking-widest uppercase">
-                    {/* RULE YOUR LOOK <br />
-                  FEEL LIKE A KING */}
-                    new collection
+                  <p className="text-xl sm:text-xl md:text-xl text-white font-light leading-relaxed drop-shadow-cinematic tracking-widest">
+                    קולקציה חדשה
                   </p>
-
-                  {/* Minimal CTA */}
-                  {/* <div className="pt-6 flex justify-center">
-                  <Link href="/shop">
-                    <Button
-                      size="xlg"
-                      className="bg-gold-elegant hover:bg-gold-600 text-black-pure font-semibold min-h-[62px] px-12 tracking-widest shadow-cinematic hover-masculine uppercase text-sm"
-                    >
-                      Enter
-                    </Button>
-                  </Link>
-                </div> */}
                 </div>
               </div>
             </ScrollReveal>
           </div>
-
-          {/* Scroll Indicator */}
-          {/* <div className="hidden md:block absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-            <div className="w-6 h-10 border-2 border-gold-elegant/50 rounded-full p-1">
-              <div className="w-1.5 h-3 bg-gold-elegant/50 rounded-full mx-auto"></div>
-            </div>
-          </div> */}
         </Link>
       </section>
 
-      {/* Featured Products Carousel - Boutique Style */}
+      {/* Featured Products Carousel */}
       {featuredProducts.length > 0 && (
         <ScrollReveal>
           <div className="border-t border-gray-200">
@@ -146,91 +118,69 @@ export default async function HomePage() {
                   typeof ProductCarousel
                 >[0]['products']
               }
-              title="Hot Sellers"
-              subtitle="Most wanted"
+              title="הנמכרים ביותר"
+              subtitle="המבוקשים ביותר"
               prioritizeFirstImages={true}
             />
           </div>
         </ScrollReveal>
       )}
 
-      {/* New Arrivals Carousel
-      {newArrivals.length > 0 && (
-        <ScrollReveal>
-          <div className=" bg-black shadow-cinematic">
-            <ProductCarousel
-              products={
-                newArrivals as unknown as Parameters<
-                  typeof ProductCarousel
-                >[0]['products']
-              }
-              title="NEW DROPS"
-              subtitle="Just Landed"
-            />
-          </div>
-        </ScrollReveal>
-      )} */}
-
-      {/* Gift Collections Section - Split Design */}
+      {/* Gift Collections Section */}
       <section className="relative h-[60vh] sm:h-[60vh] md:h-[75vh] min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 grid grid-cols-1 md:grid-cols-2">
           {/* Left Image - Gifts for Him */}
           <div className="relative h-full group">
             <Image
-              src="/images/product-5.jpg"
-              alt="Gifts for Him"
+              src="/images/crownsteel-royal.png"
+              alt="מתנות עבורו"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
               quality={95}
             />
             <div className="absolute inset-0 bg-black-pure/50 group-hover:bg-black-pure/40 transition-all"></div>
-
-            {/* Text Overlay - Left */}
-            <div className="absolute inset-0 flex items-end justify-start z-10 px-6 sm:px-12 lg:px-16 py-8 sm:py-16 lg:py-20">
+            <div className="absolute inset-0 flex items-end justify-end z-10 px-6 sm:px-12 lg:px-16 py-8 sm:py-16 lg:py-20">
               <ScrollReveal direction="up" delay={100}>
-                <div className="flex flex-col items-start">
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white-pure font-sans font-bold leading-tight drop-shadow-cinematic-xl tracking-tight uppercase mb-4 sm:mb-6">
-                    Gifts for Him
+                <div className="flex flex-col items-end">
+                  <h3 className="text-xl sm:text-xl md:text-2xl lg:text-2xl text-white-pure font-sans font-bold leading-tight drop-shadow-cinematic-xl tracking-wide mb-4 sm:mb-6">
+                    מתנות עבורו
                   </h3>
                   <Link href="/shop?gender=him">
                     <Button
                       size="lg"
-                      className="bg-white text-black hover:bg-gray-200 font-semibold uppercase text-sm sm:text-base px-6 sm:px-8"
+                      className="bg-white text-black hover:bg-gray-200 font-semibold text-sm sm:text-base px-6 sm:px-8"
                     >
-                      Explore
+                      גלו
                     </Button>
                   </Link>
                 </div>
               </ScrollReveal>
             </div>
           </div>
-
           {/* Right Image - Gifts for Her */}
           <div className="relative h-full group">
             <Image
-              src="/images/product-4.jpg"
-              alt="Gifts for Her"
+              src="/images/present.png"
+              alt="מתנות עבורה"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
               quality={95}
             />
             <div className="absolute inset-0 bg-black-pure/50 group-hover:bg-black-pure/40 transition-all"></div>
-
-            {/* Text Overlay - Right */}
-            <div className="absolute inset-0 flex items-end justify-start z-10 px-6 sm:px-12 lg:px-16 py-8 sm:py-16 lg:py-20">
+            <div className="absolute inset-0 flex items-end justify-end z-10 px-6 sm:px-12 lg:px-16 py-8 sm:py-16 lg:py-20">
               <ScrollReveal direction="up" delay={150}>
-                <div className="flex flex-col items-start">
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white-pure font-sans font-bold leading-tight drop-shadow-cinematic-xl tracking-tight uppercase mb-4 sm:mb-6">
-                    Gifts for Her
+                <div className="flex flex-col items-end">
+                  <h3 className="text-xl sm:text-xl md:text-2xl lg:text-2xl text-white-pure font-sans font-bold leading-tight drop-shadow-cinematic-xl tracking-wide mb-4 sm:mb-6">
+                    מתנות עבורה
                   </h3>
                   <Link href="/shop?gender=her">
                     <Button
                       size="lg"
-                      className="bg-white text-black hover:bg-gray-200 font-semibold uppercase text-sm sm:text-base px-6 sm:px-8"
+                      className="bg-white text-black hover:bg-gray-200 font-semibold text-sm sm:text-base px-6 sm:px-8"
                     >
-                      Explore
+                      גלו
                     </Button>
                   </Link>
                 </div>
@@ -240,98 +190,86 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Categories Section - Our Collections */}
+      {/* Categories Section */}
       <ScrollReveal>
         <section className="py-12 px-6 sm:py-20 sm:px-10 bg-white">
-          {/* Section Header */}
-          <div className="mb-8 sm:mb-12">
+          <div className="mb-8 sm:mb-12 text-center">
             <h2 className="text-base sm:text-lg font-normal text-gray-900 mb-2">
-              Our Collections
+              הקולקציות שלנו
             </h2>
           </div>
-
-          {/* Collections Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-12 lg:gap-20">
-            {/* Rings */}
             <Link href="/shop?category=rings" className="group">
               <div className="relative aspect-square mb-4 overflow-hidden bg-gray-100">
                 <Image
                   src="/images/categories/category-rings.png"
-                  alt="Rings Collection"
+                  alt="טבעות"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   priority
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
-                Rings
+              <h3 className="text-end text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
+                טבעות
               </h3>
             </Link>
-
-            {/* Chains */}
             <Link href="/shop?category=chains" className="group">
               <div className="relative aspect-square mb-4 overflow-hidden bg-gray-100">
                 <Image
                   src="/images/categories/category-chains.png"
-                  alt="Chains Collection"
+                  alt="שרשראות"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   priority
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
-                Chains
+              <h3 className="text-end text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
+                שרשראות
               </h3>
             </Link>
-
-            {/* Bracelets */}
             <Link href="/shop?category=bracelets" className="group">
               <div className="relative aspect-square mb-4 overflow-hidden bg-gray-100">
                 <Image
                   src="/images/categories/category-bracelets.png"
-                  alt="Bracelets Collection"
+                  alt="צמידים"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   priority
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
-                Bracelets
+              <h3 className="text-end text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
+                צמידים
               </h3>
             </Link>
-
-            {/* Pendants */}
             <Link href="/shop?category=pendants" className="group">
               <div className="relative aspect-square mb-4 overflow-hidden bg-gray-100">
                 <Image
                   src="/images/categories/category-pendants.png"
-                  alt="Pendants Collection"
+                  alt="תליונים"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
-                Pendants
+              <h3 className="text-end text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
+                תליונים
               </h3>
             </Link>
-
-            {/* Bundles */}
             <Link href="/shop?category=bundles" className="group">
               <div className="relative aspect-square mb-4 overflow-hidden bg-gray-100">
                 <Image
                   src="/images/categories/category-bundles.png"
-                  alt="Bundles Collection"
+                  alt="סטים"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               </div>
-              <h3 className="text-start text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
-                Bundles
+              <h3 className="text-end text-sm sm:text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
+                סטים
               </h3>
             </Link>
           </div>
@@ -346,7 +284,6 @@ export default async function HomePage() {
               {latestBlogPosts.map((post) => (
                 <div key={post.id} className="group">
                   <Link href={`/blog/${post.slug}`}>
-                    {/* Article Image */}
                     <div className="relative aspect-[16/10] mb-6 overflow-hidden bg-gray-100">
                       {post.featuredImage ? (
                         <Image
@@ -359,20 +296,16 @@ export default async function HomePage() {
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gray-200">
                           <span className="text-gray-400 text-sm">
-                            No image
+                            אין תמונה
                           </span>
                         </div>
                       )}
                     </div>
-
-                    {/* Article Title */}
                     <h3 className="text-sm font-semibold text-gray-900 mb-4 group-hover:text-gray-600 transition-colors">
                       {post.title}
                     </h3>
-
-                    {/* Discover Button */}
                     <button className="px-6 py-2 border-2 border-gray-900 text-gray-900 font-medium hover:bg-gray-900 hover:text-white transition-all">
-                      Discover
+                      גלו
                     </button>
                   </Link>
                 </div>
@@ -382,51 +315,43 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Brand Values Section - Modern & Clean */}
+      {/* Brand Values Section */}
       <section className="bg-white py-12 sm:py-16">
         <div className="container px-4 sm:px-6 mx-auto max-w-7xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t-4 border-black">
-            {/* Value 1 - Premium Quality */}
             <div className="text-center py-8 px-6 border-r border-b border-l border-gray-200 hover:bg-gray-50 transition-colors">
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Premium Quality
+                איכות פרימיום
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Handcrafted with the finest materials. Each piece is
-                meticulously designed for lasting beauty.
+                עבודת יד מהחומרים הטובים ביותר. כל פריט מעוצב בקפידה ליופי
+                מתמשך.
               </p>
             </div>
-
-            {/* Value 2 - Lifetime Warranty */}
             <div className="text-center py-8 px-6 border-r border-b border-gray-200 hover:bg-gray-50 transition-colors">
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Lifetime Warranty
+                אחריות לכל החיים
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                We stand behind our craft. Every piece comes with a lifetime
-                warranty against defects.
+                אנו עומדים מאחורי המלאכה שלנו. כל פריט מגיע עם אחריות לכל החיים
+                נגד פגמים.
               </p>
             </div>
-
-            {/* Value 3 - Free Shipping */}
             <div className="text-center py-8 px-6 border-r border-b border-gray-200 hover:bg-gray-50 transition-colors">
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Free Shipping
+                משלוח חינם
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Complimentary shipping on all orders. Your jewelry arrives
-                safely, beautifully packaged.
+                משלוח חינם על כל ההזמנות. התכשיטים שלכם יגיעו בבטחה ובאריזה
+                יוקרתית.
               </p>
             </div>
-
-            {/* Value 4 - Expert Craftsmanship */}
             <div className="text-center py-8 px-6 border-r border-b border-gray-200 hover:bg-gray-50 transition-colors">
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Expert Craftsmanship
+                אומנות מומחית
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Years of expertise in every piece. Designed by artisans,
-                perfected for you.
+                שנות ניסיון בכל פריט. עיצוב אומנים, מושלם בשבילך.
               </p>
             </div>
           </div>

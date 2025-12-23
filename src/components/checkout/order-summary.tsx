@@ -40,11 +40,11 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
   const currencySymbol = settings?.currencySymbol || '₪';
 
   return (
-    <Card className="sticky top-4">
-      <CardHeader>
-        <CardTitle>Order Summary</CardTitle>
+    <Card className="sticky top-4 p-4 sm:p-6 md:p-8 bg-white rounded-lg shadow border border-gray-200">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-gray-900">סיכום הזמנה</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-0 text-gray-800">
         {/* Cart Items */}
         <div className="space-y-4 max-h-[300px] overflow-y-auto">
           {items.map((item) => (
@@ -60,7 +60,7 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">{item.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  Quantity: {item.quantity}
+                  כמות: {item.quantity}
                 </p>
               </div>
               <p className="font-medium text-sm">
@@ -76,7 +76,7 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
         {/* Price Breakdown */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Subtotal</span>
+            <span className="text-muted-foreground">סך ביניים</span>
             <span className="font-medium">
               {currencySymbol}
               {subtotal.toFixed(2)}
@@ -86,9 +86,7 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
           {/* Discount Row */}
           {discountAmount > 0 && appliedCoupon && (
             <div className="flex justify-between text-sm text-green-600">
-              <span className="font-medium">
-                Discount ({appliedCoupon.code})
-              </span>
+              <span className="font-medium">הנחה ({appliedCoupon.code})</span>
               <span className="font-medium">
                 -{currencySymbol}
                 {discountAmount.toFixed(2)}
@@ -97,7 +95,7 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
           )}
 
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Shipping</span>
+            <span className="text-muted-foreground">משלוח</span>
             <span
               className={`font-medium ${shippingInfo.isFree ? 'text-green-600' : ''}`}
             >
@@ -113,7 +111,7 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
           )}
 
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">VAT ({taxRate}%)</span>
+            <span className="text-muted-foreground">מע"מ ({taxRate}%)</span>
             <span className="font-medium">
               {currencySymbol}
               {taxAmount.toFixed(2)}
@@ -123,7 +121,7 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
           <Separator />
 
           <div className="flex justify-between text-lg font-bold">
-            <span>Total</span>
+            <span>סה"כ</span>
             <span>
               {currencySymbol}
               {total.toFixed(2)}

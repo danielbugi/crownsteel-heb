@@ -85,7 +85,7 @@ export function QuickViewModal({
       image: product.image,
       quantity: quantity,
     });
-    toast.success(`Added ${quantity} item(s) to cart!`);
+    toast.success(`נוסף ${quantity} פריט(ים) לעגלה!`);
     onOpenChange(false);
   };
 
@@ -108,7 +108,7 @@ export function QuickViewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-[#18120a] border-2 border-gold-500 shadow-2xl shadow-gold-900/40">
         <DialogHeader>
           <DialogTitle className="sr-only">{product.name}</DialogTitle>
         </DialogHeader>
@@ -128,16 +128,16 @@ export function QuickViewModal({
 
               {/* Badges */}
               <div className="absolute top-3 left-3 flex flex-col gap-2">
-                {product.featured && <ProductBadge>Featured</ProductBadge>}
+                {product.featured && <ProductBadge>מומלץ</ProductBadge>}
                 {product.hasVariants &&
                   product.variants &&
                   product.variants.length > 0 && (
                     <ProductBadge>
-                      Multiple {product.variantLabel || 'Options'}
+                      מספר {product.variantLabel || 'אפשרויות'}
                     </ProductBadge>
                   )}
                 {discountPercentage > 0 && (
-                  <ProductBadge>-{discountPercentage}% OFF</ProductBadge>
+                  <ProductBadge>-{discountPercentage}% הנחה</ProductBadge>
                 )}
               </div>
             </div>
@@ -219,7 +219,7 @@ export function QuickViewModal({
 
             {/* Quantity Selector */}
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">Quantity</label>
+              <label className="block text-sm font-medium mb-2">כמות</label>
               <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
@@ -258,19 +258,19 @@ export function QuickViewModal({
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 {!product.inStock
-                  ? 'Out of Stock'
+                  ? 'אזל מהמלאי'
                   : product.hasVariants &&
                       product.variants &&
                       product.variants.length > 0
-                    ? 'Select Options'
-                    : 'Add to Cart'}
+                    ? 'בחר אפשרויות'
+                    : 'הוסף לעגלה'}
               </Button>
 
               <div className="grid grid-cols-2 gap-3">
                 <Button variant="outline" size="lg" className="w-full" asChild>
                   <Link href={`/shop/${product.slug}`}>
                     <ExternalLink className="mr-2 h-4 w-4" />
-                    View Details
+                    לפרטי המוצר
                   </Link>
                 </Button>
                 <Button
@@ -278,11 +278,11 @@ export function QuickViewModal({
                   size="lg"
                   className="w-full"
                   onClick={() => {
-                    toast.success('Added to wishlist!');
+                    toast.success('נוסף למועדפים!');
                   }}
                 >
                   <Heart className="mr-2 h-4 w-4" />
-                  Wishlist
+                  מועדפים
                 </Button>
               </div>
             </div>
