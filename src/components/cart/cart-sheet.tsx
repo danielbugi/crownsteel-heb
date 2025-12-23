@@ -130,7 +130,7 @@ export function CartSheet() {
               {/* Total */}
               <div className="flex justify-between">
                 <span className="font-light uppercase tracking-wide text-black text-base">
-                  סה"כ
+                  סה&quot;כ
                 </span>
                 <span className="font-bold text-black text-lg">
                   {formatPrice(totalWithShipping)}

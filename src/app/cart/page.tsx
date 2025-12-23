@@ -93,7 +93,7 @@ export default function CartPage() {
                     </div>
                     <Separator />
                     <div className="flex justify-between text-lg font-bold">
-                      <span>סה"כ</span>
+                      <span>סה&quot;כ</span>
                       <span>{formatPrice(totalPrice)}</span>
                     </div>
                   </div>

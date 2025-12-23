@@ -377,14 +377,16 @@ export function CheckoutForm({
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">מע"מ ({taxRate}%)</span>
+              <span className="text-muted-foreground">
+                מע&quot;מ ({taxRate}%)
+              </span>
               <span>
                 {settings?.currencySymbol}
                 {taxAmount.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between text-lg font-bold border-t pt-2">
-              <span>סה"כ</span>
+              <span>סה&quot;כ</span>
               <span>
                 {settings?.currencySymbol}
                 {finalTotal.toFixed(2)}
@@ -405,7 +407,7 @@ export function CheckoutForm({
             <div className="bg-muted p-4 rounded-lg space-y-2">
               <p className="text-sm">תשלום מאובטח באמצעות טרנזילה</p>
               <p className="text-xs text-muted-foreground">
-                לאחר לחיצה על "המשך לתשלום" תועברו לעמוד תשלום מאובטח
+                לאחר לחיצה על &quot;המשך לתשלום&quot; תועברו לעמוד תשלום מאובטח
               </p>
             </div>
           </CardContent>

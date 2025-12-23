@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-12-18T13:33:08.955Z",
+  "timestamp": "2025-12-23T10:57:33.426Z",
   "javascript": {
-    "total": "1287.31 KB",
-    "totalKB": "1287.31",
+    "total": "1287.21 KB",
+    "totalKB": "1287.21",
     "files": [
       {
         "file": "framework-32492dd9c4fc5870.js",
@@ -53,13 +53,13 @@
         "warning": false
       },
       {
-        "file": "5327-563758691ff73213.js",
-        "size": 26.1201171875,
-        "formatted": "26.12 KB",
+        "file": "3487-c844e937f9e1368e.js",
+        "size": 26.0419921875,
+        "formatted": "26.04 KB",
         "warning": false
       },
       {
-        "file": "3033-33deda496d12d09b.js",
+        "file": "9801-e0031271415014fd.js",
         "size": 24.615234375,
         "formatted": "24.62 KB",
         "warning": false
@@ -68,13 +68,13 @@
     "warning": true
   },
   "css": {
-    "total": "97.00 KB",
-    "totalKB": "97.00",
+    "total": "96.94 KB",
+    "totalKB": "96.94",
     "files": [
       {
-        "file": "972bb4f5b4b8cc15.css",
-        "size": 80.51953125,
-        "formatted": "80.52 KB"
+        "file": "813c06efdebe3a5c.css",
+        "size": 80.4638671875,
+        "formatted": "80.46 KB"
       },
       {
         "file": "756c41fcfd0e873c.css",
@@ -85,7 +85,7 @@
     "warning": true
   },
   "summary": {
-    "totalSize": "1384.30 KB",
+    "totalSize": "1384.15 KB",
     "jsFiles": 43,
     "cssFiles": 2
   }

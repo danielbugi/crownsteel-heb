@@ -111,7 +111,9 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
           )}
 
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">מע"מ ({taxRate}%)</span>
+            <span className="text-muted-foreground">
+              מע&quot;מ ({taxRate}%)
+            </span>
             <span className="font-medium">
               {currencySymbol}
               {taxAmount.toFixed(2)}
@@ -121,7 +123,7 @@ export function OrderSummary({ appliedCoupon }: OrderSummaryProps) {
           <Separator />
 
           <div className="flex justify-between text-lg font-bold">
-            <span>סה"כ</span>
+            <span>סה&quot;כ</span>
             <span>
               {currencySymbol}
               {total.toFixed(2)}
