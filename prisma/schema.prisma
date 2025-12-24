@@ -26,6 +26,7 @@ model User {
   cartItems CartItem[]
   reviews   Review[]
   wishlist  Wishlist[]
+  supportTickets SupportTicket[] @relation("CustomerTickets")
   blogPosts BlogPost[] @relation("BlogAuthor")
   @@map("users")
 }
@@ -608,4 +609,19 @@ enum BlogStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+}
+
+model SupportTicket {
+  id        String   @id @default(cuid())
+  customerId String
+  customer  User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  subject   String
+  description String
+  status    String   @default("open") // open, in-progress, resolved, closed
+  priority  String   @default("medium") // low, medium, high
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status])
 }

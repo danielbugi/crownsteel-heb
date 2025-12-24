@@ -24,6 +24,8 @@ import {
   generateWebSiteSchema,
 } from '@/lib/seo/structured-data';
 
+import { ChatDialog } from '@/components/chat/chat-dialog';
+
 // Luxury Fonts
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -203,6 +205,7 @@ export default function RootLayout({
                 <CartSheet />
                 <WishlistSheet />
                 <CookieAndSignupFlow />
+                <ChatDialog />
                 <Toaster position="bottom-right" />
               </WebVitalsProvider>
             </WishlistSyncProvider>

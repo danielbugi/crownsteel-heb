@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-12-23T10:57:33.426Z",
+  "timestamp": "2025-12-24T09:51:00.690Z",
   "javascript": {
-    "total": "1287.21 KB",
-    "totalKB": "1287.21",
+    "total": "1287.73 KB",
+    "totalKB": "1287.73",
     "files": [
       {
         "file": "framework-32492dd9c4fc5870.js",
@@ -68,13 +68,13 @@
     "warning": true
   },
   "css": {
-    "total": "96.94 KB",
-    "totalKB": "96.94",
+    "total": "99.22 KB",
+    "totalKB": "99.22",
     "files": [
       {
-        "file": "813c06efdebe3a5c.css",
-        "size": 80.4638671875,
-        "formatted": "80.46 KB"
+        "file": "493cbda800436cc5.css",
+        "size": 82.7431640625,
+        "formatted": "82.74 KB"
       },
       {
         "file": "756c41fcfd0e873c.css",
@@ -85,7 +85,7 @@
     "warning": true
   },
   "summary": {
-    "totalSize": "1384.15 KB",
+    "totalSize": "1386.95 KB",
     "jsFiles": 43,
     "cssFiles": 2
   }
