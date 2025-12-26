@@ -1,13 +1,13 @@
 {
-  "timestamp": "2025-12-26T14:35:09.746Z",
+  "timestamp": "2025-12-26T15:01:52.077Z",
   "javascript": {
-    "total": "1287.73 KB",
-    "totalKB": "1287.73",
+    "total": "1349.00 KB",
+    "totalKB": "1349.00",
     "files": [
       {
-        "file": "framework-32492dd9c4fc5870.js",
-        "size": 178.455078125,
-        "formatted": "178.46 KB",
+        "file": "framework-d7945a8ad0653f37.js",
+        "size": 185.3388671875,
+        "formatted": "185.34 KB",
         "warning": true
       },
       {
@@ -23,6 +23,12 @@
         "warning": true
       },
       {
+        "file": "6237-79146e1a70f23e06.js",
+        "size": 133.53515625,
+        "formatted": "133.54 KB",
+        "warning": true
+      },
+      {
         "file": "main-2016872a0d8610fd.js",
         "size": 119.12109375,
         "formatted": "119.12 KB",
@@ -35,33 +41,27 @@
         "warning": true
       },
       {
-        "file": "7357-c095d1fe0b2f7cf1.js",
-        "size": 88.5234375,
-        "formatted": "88.52 KB",
+        "file": "9644-a91112b8bcb9b17b.js",
+        "size": 34.599609375,
+        "formatted": "34.60 KB",
         "warning": false
       },
       {
-        "file": "5118-9fb5408668515a93.js",
-        "size": 30.3544921875,
-        "formatted": "30.35 KB",
-        "warning": false
-      },
-      {
-        "file": "6093-da8af415b686f250.js",
+        "file": "6093-039480aa739a6d9d.js",
         "size": 26.431640625,
         "formatted": "26.43 KB",
         "warning": false
       },
       {
-        "file": "3487-c844e937f9e1368e.js",
-        "size": 26.0419921875,
+        "file": "3487-b09bb6feafa4f9cf.js",
+        "size": 26.041015625,
         "formatted": "26.04 KB",
         "warning": false
       },
       {
-        "file": "9801-e0031271415014fd.js",
-        "size": 24.615234375,
-        "formatted": "24.62 KB",
+        "file": "1601-125cf0a9a9354eab.js",
+        "size": 24.92578125,
+        "formatted": "24.93 KB",
         "warning": false
       }
     ],
@@ -72,7 +72,7 @@
     "totalKB": "100.65",
     "files": [
       {
-        "file": "f0e34120c4a42ef6.css",
+        "file": "f578329cafc1e239.css",
         "size": 84.171875,
         "formatted": "84.17 KB"
       },
@@ -85,7 +85,7 @@
     "warning": true
   },
   "summary": {
-    "totalSize": "1388.38 KB",
+    "totalSize": "1449.66 KB",
     "jsFiles": 43,
     "cssFiles": 2
   }
