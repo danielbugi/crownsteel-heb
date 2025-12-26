@@ -1,428 +1,254 @@
-// src/components/chat/chat-dialog.tsx
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Loader2, Send, MessageCircle, X } from 'lucide-react';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import toast from 'react-hot-toast';
+import { Eye, EyeOff, Lock } from 'lucide-react';
 
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-  products?: Array<{
-    id: string;
-    name: string;
-    slug: string;
-    price: number;
-    image: string;
-    rating: number;
-    reviews: number;
-  }>;
-  categories?: Array<{
-    id: string;
-    name: string;
-    slug: string;
-    image?: string;
-    productCount: number;
-  }>;
-}
-
-export function ChatDialog() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
+export function ChangePasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
 
-  const quickActions = [
-    { label: 'קטגוריות מובילות', message: 'הראה לי את קטגוריות המוצרים שלכם' },
-    { label: 'מוצרים מובילים', message: 'הראה לי את המוצרים המובילים שלכם' },
-    { label: 'איך מודדים טבעת?', message: 'איך אני יודע את גודל הטבעת שלי?' },
-    { label: 'איפה ההזמנה שלי?', message: 'איך אני עוקב אחר ההזמנה שלי?' },
-  ];
+  const [formData, setFormData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
 
-  const handleQuickAction = (message: string) => {
-    setInput(message);
-    setTimeout(() => {
-      if (formRef.current) {
-        formRef.current.dispatchEvent(
-          new Event('submit', { bubbles: true, cancelable: true })
-        );
-      }
-    }, 0);
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {
+    setShowPasswords((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
   };
 
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+  const validatePassword = (password: string): string[] => {
+    const errors = [];
+    if (password.length < 8) {
+      errors.push('Password must be at least 8 characters long');
     }
-  }, [messages]);
-
-  // Focus input when chat opens
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 100);
+    if (!/(?=.*[a-z])/.test(password)) {
+      errors.push('Password must contain at least one lowercase letter');
     }
-  }, [isOpen]);
+    if (!/(?=.*[A-Z])/.test(password)) {
+      errors.push('Password must contain at least one uppercase letter');
+    }
+    if (!/(?=.*\d)/.test(password)) {
+      errors.push('Password must contain at least one number');
+    }
+    return errors;
+  };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!input.trim() || isLoading) return;
-
-    // Add user message
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    setError(null);
+    setErrors([]);
     setIsLoading(true);
 
+    // Client-side validation
+    const validationErrors = [];
+
+    if (!formData.currentPassword) {
+      validationErrors.push('Current password is required');
+    }
+
+    const passwordErrors = validatePassword(formData.newPassword);
+    validationErrors.push(...passwordErrors);
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      validationErrors.push('New passwords do not match');
+    }
+
+    if (formData.currentPassword === formData.newPassword) {
+      validationErrors.push(
+        'New password must be different from current password'
+      );
+    }
+
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // Send to agent API
-      const response = await fetch('/api/agent/chat', {
+      const response = await fetch('/api/user/change-password', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: messages.concat(userMessage).map((msg) => ({
-            role: msg.role,
-            content: msg.content,
-          })),
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to get response');
-      }
-
       const data = await response.json();
 
-      // Parse products or categories from response if present
-      let products: Message['products'] = undefined;
-      let categories: Message['categories'] = undefined;
-      let responseText = data.message;
-
-      // Check for PRODUCTS_JSON
-      if (data.message.includes('PRODUCTS_JSON:')) {
-        const lines = data.message.split('\n');
-        let jsonStartIdx = -1;
-
-        for (let i = 0; i < lines.length; i++) {
-          if (lines[i].includes('PRODUCTS_JSON:')) {
-            jsonStartIdx = i;
-            break;
-          }
-        }
-
-        if (jsonStartIdx !== -1) {
-          try {
-            const remainingLines = lines.slice(jsonStartIdx + 1);
-            const jsonStr = remainingLines.join('\n');
-            const jsonMatch = jsonStr.match(/\[[\s\S]*\]/);
-            if (jsonMatch) {
-              products = JSON.parse(jsonMatch[0]);
-              responseText = lines.slice(0, jsonStartIdx).join('\n').trim();
-            }
-          } catch (e) {
-            console.error('Failed to parse products:', e);
-          }
-        }
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to change password');
       }
 
-      // Check for CATEGORIES_JSON
-      if (data.message.includes('CATEGORIES_JSON:')) {
-        const lines = data.message.split('\n');
-        let jsonStartIdx = -1;
+      toast.success('Password changed successfully');
 
-        for (let i = 0; i < lines.length; i++) {
-          if (lines[i].includes('CATEGORIES_JSON:')) {
-            jsonStartIdx = i;
-            break;
-          }
-        }
+      // Reset form
+      setFormData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
 
-        if (jsonStartIdx !== -1) {
-          try {
-            const remainingLines = lines.slice(jsonStartIdx + 1);
-            const jsonStr = remainingLines.join('\n');
-            const jsonMatch = jsonStr.match(/\[[\s\S]*\]/);
-            if (jsonMatch) {
-              categories = JSON.parse(jsonMatch[0]);
-              responseText = lines.slice(0, jsonStartIdx).join('\n').trim();
-            }
-          } catch (e) {
-            console.error('Failed to parse categories:', e);
-          }
-        }
-      }
-
-      // Add assistant message
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: responseText,
-        timestamp: new Date(),
-        products,
-        categories,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'אירעה שגיאה';
-      setError(errorMessage);
-      console.error('Chat error:', err);
+      // Optional: Sign out user to require re-login with new password
+      // router.push("/api/auth/signout");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to change password';
+      toast.error(errorMessage);
+      setErrors([errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear errors when user starts typing
+    if (errors.length > 0) {
+      setErrors([]);
+    }
+  };
+
   return (
-    <>
-      {/* Chat Button - Responsive positioning */}
-      <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50">
-        {!isOpen && (
-          <button
-            onClick={() => setIsOpen(true)}
-            className="h-14 w-14 rounded-full bg-blue-600 shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all flex items-center justify-center text-white active:scale-95"
-            title="פתח צ'אט"
-            aria-label="Open chat"
-          >
-            <MessageCircle className="h-6 w-6" />
-          </button>
-        )}
-      </div>
-
-      {/* Floating Chat Box - Mobile full screen, Desktop fixed size */}
-      {isOpen && (
-        <>
-          {/* Mobile Overlay - Close on background click */}
-          <div
-            className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden"
-            onClick={() => setIsOpen(false)}
-            aria-hidden="true"
-          />
-
-          {/* Chat Container - Responsive */}
-          <div
-            className="fixed inset-0 md:inset-auto md:bottom-24 md:right-6 md:w-96 z-50 bg-white rounded-none md:rounded-2xl shadow-2xl flex flex-col border-0 md:border border-gray-200 md:h-[600px] h-screen md:max-h-[600px]"
-            dir="rtl"
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 md:px-6 py-3 md:py-4 rounded-none md:rounded-t-2xl flex justify-between items-center flex-shrink-0">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-white hover:text-blue-100 transition-colors p-1 active:scale-90"
-                aria-label="Close chat"
-              >
-                <X className="h-5 w-5" />
-              </button>
-              <div className="text-right flex-1 mr-2">
-                <h3 className="font-semibold text-base md:text-lg">
-                  Crown Steel Support
-                </h3>
-                <p className="text-xs text-blue-100">כאן כדי לעזור לך</p>
-              </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Lock className="h-5 w-5" />
+          Change Password
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {errors.length > 0 && (
+            <div className="p-4 border border-red-200 bg-red-50 rounded-lg">
+              <ul className="list-disc list-inside space-y-1 text-sm text-red-600">
+                {errors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
             </div>
+          )}
 
-            {/* Messages Area - Responsive padding and scroll */}
-            <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-white">
-              {messages.length === 0 && (
-                <div className="flex flex-col h-full">
-                  {/* Welcome Message */}
-                  <div className="flex flex-col items-center justify-start py-4 md:py-6 text-center px-2">
-                    <MessageCircle className="h-10 md:h-12 w-10 md:w-12 text-gray-400 mb-3" />
-                    <p className="text-sm text-gray-700 font-medium">
-                      !ברוך הבא ל-Crown Steel
-                    </p>
-                    <p className="text-xs text-gray-500 mt-2">
-                      אני כאן כדי לעזור לך למצוא תכשיטים מושלמים
-                    </p>
-                  </div>
-
-                  {/* Quick Action Buttons - Responsive grid */}
-                  <div className="mt-auto grid grid-cols-2 gap-2 px-2 pb-4">
-                    {quickActions.map((action, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleQuickAction(action.message)}
-                        disabled={isLoading}
-                        className="bg-gray-50 hover:bg-blue-50 active:bg-blue-100 disabled:bg-gray-100 border border-gray-200 rounded-lg p-2 md:p-3 text-right text-xs md:text-sm text-gray-700 font-medium transition-colors touch-manipulation disabled:text-gray-400"
-                      >
-                        {action.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Messages */}
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-xs md:max-w-sm ${
-                      message.role === 'user'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-800'
-                    } rounded-lg px-3 md:px-4 py-2 md:py-3 text-sm md:text-base break-words`}
-                  >
-                    {message.content}
-                  </div>
-                </div>
-              ))}
-
-              {/* Product Cards Display */}
-              {messages.map((message) =>
-                message.products && message.products.length > 0 ? (
-                  <div
-                    key={`products-${message.id}`}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3"
-                  >
-                    {message.products.map((product) => (
-                      <a
-                        key={product.id}
-                        href={`/shop/${product.slug}`}
-                        className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg active:shadow-md transition-shadow cursor-pointer touch-manipulation"
-                      >
-                        <div className="relative h-28 md:h-32 w-full bg-gray-100 overflow-hidden">
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-full object-cover hover:scale-105 active:scale-100 transition-transform"
-                          />
-                        </div>
-                        <div className="p-2 md:p-3">
-                          <h3 className="text-xs md:text-sm font-semibold text-gray-800 mb-1 line-clamp-2">
-                            {product.name}
-                          </h3>
-                          <p className="text-xs text-blue-600 font-semibold mb-1">
-                            ₪{product.price.toLocaleString('he-IL')}
-                          </p>
-                          <div className="flex items-center gap-1 text-xs text-gray-600">
-                            <span>⭐ {product.rating.toFixed(1)}</span>
-                            <span>({product.reviews})</span>
-                          </div>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                ) : null
-              )}
-
-              {/* Category Cards Display */}
-              {messages.map((message) =>
-                message.categories && message.categories.length > 0 ? (
-                  <div
-                    key={`categories-${message.id}`}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3"
-                  >
-                    {message.categories.map((category) => (
-                      <a
-                        key={category.id}
-                        href={`/shop?category=${category.slug}`}
-                        className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg active:shadow-md transition-shadow cursor-pointer touch-manipulation"
-                      >
-                        {category.image ? (
-                          <div className="relative h-28 md:h-32 w-full bg-gray-100 overflow-hidden">
-                            <img
-                              src={category.image}
-                              alt={category.name}
-                              className="w-full h-full object-cover hover:scale-105 active:scale-100 transition-transform"
-                            />
-                          </div>
-                        ) : (
-                          <div className="h-28 md:h-32 w-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                            <span className="text-2xl md:text-3xl opacity-50">
-                              📦
-                            </span>
-                          </div>
-                        )}
-                        <div className="p-2 md:p-3">
-                          <h3 className="text-xs md:text-sm font-semibold text-gray-800 mb-1">
-                            {category.name}
-                          </h3>
-                          <p className="text-xs text-gray-600">
-                            {category.productCount}{' '}
-                            {category.productCount === 1 ? 'מוצר' : 'מוצרים'}
-                          </p>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                ) : null
-              )}
-
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-200 text-gray-800 rounded-lg px-3 md:px-4 py-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </div>
-                </div>
-              )}
-
-              {error && (
-                <div className="bg-red-100 text-red-700 rounded-lg px-3 md:px-4 py-2 text-xs md:text-sm border border-red-300">
-                  {error}
-                </div>
-              )}
-
-              <div ref={scrollRef} />
-            </div>
-
-            {/* Input Area - Responsive and mobile-friendly */}
-            <div className="border-t border-gray-200 p-3 md:p-3 bg-white rounded-none md:rounded-b-2xl flex-shrink-0">
-              <form
-                ref={formRef}
-                onSubmit={handleSendMessage}
-                className="flex gap-2 items-end flex-row-reverse"
+          {/* Current Password */}
+          <div className="space-y-2">
+            <Label htmlFor="currentPassword">Current Password</Label>
+            <div className="relative">
+              <Input
+                id="currentPassword"
+                type={showPasswords.current ? 'text' : 'password'}
+                value={formData.currentPassword}
+                onChange={(e) =>
+                  handleInputChange('currentPassword', e.target.value)
+                }
+                placeholder="Enter your current password"
+                required
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => togglePasswordVisibility('current')}
               >
-                <div className="flex-1 flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent bg-white">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="הקלד את ההודעה שלך..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    disabled={isLoading}
-                    className="flex-1 px-3 md:px-4 py-2 outline-none text-gray-800 text-sm md:text-base placeholder-gray-500 disabled:bg-gray-100 disabled:text-gray-500 bg-transparent text-right"
-                    style={{
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={isLoading || !input.trim()}
-                  className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-300 text-white px-3 py-2 rounded-lg transition-colors flex items-center justify-center flex-shrink-0 h-10 w-10 touch-manipulation"
-                  aria-label="Send message"
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </button>
-              </form>
+                {showPasswords.current ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
             </div>
           </div>
-        </>
-      )}
-    </>
+
+          {/* New Password */}
+          <div className="space-y-2">
+            <Label htmlFor="newPassword">New Password</Label>
+            <div className="relative">
+              <Input
+                id="newPassword"
+                type={showPasswords.new ? 'text' : 'password'}
+                value={formData.newPassword}
+                onChange={(e) =>
+                  handleInputChange('newPassword', e.target.value)
+                }
+                placeholder="Enter your new password"
+                required
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => togglePasswordVisibility('new')}
+              >
+                {showPasswords.new ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Confirm Password */}
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type={showPasswords.confirm ? 'text' : 'password'}
+                value={formData.confirmPassword}
+                onChange={(e) =>
+                  handleInputChange('confirmPassword', e.target.value)
+                }
+                placeholder="Confirm your new password"
+                required
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => togglePasswordVisibility('confirm')}
+              >
+                {showPasswords.confirm ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Password Requirements */}
+          <div className="text-sm text-muted-foreground">
+            <p className="font-medium mb-1">Password requirements:</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>At least 8 characters long</li>
+              <li>Contains uppercase and lowercase letters</li>
+              <li>Contains at least one number</li>
+            </ul>
+          </div>
+
+          <Button type="submit" disabled={isLoading} className="w-full">
+            {isLoading ? 'Changing Password...' : 'Change Password'}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

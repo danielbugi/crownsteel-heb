@@ -38,19 +38,15 @@ export function ChatDialog() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const quickActions = [
-    { label: 'קטגוריות מובילות', message: 'הראה לי את קטגוריות המוצרים שלכם' },
+    { label: 'גלישה במוצרים', message: 'הראה לי את קטגוריות המוצרים שלכם' },
     { label: 'מוצרים מובילים', message: 'הראה לי את המוצרים המובילים שלכם' },
-    {
-      label: 'איך לדעת מה המידה שלי?',
-      message: 'איך אני יודע את גודל הטבעת שלי?',
-    },
-    { label: 'איפה ההזמנה שלי?', message: 'איך אני עוקב אחר ההזמנה שלי?' },
+    { label: 'בעצם גודל', message: 'איך אני יודע את גודל הטבעת שלי?' },
+    { label: 'עקיבה הזמנה', message: 'איך אני עוקב אחר ההזמנה שלי?' },
   ];
 
   const handleQuickAction = (message: string) => {
     setInput(message);
     setTimeout(() => {
-      // Use formRef instead of querySelector - this ensures we submit the CORRECT form
       if (formRef.current) {
         formRef.current.dispatchEvent(
           new Event('submit', { bubbles: true, cancelable: true })
@@ -194,260 +190,238 @@ export function ChatDialog() {
 
   return (
     <>
-      {/* Chat Button - Fixed in bottom right */}
-      <div className="fixed bottom-6 right-6 z-50">
+      {/* Chat Button - Responsive positioning */}
+      <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50">
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="h-14 w-14 rounded-full bg-blue-600 shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all flex items-center justify-center text-white"
+            className="h-14 w-14 rounded-full bg-blue-600 shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all flex items-center justify-center text-white active:scale-95"
             title="פתח צ'אט"
+            aria-label="Open chat"
           >
             <MessageCircle className="h-6 w-6" />
           </button>
         )}
       </div>
 
-      {/* Floating Chat Box */}
+      {/* Floating Chat Box - Mobile full screen, Desktop fixed size */}
       {isOpen && (
-        <div
-          className="fixed bottom-24 right-6 z-50 w-96 bg-white rounded-2xl shadow-2xl flex flex-col h-[600px] border border-gray-200"
-          dir="rtl"
-        >
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white hover:text-blue-100 transition-colors p-1"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <div className="text-right">
-              <h3 className="font-semibold text-lg">Crown Steel Support</h3>
-              <p className="text-xs text-blue-100 mt-1">
-                כאן כדי לעזור לך למצוא תכשיטים מושלמים
-              </p>
-            </div>
-          </div>
+        <>
+          {/* Mobile Overlay - Close on background click */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
 
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
-            {messages.length === 0 && (
-              <div className="flex flex-col h-full">
-                {/* Welcome Message */}
-                <div className="flex flex-col items-center justify-start py-6 text-center">
-                  <MessageCircle className="h-12 w-12 text-gray-400 mb-3" />
-                  <p className="text-sm text-gray-700 font-medium">
-                    !ברוך הבא ל-Crown Steel
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">
-                    אני כאן כדי לעזור לך למצוא תכשיטים מושלמים והתשובות לשאלות
-                    שלך
-                  </p>
-                </div>
-
-                {/* Quick Action Buttons */}
-                <div className="mt-auto grid grid-cols-2 gap-2">
-                  {quickActions.map((action, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleQuickAction(action.message)}
-                      disabled={isLoading}
-                      className="bg-blue-50 hover:bg-blue-100 disabled:bg-gray-100 text-blue-600 hover:text-blue-700 disabled:text-gray-400 px-3 py-2 rounded-lg text-xs font-medium transition-colors border border-blue-200 hover:border-blue-300"
-                    >
-                      {action.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
+          {/* Chat Container - Responsive */}
+          <div
+            className="fixed inset-0 md:inset-auto md:bottom-24 md:right-6 md:w-96 z-50 bg-white rounded-none md:rounded-2xl shadow-2xl flex flex-col border-0 md:border border-gray-200 md:h-[600px] h-screen md:max-h-[600px]"
+            dir="rtl"
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 md:px-6 py-3 md:py-4 rounded-none md:rounded-t-2xl flex justify-between items-center flex-shrink-0">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-white hover:text-blue-100 transition-colors p-1 active:scale-90"
+                aria-label="Close chat"
               >
-                <div className="flex flex-col gap-2 max-w-2xl">
-                  <div
-                    className={`rounded-lg px-4 py-2 ${
-                      message.role === 'user'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-800'
-                    }`}
-                  >
-                    <p className="text-sm break-words whitespace-pre-wrap">
-                      {message.content}
+                <X className="h-5 w-5" />
+              </button>
+              <div className="text-right flex-1 mr-2">
+                <h3 className="font-semibold text-base md:text-lg">
+                  Crown Steel Support
+                </h3>
+                <p className="text-xs text-blue-100">כאן כדי לעזור לך</p>
+              </div>
+            </div>
+
+            {/* Messages Area - Responsive padding and scroll */}
+            <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-white">
+              {messages.length === 0 && (
+                <div className="flex flex-col h-full">
+                  {/* Welcome Message */}
+                  <div className="flex flex-col items-center justify-start py-4 md:py-6 text-center px-2">
+                    <MessageCircle className="h-10 md:h-12 w-10 md:w-12 text-gray-400 mb-3" />
+                    <p className="text-sm text-gray-700 font-medium">
+                      !ברוך הבא ל-Crown Steel
                     </p>
-                    <span
-                      className={`text-xs mt-1 block ${
-                        message.role === 'user'
-                          ? 'text-blue-100'
-                          : 'text-gray-600'
-                      }`}
-                    >
-                      {message.timestamp.toLocaleTimeString('he-IL', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </span>
+                    <p className="text-xs text-gray-500 mt-2">
+                      אני כאן כדי לעזור לך למצוא תכשיטים מושלמים
+                    </p>
                   </div>
 
-                  {/* Product Cards Display */}
-                  {message.products && message.products.length > 0 && (
-                    <div className="grid grid-cols-2 gap-2">
-                      {message.products.map((product) => (
-                        <a
-                          key={product.id}
-                          href={`/shop/${product.slug}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                        >
-                          {/* Image */}
-                          <div className="relative h-32 w-full bg-gray-100 overflow-hidden">
+                  {/* Quick Action Buttons - Responsive grid */}
+                  <div className="mt-auto grid grid-cols-2 gap-2 px-2 pb-4">
+                    {quickActions.map((action, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleQuickAction(action.message)}
+                        disabled={isLoading}
+                        className="bg-gray-50 hover:bg-blue-50 active:bg-blue-100 disabled:bg-gray-100 border border-gray-200 rounded-lg p-2 md:p-3 text-right text-xs md:text-sm text-gray-700 font-medium transition-colors touch-manipulation disabled:text-gray-400"
+                      >
+                        {action.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Messages */}
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-xs md:max-w-sm ${
+                      message.role === 'user'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-800'
+                    } rounded-lg px-3 md:px-4 py-2 md:py-3 text-sm md:text-base break-words`}
+                  >
+                    {message.content}
+                  </div>
+                </div>
+              ))}
+
+              {/* Product Cards Display */}
+              {messages.map((message) =>
+                message.products && message.products.length > 0 ? (
+                  <div
+                    key={`products-${message.id}`}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3"
+                  >
+                    {message.products.map((product) => (
+                      <a
+                        key={product.id}
+                        href={`/shop/${product.slug}`}
+                        className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg active:shadow-md transition-shadow cursor-pointer touch-manipulation"
+                      >
+                        <div className="relative h-28 md:h-32 w-full bg-gray-100 overflow-hidden">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover hover:scale-105 active:scale-100 transition-transform"
+                          />
+                        </div>
+                        <div className="p-2 md:p-3">
+                          <h3 className="text-xs md:text-sm font-semibold text-gray-800 mb-1 line-clamp-2">
+                            {product.name}
+                          </h3>
+                          <p className="text-xs text-blue-600 font-semibold mb-1">
+                            ₪{product.price.toLocaleString('he-IL')}
+                          </p>
+                          <div className="flex items-center gap-1 text-xs text-gray-600">
+                            <span>⭐ {product.rating.toFixed(1)}</span>
+                            <span>({product.reviews})</span>
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                ) : null
+              )}
+
+              {/* Category Cards Display */}
+              {messages.map((message) =>
+                message.categories && message.categories.length > 0 ? (
+                  <div
+                    key={`categories-${message.id}`}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3"
+                  >
+                    {message.categories.map((category) => (
+                      <a
+                        key={category.id}
+                        href={`/shop?category=${category.slug}`}
+                        className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg active:shadow-md transition-shadow cursor-pointer touch-manipulation"
+                      >
+                        {category.image ? (
+                          <div className="relative h-28 md:h-32 w-full bg-gray-100 overflow-hidden">
                             <img
-                              src={product.image}
-                              alt={product.name}
-                              className="w-full h-full object-cover hover:scale-105 transition-transform"
+                              src={category.image}
+                              alt={category.name}
+                              className="w-full h-full object-cover hover:scale-105 active:scale-100 transition-transform"
                             />
                           </div>
-
-                          {/* Content */}
-                          <div className="p-2">
-                            <h3 className="text-xs font-semibold text-gray-800 line-clamp-2 mb-1">
-                              {product.name}
-                            </h3>
-
-                            {/* Rating */}
-                            {product.reviews > 0 && (
-                              <div className="flex items-center gap-1 mb-1">
-                                <div className="flex items-center">
-                                  {[...Array(5)].map((_, i) => (
-                                    <span
-                                      key={i}
-                                      className={`text-xs ${
-                                        i < Math.round(product.rating)
-                                          ? 'text-yellow-400'
-                                          : 'text-gray-300'
-                                      }`}
-                                    >
-                                      ★
-                                    </span>
-                                  ))}
-                                </div>
-                                <span className="text-xs text-gray-600">
-                                  ({product.reviews})
-                                </span>
-                              </div>
-                            )}
-
-                            {/* Price */}
-                            <p className="text-sm font-bold text-gray-900">
-                              ₪{product.price}
-                            </p>
+                        ) : (
+                          <div className="h-28 md:h-32 w-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                            <span className="text-2xl md:text-3xl opacity-50">
+                              📦
+                            </span>
                           </div>
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                        )}
+                        <div className="p-2 md:p-3">
+                          <h3 className="text-xs md:text-sm font-semibold text-gray-800 mb-1">
+                            {category.name}
+                          </h3>
+                          <p className="text-xs text-gray-600">
+                            {category.productCount}{' '}
+                            {category.productCount === 1 ? 'מוצר' : 'מוצרים'}
+                          </p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                ) : null
+              )}
 
-                  {/* Category Cards Display */}
-                  {message.categories && message.categories.length > 0 && (
-                    <div className="grid grid-cols-2 gap-2">
-                      {message.categories.map((category) => (
-                        <a
-                          key={category.id}
-                          href={`/shop?category=${category.slug}`}
-                          className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                        >
-                          {/* Image Container */}
-                          {category.image ? (
-                            <div className="relative h-32 w-full bg-gray-100 overflow-hidden">
-                              <img
-                                src={category.image}
-                                alt={category.name}
-                                className="w-full h-full object-cover hover:scale-105 transition-transform"
-                              />
-                            </div>
-                          ) : (
-                            <div className="h-32 w-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                              <span className="text-3xl opacity-50">📦</span>
-                            </div>
-                          )}
-
-                          {/* Content */}
-                          <div className="p-3">
-                            <h3 className="text-sm font-semibold text-gray-800 mb-1">
-                              {category.name}
-                            </h3>
-                            <p className="text-xs text-gray-600">
-                              {category.productCount}{' '}
-                              {category.productCount === 1 ? 'מוצר' : 'מוצרים'}
-                            </p>
-                          </div>
-                        </a>
-                      ))}
-                    </div>
-                  )}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-200 text-gray-800 rounded-lg px-3 md:px-4 py-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </div>
                 </div>
-              </div>
-            ))}
+              )}
 
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-gray-200 text-gray-800 rounded-lg px-4 py-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+              {error && (
+                <div className="bg-red-100 text-red-700 rounded-lg px-3 md:px-4 py-2 text-xs md:text-sm border border-red-300">
+                  {error}
                 </div>
-              </div>
-            )}
+              )}
 
-            {error && (
-              <div className="bg-red-100 text-red-700 rounded-lg px-4 py-2 text-sm border border-red-300">
-                {error}
-              </div>
-            )}
+              <div ref={scrollRef} />
+            </div>
 
-            <div ref={scrollRef} />
-          </div>
-
-          {/* Input Area */}
-          <div className="border-t border-gray-200 p-3 bg-white rounded-b-2xl">
-            <form
-              ref={formRef}
-              onSubmit={handleSendMessage}
-              className="flex gap-2 items-end flex-row-reverse"
-            >
-              <div className="flex-1 flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent bg-white">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  placeholder="הקלד את ההודעה שלך..."
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  disabled={isLoading}
-                  className="flex-1 px-4 py-2 outline-none text-gray-800 placeholder-gray-500 disabled:bg-gray-100 disabled:text-gray-500 bg-transparent text-right"
-                  style={{
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-3 py-2 rounded-lg transition-colors flex items-center justify-center flex-shrink-0 h-10 w-10"
+            {/* Input Area - Responsive and mobile-friendly */}
+            <div className="border-t border-gray-200 p-3 md:p-3 bg-white rounded-none md:rounded-b-2xl flex-shrink-0">
+              <form
+                ref={formRef}
+                onSubmit={handleSendMessage}
+                className="flex gap-2 items-end flex-row-reverse"
               >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </button>
-            </form>
+                <div className="flex-1 flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent bg-white">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder="הקלד את ההודעה שלך..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    disabled={isLoading}
+                    className="flex-1 px-3 md:px-4 py-2 outline-none text-gray-800 text-sm md:text-base placeholder-gray-500 disabled:bg-gray-100 disabled:text-gray-500 bg-transparent text-right"
+                    style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isLoading || !input.trim()}
+                  className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-300 text-white px-3 py-2 rounded-lg transition-colors flex items-center justify-center flex-shrink-0 h-10 w-10 touch-manipulation"
+                  aria-label="Send message"
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
