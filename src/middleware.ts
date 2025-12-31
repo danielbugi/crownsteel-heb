@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { auth } from '@/lib/auth';
+import { getToken } from 'next-auth/jwt';
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -10,10 +10,14 @@ export async function middleware(req: NextRequest) {
   const isAdminApiRoute = pathname.startsWith('/api/admin');
 
   if (isAdminRoute || isAdminApiRoute) {
-    const session = await auth();
+    // Use getToken instead of auth() to avoid importing heavy dependencies
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET
+    });
 
     // Not logged in - redirect to home for pages, return 401 for API
-    if (!session || !session.user) {
+    if (!token) {
       if (isAdminApiRoute) {
         return NextResponse.json(
           { error: 'Authentication required' },
@@ -27,7 +31,7 @@ export async function middleware(req: NextRequest) {
     }
 
     // Not an admin - redirect to home for pages, return 403 for API
-    if (session.user.role !== 'ADMIN') {
+    if (token.role !== 'ADMIN') {
       if (isAdminApiRoute) {
         return NextResponse.json(
           { error: 'Admin access required' },
