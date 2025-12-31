@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Upload, X, Loader2, GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { uploadImages } from '@/lib/upload';
 import Image from 'next/image';
 
 interface MultipleImagesUploaderProps {
@@ -36,26 +37,7 @@ export function MultipleImagesUploader({
 
     try {
       setIsUploading(true);
-
-      const uploadPromises = filesToUpload.map(async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('folder', folder);
-
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error('Upload failed');
-        }
-
-        const data = await response.json();
-        return data.url;
-      });
-
-      const urls = await Promise.all(uploadPromises);
+      const urls = await uploadImages(filesToUpload, folder);
       onChange([...value, ...urls]);
     } catch (error) {
       console.error('Upload error:', error);

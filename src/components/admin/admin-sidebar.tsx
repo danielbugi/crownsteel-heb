@@ -90,7 +90,7 @@ export function AdminSidebar() {
         {navigationSections.map((section) => (
           <div key={section.title}>
             {/* Section Title */}
-            <h3 className="px-3 mb-2 text-xs font-semibold text-black uppercase tracking-wider">
+            <h3 className="px-3 mb-2 text-xs font-semibold text-white uppercase tracking-wider">
               {section.title}
             </h3>
             {/* Section Items */}

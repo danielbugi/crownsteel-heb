@@ -148,7 +148,7 @@ export function AuthSidebar({ isOpen, onClose }: AuthSidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed top-0 left-0 h-full w-full sm:w-[400px] bg-white shadow-2xl transition-all duration-300 ease-in-out',
+          'fixed top-0 left-0 h-full w-full sm:w-[400px] bg-white text-gray-900 shadow-2xl transition-all duration-300 ease-in-out',
           isOpen
             ? 'translate-x-0 z-50 visible'
             : '-translate-x-full invisible z-50'

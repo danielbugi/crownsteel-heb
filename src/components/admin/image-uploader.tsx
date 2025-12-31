@@ -5,6 +5,7 @@ import { useState, useCallback } from 'react';
 import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { uploadImage } from '@/lib/upload';
 import Image from 'next/image';
 
 interface ImageUploaderProps {
@@ -30,23 +31,8 @@ export function ImageUploader({
   const handleUpload = async (file: File) => {
     try {
       setIsUploading(true);
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', folder);
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Upload failed');
-      }
-
-      const data = await response.json();
-      onChange(data.url);
+      const url = await uploadImage(file, folder);
+      onChange(url);
     } catch (error) {
       console.error('Upload error:', error);
       alert(error instanceof Error ? error.message : 'Failed to upload image');

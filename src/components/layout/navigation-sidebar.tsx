@@ -52,7 +52,7 @@ export function NavigationSidebar({ isOpen, onClose }: NavigationSidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed top-0 h-full w-80 bg-white shadow-2xl transition-all duration-300 ease-in-out left-0',
+          'fixed top-0 h-full w-80 bg-white text-gray-900 shadow-2xl transition-all duration-300 ease-in-out left-0',
           isOpen
             ? 'translate-x-0 z-50 visible'
             : '-translate-x-full z-50 invisible'

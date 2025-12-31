@@ -117,7 +117,7 @@ export function WishlistSheetItem({
           onClick={onClose}
           className="hover:text-primary transition-colors"
         >
-          <h4 className="font-semibold text-sm line-clamp-2 mb-1">
+          <h4 className="font-semibold text-sm text-black-pure line-clamp-2 mb-1">
             {product.name}
           </h4>
         </Link>
@@ -143,7 +143,7 @@ export function WishlistSheetItem({
           <Button
             size="sm"
             variant="outline"
-            className="h-8 text-xs flex-1"
+            className="h-8 text-xs flex-1 text-black-pure border-black"
             onClick={handleAddToCart}
             disabled={!product.inStock}
           >
@@ -153,7 +153,7 @@ export function WishlistSheetItem({
           <Button
             size="sm"
             variant="default"
-            className="h-8 text-xs"
+            className="h-8 text-xs text-black-pure flex-1"
             onClick={handleMoveToCart}
             disabled={!product.inStock}
           >

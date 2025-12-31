@@ -45,7 +45,7 @@ export function CartSheet() {
     <Sheet open={isOpen} onOpenChange={toggleCart}>
       <SheetContent
         side="left"
-        className="flex w-full flex-col p-0 sm:max-w-lg bg-white border-r border-gray-200 left-0 !right-auto"
+        className="flex w-full flex-col p-0 sm:max-w-lg bg-white text-gray-900 border-r border-gray-200 left-0 !right-auto"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
